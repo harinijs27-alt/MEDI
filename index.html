@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>MEDICARE AI</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+
+<body>
+
+<!-- ================= LOGIN PAGE ================= -->
+
+<div id="loginPage" class="login-container">
+
+    <div class="login-box">
+
+        <h1>
+            <i class="fa-solid fa-pills"></i>
+            <span data-i18n="appTitle">MEDICARE AI</span>
+        </h1>
+
+        <p data-i18n="appSubtitle">
+            Smart Medication Reminder
+        </p>
+
+        <!-- Patient Name -->
+        <input
+            type="text"
+            id="patientName"
+            data-i18n-placeholder="patientNamePlaceholder"
+            placeholder="Enter Patient Name"
+        >
+
+        <!-- Age -->
+        <input
+            type="number"
+            id="patientAge"
+            data-i18n-placeholder="agePlaceholder"
+            placeholder="Enter Age"
+        >
+
+        <!-- Patient Phone -->
+        <input
+            type="tel"
+            id="patientPhone"
+            data-i18n-placeholder="phonePlaceholder"
+            placeholder="+91XXXXXXXXXX"
+        >
+
+        <!-- Caregiver Phone -->
+        <input
+            type="tel"
+            id="caregiverLogin"
+            data-i18n-placeholder="caregiverPlaceholder"
+            placeholder="+91XXXXXXXXXX"
+        >
+
+        <!-- Language -->
+        <select id="language">
+
+            <option value="en">English</option>
+
+            <option value="ta">தமிழ்</option>
+
+            <option value="hi">हिन्दी</option>
+
+            <option value="te">తెలుగు</option>
+
+        </select>
+
+        <!-- Login -->
+        <button onclick="loginPatient()">
+            <i class="fa-solid fa-right-to-bracket"></i>
+            <span data-i18n="login">Login</span>
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- ================= DASHBOARD ================= -->
+
+<div id="dashboard" style="display:none;">
+
+    <!-- Header -->
+
+    <header>
+
+        <div class="header-left">
+
+            <h1>
+                <i class="fa-solid fa-pills"></i>
+                <span data-i18n="appTitle">MEDICARE AI</span>
+            </h1>
+
+            <p id="welcomeText"></p>
+
+        </div>
+
+        <div class="header-right">
+
+            <!-- Clock -->
+            <div id="clock"></div>
+
+            <!-- Language -->
+            <select id="dashboardLanguage">
+
+                <option value="en">English</option>
+                <option value="ta">தமிழ்</option>
+                <option value="hi">हिन्दी</option>
+                <option value="te">తెలుగు</option>
+
+            </select>
+
+            <!-- Dark Mode -->
+            <button onclick="toggleDarkMode()" title="Dark Mode">
+                <i class="fa-solid fa-moon"></i>
+            </button>
+
+            <!-- Logout -->
+            <button onclick="logout()">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                <span data-i18n="logout">Logout</span>
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <!-- Main Content -->
+
+    <main>
+
+        <!-- ================= PROFILE ================= -->
+
+        <section class="card">
+
+            <h2>
+                <i class="fa-solid fa-user"></i>
+                <span data-i18n="patientProfile">
+                    Patient Profile
+                </span>
+            </h2>
+
+            <div id="patientProfile"></div>
+
+        </section>
+
+
+        <!-- ================= NEXT REMINDER ================= -->
+
+        <section class="card">
+
+            <h2>
+                <i class="fa-solid fa-bell"></i>
+                <span data-i18n="nextReminder">
+                    Next Reminder
+                </span>
+            </h2>
+
+            <div id="nextReminder"></div>
+
+        </section>
+
+
+        <!-- ================= STATISTICS ================= -->
+
+        <section class="stats-container">
+
+            <div class="stat-card">
+
+                <i class="fa-solid fa-pills"></i>
+
+                <h3 data-i18n="totalMedicine">
+                    Total Medicines
+                </h3>
+
+                <span id="totalMedicine">0</span>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <i class="fa-solid fa-check-circle"></i>
+
+                <h3 data-i18n="taken">
+                    Taken
+                </h3>
+
+                <span id="takenCount">0</span>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <i class="fa-solid fa-circle-xmark"></i>
+
+                <h3 data-i18n="missed">
+                    Missed
+                </h3>
+
+                <span id="missedCount">0</span>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <i class="fa-solid fa-chart-line"></i>
+
+                <h3 data-i18n="adherence">
+                    Adherence
+                </h3>
+
+                <span id="adherence">0%</span>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= ADD MEDICINE ================= -->
+
+        <section class="card">
+
+            <h2>
+
+                <i class="fa-solid fa-plus-circle"></i>
+
+                <span data-i18n="addMedicine">
+                    Add Medicine
+                </span>
+
+            </h2>
+
+
+            <div class="medicine-form">
+
+                <input
+                    type="text"
+                    id="medicineName"
+                    data-i18n-placeholder="medicineNamePlaceholder"
+                    placeholder="Medicine Name"
+                >
+
+
+                <input
+                    type="text"
+                    id="dosage"
+                    data-i18n-placeholder="dosagePlaceholder"
+                    placeholder="Dosage"
+                >
+
+
+                <input
+                    type="time"
+                    id="medicineTime"
+                >
+
+
+                <button onclick="addMedicine()">
+
+                    <i class="fa-solid fa-plus"></i>
+
+                    <span data-i18n="add">
+                        Add
+                    </span>
+
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= MEDICINE LIST ================= -->
+
+        <section class="card">
+
+            <h2>
+
+                <i class="fa-solid fa-list"></i>
+
+                <span data-i18n="medicineList">
+                    Medicine List
+                </span>
+
+            </h2>
+
+
+            <div id="medicineList"></div>
+
+        </section>
+
+
+        <!-- ================= CAREGIVER ================= -->
+
+        <section class="card">
+
+            <h2>
+
+                <i class="fa-solid fa-user-shield"></i>
+
+                <span data-i18n="caregiverSupport">
+                    Caregiver Support
+                </span>
+
+            </h2>
+
+
+            <div class="button-group">
+
+                <button onclick="callCaregiver()">
+
+                    <i class="fa-solid fa-phone"></i>
+
+                    <span data-i18n="callCaregiver">
+                        Call Caregiver
+                    </span>
+
+                </button>
+
+
+                <button onclick="callAmbulance()">
+
+                    <i class="fa-solid fa-truck-medical"></i>
+
+                    <span data-i18n="emergency">
+                        Emergency
+                    </span>
+
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= AI ASSISTANT ================= -->
+
+        <section class="card">
+
+            <h2>
+
+                <i class="fa-solid fa-robot"></i>
+
+                <span data-i18n="assistant">
+                    Health Assistant
+                </span>
+
+            </h2>
+
+
+            <div id="healthMessage">
+                Stay healthy and take your medicines on time.
+            </div>
+
+        </section>
+
+
+        <!-- ================= REPORT ================= -->
+
+        <section class="card">
+
+            <h2>
+
+                <i class="fa-solid fa-file-medical"></i>
+
+                <span data-i18n="report">
+                    Medication Report
+                </span>
+
+            </h2>
+
+
+            <div class="report-summary">
+
+                <div>
+
+                    <strong data-i18n="totalMedicine">
+                        Total Medicines
+                    </strong>
+
+                    <span id="reportTotal">0</span>
+
+                </div>
+
+
+                <div>
+
+                    <strong data-i18n="taken">
+                        Taken
+                    </strong>
+
+                    <span id="reportTaken">0</span>
+
+                </div>
+
+
+                <div>
+
+                    <strong data-i18n="missed">
+                        Missed
+                    </strong>
+
+                    <span id="reportMissed">0</span>
+
+                </div>
+
+
+                <div>
+
+                    <strong data-i18n="adherence">
+                        Adherence
+                    </strong>
+
+                    <span id="reportAdherence">0%</span>
+
+                </div>
+
+            </div>
+
+
+            <div id="reportTable"></div>
+
+
+            <button onclick="downloadReport()">
+
+                <i class="fa-solid fa-download"></i>
+
+                <span data-i18n="downloadReport">
+                    Download Report
+                </span>
+
+            </button>
+
+        </section>
+
+
+        <!-- ================= ACTIVITY LOG ================= -->
+
+        <section class="card">
+
+            <h2>
+
+                <i class="fa-solid fa-clock-rotate-left"></i>
+
+                <span data-i18n="activity">
+                    Activity History
+                </span>
+
+            </h2>
+
+
+            <div id="logList"></div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<!-- ================= ALARM ================= -->
+
+<audio
+    id="alarm"
+    src="https://assets.mixkit.co/sfx/preview/mixkit-alarm-tone-996.mp3"
+    loop>
+</audio>
+
+
+<!-- jsPDF -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+
+<!-- Main JavaScript -->
+
+<script src="script.js"></script>
+
+</body>
+</html>
