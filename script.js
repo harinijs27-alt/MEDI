@@ -1,21 +1,23 @@
 let medicines = [];
 
 let activeReminder = null;
-let reminderLoop;
-
-// =========================
-// RELIABLE BROWSER ALARM
-// =========================
+let reminderLoop = null;
 
 let alarmAudioContext = null;
 let alarmInterval = null;
+
+
+// ======================================================
+// AUDIO SYSTEM
+// ======================================================
 
 function initAlarmAudio(){
 
   try{
 
     const AudioContextClass =
-      window.AudioContext || window.webkitAudioContext;
+      window.AudioContext ||
+      window.webkitAudioContext;
 
     if(!AudioContextClass){
       return false;
@@ -41,6 +43,10 @@ function initAlarmAudio(){
 }
 
 
+// ======================================================
+// ALARM BEEP
+// ======================================================
+
 function makeAlarmBeep(){
 
   if(!initAlarmAudio()){
@@ -49,7 +55,8 @@ function makeAlarmBeep(){
 
   try{
 
-    const now = alarmAudioContext.currentTime;
+    const now =
+      alarmAudioContext.currentTime;
 
     const oscillator =
       alarmAudioContext.createOscillator();
@@ -57,12 +64,14 @@ function makeAlarmBeep(){
     const gain =
       alarmAudioContext.createGain();
 
+
     oscillator.type = "square";
 
     oscillator.frequency.setValueAtTime(
       880,
       now
     );
+
 
     gain.gain.setValueAtTime(
       0.0001,
@@ -79,11 +88,13 @@ function makeAlarmBeep(){
       now + 0.45
     );
 
+
     oscillator.connect(gain);
 
     gain.connect(
       alarmAudioContext.destination
     );
+
 
     oscillator.start(now);
 
@@ -103,6 +114,10 @@ function makeAlarmBeep(){
 }
 
 
+// ======================================================
+// START ALARM
+// ======================================================
+
 function playAlarm(){
 
   if(!initAlarmAudio()){
@@ -115,9 +130,11 @@ function playAlarm(){
 
   }
 
+
   stopAlarm(false);
 
   makeAlarmBeep();
+
 
   alarmInterval =
     setInterval(
@@ -127,6 +144,10 @@ function playAlarm(){
 
 }
 
+
+// ======================================================
+// STOP ALARM
+// ======================================================
 
 function stopAlarm(closeContext = false){
 
@@ -140,8 +161,10 @@ function stopAlarm(closeContext = false){
 
   }
 
+
   const alarm =
     document.getElementById("alarm");
+
 
   if(alarm){
 
@@ -156,6 +179,7 @@ function stopAlarm(closeContext = false){
     }catch(error){}
 
   }
+
 
   if(
     closeContext &&
@@ -175,8 +199,7 @@ function stopAlarm(closeContext = false){
 }
 
 
-// Unlock browser audio when user interacts
-// with the webpage.
+// Unlock browser audio after user interaction
 
 document.addEventListener(
   "pointerdown",
@@ -188,9 +211,9 @@ document.addEventListener(
 );
 
 
-// =========================
+// ======================================================
 // PATIENT STORAGE
-// =========================
+// ======================================================
 
 function getPatientKey(){
 
@@ -204,7 +227,9 @@ function getPatientKey(){
 function loadPatientMedicines(){
 
   const key =
-    "medicines_" + getPatientKey();
+    "medicines_" +
+    getPatientKey();
+
 
   medicines =
     JSON.parse(
@@ -217,7 +242,9 @@ function loadPatientMedicines(){
 function savePatientMedicines(){
 
   const key =
-    "medicines_" + getPatientKey();
+    "medicines_" +
+    getPatientKey();
+
 
   localStorage.setItem(
     key,
@@ -230,7 +257,9 @@ function savePatientMedicines(){
 function loadPatientLogs(){
 
   const key =
-    "logs_" + getPatientKey();
+    "logs_" +
+    getPatientKey();
+
 
   return JSON.parse(
     localStorage.getItem(key)
@@ -242,7 +271,9 @@ function loadPatientLogs(){
 function savePatientLogs(logs){
 
   const key =
-    "logs_" + getPatientKey();
+    "logs_" +
+    getPatientKey();
+
 
   localStorage.setItem(
     key,
@@ -252,14 +283,15 @@ function savePatientLogs(logs){
 }
 
 
-// =========================
+// ======================================================
 // CLOCK
-// =========================
+// ======================================================
 
 function updateClock(){
 
   const clock =
     document.getElementById("clock");
+
 
   if(clock){
 
@@ -270,36 +302,40 @@ function updateClock(){
 
 }
 
+
 setInterval(
   updateClock,
   1000
 );
 
 
-// =========================
+// ======================================================
 // LOGIN
-// =========================
+// ======================================================
 
 function loginPatient(){
 
-  // Unlock alarm sound from
-  // the login button click.
+  // Unlock audio
   initAlarmAudio();
+
 
   const name =
     document.getElementById(
       "patientName"
     ).value;
 
+
   const age =
     document.getElementById(
       "patientAge"
     ).value;
 
+
   const phone =
     document.getElementById(
       "patientPhone"
     ).value;
+
 
   const caregiver =
     document.getElementById(
@@ -372,9 +408,9 @@ function loginPatient(){
 }
 
 
-// =========================
+// ======================================================
 // AUTO LOGIN
-// =========================
+// ======================================================
 
 window.onload = function(){
 
@@ -402,33 +438,34 @@ window.onload = function(){
     ).style.display = "flex";
 
 
-    // FIXED: patient instead of name
-
     document.getElementById(
       "welcomeUser"
     ).innerHTML =
       `Welcome, ${patient}!`;
 
 
-    setTimeout(() => {
+    setTimeout(
+      function(){
 
-      document.getElementById(
-        "welcomeSection"
-      ).style.display = "none";
-
-
-      document.getElementById(
-        "dashboardSection"
-      ).style.display = "block";
+        document.getElementById(
+          "welcomeSection"
+        ).style.display = "none";
 
 
-      loadProfile();
+        document.getElementById(
+          "dashboardSection"
+        ).style.display = "block";
 
-      loadMedicines();
 
-      loadLogs();
+        loadProfile();
 
-    },3000);
+        loadMedicines();
+
+        loadLogs();
+
+      },
+      3000
+    );
 
 
     document.getElementById(
@@ -441,9 +478,9 @@ window.onload = function(){
 };
 
 
-// =========================
+// ======================================================
 // PROFILE
-// =========================
+// ======================================================
 
 function loadProfile(){
 
@@ -451,6 +488,7 @@ function loadProfile(){
     document.getElementById(
       "patientProfile"
     );
+
 
   if(!profile){
     return;
@@ -460,41 +498,46 @@ function loadProfile(){
   profile.innerHTML =
 
     `Name: ${
-      localStorage.getItem("patientName")
+      localStorage.getItem(
+        "patientName"
+      )
     }<br>
 
      Age: ${
-       localStorage.getItem("patientAge")
+       localStorage.getItem(
+         "patientAge"
+       )
      }<br>
 
      Phone: ${
-       localStorage.getItem("patientPhone")
+       localStorage.getItem(
+         "patientPhone"
+       )
      }`;
 
 }
 
 
-// =========================
+// ======================================================
 // ADD MEDICINE
-// =========================
+// ======================================================
 
 function addMedicine(){
 
-  // Unlock audio when user presses
-  // Add Medicine.
+  // Unlock audio
   initAlarmAudio();
 
 
   const name =
     document.getElementById(
       "medicineName"
-    ).value;
+    ).value.trim();
 
 
   const dosage =
     document.getElementById(
       "dosage"
-    ).value;
+    ).value.trim();
 
 
   const time =
@@ -544,15 +587,15 @@ function addMedicine(){
   updateDashboard();
 
 
-  // Clear fields
-
   document.getElementById(
     "medicineName"
   ).value = "";
 
+
   document.getElementById(
     "dosage"
   ).value = "";
+
 
   document.getElementById(
     "medicineTime"
@@ -561,9 +604,9 @@ function addMedicine(){
 }
 
 
-// =========================
+// ======================================================
 // LOAD MEDICINES
-// =========================
+// ======================================================
 
 function loadMedicines(){
 
@@ -571,6 +614,7 @@ function loadMedicines(){
     document.getElementById(
       "medicineList"
     );
+
 
   if(!list){
     return;
@@ -581,7 +625,7 @@ function loadMedicines(){
 
 
   medicines.forEach(
-    (med,index) => {
+    function(med,index){
 
       const li =
         document.createElement(
@@ -615,9 +659,9 @@ function loadMedicines(){
 }
 
 
-// =========================
+// ======================================================
 // DASHBOARD & REPORT
-// =========================
+// ======================================================
 
 function updateDashboard(){
 
@@ -627,13 +671,21 @@ function updateDashboard(){
 
   const taken =
     medicines.filter(
-      med => med.status === "Taken"
+      function(med){
+
+        return med.status === "Taken";
+
+      }
     ).length;
 
 
   const missed =
     medicines.filter(
-      med => med.status === "Missed"
+      function(med){
+
+        return med.status === "Missed";
+
+      }
     ).length;
 
 
@@ -651,8 +703,10 @@ function updateDashboard(){
     );
 
   if(totalMedicine){
+
     totalMedicine.innerHTML =
       total;
+
   }
 
 
@@ -662,8 +716,10 @@ function updateDashboard(){
     );
 
   if(takenCount){
+
     takenCount.innerHTML =
       taken;
+
   }
 
 
@@ -673,8 +729,10 @@ function updateDashboard(){
     );
 
   if(missedCount){
+
     missedCount.innerHTML =
       missed;
+
   }
 
 
@@ -684,14 +742,14 @@ function updateDashboard(){
     );
 
   if(adherenceElement){
+
     adherenceElement.innerHTML =
       adherence + "%";
+
   }
 
 
-  // =========================
-  // REPORT
-  // =========================
+  // Report
 
   const reportTotal =
     document.getElementById(
@@ -699,8 +757,10 @@ function updateDashboard(){
     );
 
   if(reportTotal){
+
     reportTotal.innerHTML =
       total;
+
   }
 
 
@@ -710,8 +770,10 @@ function updateDashboard(){
     );
 
   if(reportTaken){
+
     reportTaken.innerHTML =
       taken;
+
   }
 
 
@@ -721,8 +783,10 @@ function updateDashboard(){
     );
 
   if(reportMissed){
+
     reportMissed.innerHTML =
       missed;
+
   }
 
 
@@ -732,8 +796,10 @@ function updateDashboard(){
     );
 
   if(reportAdherence){
+
     reportAdherence.innerHTML =
       adherence + "%";
+
   }
 
 
@@ -749,7 +815,7 @@ function updateDashboard(){
 
 
     medicines.forEach(
-      med => {
+      function(med){
 
         reportTable.innerHTML +=
 
@@ -773,9 +839,9 @@ function updateDashboard(){
 }
 
 
-// =========================
+// ======================================================
 // MARK TAKEN
-// =========================
+// ======================================================
 
 function markTaken(index){
 
@@ -803,8 +869,6 @@ function markTaken(index){
   );
 
 
-  // STOP ALARM
-
   stopAlarm(false);
 
 
@@ -824,20 +888,23 @@ function markTaken(index){
 }
 
 
-// =========================
-// REMINDER CHECK
-// =========================
+// ======================================================
+// CHECK REMINDERS
+// ======================================================
 
 function checkReminders(){
 
   const currentTime =
     new Date()
       .toTimeString()
-      .substring(0,5);
+      .substring(
+        0,
+        5
+      );
 
 
   medicines.forEach(
-    (medicine,index) => {
+    function(medicine,index){
 
       if(
         medicine.time === currentTime &&
@@ -856,15 +923,71 @@ function checkReminders(){
 
 }
 
+
 setInterval(
   checkReminders,
   1000
 );
 
 
-// =========================
+// ======================================================
+// SPEAK THE ACTUAL MEDICINE NAME
+// ======================================================
+
+function speakMedicineReminder(
+  medicineName
+){
+
+  try{
+
+    speechSynthesis.cancel();
+
+
+    const speech =
+      new SpeechSynthesisUtterance(
+
+        "Time to take " +
+        medicineName
+
+      );
+
+
+    speech.lang =
+      "en-US";
+
+
+    speech.rate =
+      0.85;
+
+
+    speech.pitch =
+      1;
+
+
+    speech.volume =
+      1;
+
+
+    speechSynthesis.speak(
+      speech
+    );
+
+
+  }catch(error){
+
+    console.log(
+      "Voice reminder error:",
+      error
+    );
+
+  }
+
+}
+
+
+// ======================================================
 // REMINDER ALERT
-// =========================
+// ======================================================
 
 function triggerReminder(
   medicine,
@@ -883,75 +1006,32 @@ function triggerReminder(
   activeReminder = index;
 
 
-  // =========================
-  // START ALARM SOUND
-  // =========================
+  // Start alarm
 
   playAlarm();
 
 
-  // =========================
-  // SPEAK IMMEDIATELY
-  // =========================
+  // IMPORTANT:
+  // Say the EXACT medicine name entered by user.
 
-  try{
-
-    speechSynthesis.cancel();
-
-
-    const firstSpeech =
-      new SpeechSynthesisUtterance(
-        `Time to take ${medicine.name}`
-      );
+  speakMedicineReminder(
+    medicine.name
+  );
 
 
-    firstSpeech.lang =
-      "en-US";
-
-
-    speechSynthesis.speak(
-      firstSpeech
-    );
-
-  }catch(error){
-
-    console.log(
-      "Speech error:",
-      error
-    );
-
-  }
-
-
-  // =========================
-  // REPEAT VOICE
-  // =========================
+  // Repeat medicine name every 5 seconds
 
   reminderLoop =
     setInterval(
-      () => {
+      function(){
 
-        try{
+        if(
+          medicines[index] &&
+          medicines[index].status === "Pending"
+        ){
 
-          const speech =
-            new SpeechSynthesisUtterance(
-              `Time to take ${medicine.name}`
-            );
-
-
-          speech.lang =
-            "en-US";
-
-
-          speechSynthesis.speak(
-            speech
-          );
-
-        }catch(error){
-
-          console.log(
-            "Speech error:",
-            error
+          speakMedicineReminder(
+            medicine.name
           );
 
         }
@@ -981,12 +1061,12 @@ function triggerReminder(
   }
 
 
-  // =========================
+  // ====================================================
   // MISS AFTER 1 MINUTE
-  // =========================
+  // ====================================================
 
   setTimeout(
-    () => {
+    function(){
 
       clearInterval(
         reminderLoop
@@ -998,12 +1078,13 @@ function triggerReminder(
         medicines[index].status === "Pending"
       ){
 
-        // STOP ALARM
-
         stopAlarm(false);
 
+
         try{
+
           speechSynthesis.cancel();
+
         }catch(error){}
 
 
@@ -1019,8 +1100,6 @@ function triggerReminder(
           " missed"
         );
 
-
-        // SEND SMS
 
         sendMissedSMS(
           medicine
@@ -1043,9 +1122,9 @@ function triggerReminder(
 }
 
 
-// =========================
+// ======================================================
 // SMS FUNCTION
-// =========================
+// ======================================================
 
 function sendMissedSMS(
   medicine
@@ -1058,7 +1137,9 @@ function sendMissedSMS(
 
 
   if(!caregiver){
+
     return;
+
   }
 
 
@@ -1074,16 +1155,12 @@ function sendMissedSMS(
     );
 
 
-  // OPEN SMS APP
-
   window.location.href =
     `sms:${caregiver}?body=${smsText}`;
 
 
-  // OPTIONAL CALL
-
   setTimeout(
-    () => {
+    function(){
 
       const confirmCall =
         confirm(
@@ -1105,9 +1182,9 @@ function sendMissedSMS(
 }
 
 
-// =========================
+// ======================================================
 // LOG SYSTEM
-// =========================
+// ======================================================
 
 function addLog(
   message
@@ -1159,7 +1236,7 @@ function loadLogs(){
 
 
   logs.forEach(
-    log => {
+    function(log){
 
       const li =
         document.createElement(
@@ -1181,13 +1258,9 @@ function loadLogs(){
 }
 
 
-// =========================
-// ALARM TEST
-// =========================
-
-// You can run testAlarm()
-// from the browser console
-// to test the sound.
+// ======================================================
+// TEST ALARM
+// ======================================================
 
 function testAlarm(){
 
@@ -1197,7 +1270,7 @@ function testAlarm(){
 
 
   setTimeout(
-    () => {
+    function(){
 
       stopAlarm(false);
 
@@ -1208,9 +1281,9 @@ function testAlarm(){
 }
 
 
-// =========================
+// ======================================================
 // OTHER FEATURES
-// =========================
+// ======================================================
 
 function callAmbulance(){
 
@@ -1225,6 +1298,10 @@ function callAmbulance(){
 }
 
 
+// ======================================================
+// DARK MODE
+// ======================================================
+
 function toggleDarkMode(){
 
   document.body.classList.toggle(
@@ -1234,11 +1311,20 @@ function toggleDarkMode(){
 }
 
 
+// ======================================================
+// LOGOUT
+// ======================================================
+
 function logout(){
 
-  // Stop alarm before logout
-
   stopAlarm(false);
+
+
+  try{
+
+    speechSynthesis.cancel();
+
+  }catch(error){}
 
 
   localStorage.removeItem(
@@ -1250,6 +1336,10 @@ function logout(){
 
 }
 
+
+// ======================================================
+// CALL CAREGIVER
+// ======================================================
 
 function callCaregiver(){
 
@@ -1281,16 +1371,15 @@ function callCaregiver(){
 }
 
 
-// =========================
+// ======================================================
 // DOWNLOAD REPORT
-// =========================
+// ======================================================
 
 function downloadReport(){
 
-  // FIXED: use current patient's medicine storage
-
   const key =
-    "medicines_" + getPatientKey();
+    "medicines_" +
+    getPatientKey();
 
 
   let medicines =
@@ -1335,7 +1424,8 @@ function downloadReport(){
   let patient =
     localStorage.getItem(
       "patientName"
-    ) || "Patient";
+    ) ||
+    "Patient";
 
 
   pdf.setFontSize(
@@ -1368,7 +1458,8 @@ function downloadReport(){
 
 
   pdf.text(
-    "Patient Name: " + patient,
+    "Patient Name: " +
+    patient,
     20,
     45
   );
@@ -1409,7 +1500,7 @@ function downloadReport(){
 
 
   medicines.forEach(
-    med => {
+    function(med){
 
       pdf.text(
         med.name || "",
