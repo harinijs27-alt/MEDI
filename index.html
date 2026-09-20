@@ -4,11 +4,13 @@
 <head>
     <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
-    <title>JS MEDICARE</title>
+    <title>JS MEDICARE - AI Medication Assistant</title>
 
     <style>
+
         * {
             box-sizing: border-box;
         }
@@ -17,95 +19,95 @@
             margin: 0;
             font-family: Arial, sans-serif;
             background: #f0fdf4;
-            color: #1f2937;
+            color: #166534;
         }
 
-        /* ================= LOGIN ================= */
+        button,
+        input,
+        select {
+            font-family: inherit;
+        }
 
-        .login-section {
+        /* ================================
+           LOGIN
+        ================================= */
+
+        .login-container {
             min-height: 100vh;
             display: flex;
-            align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, #dcfce7, #f0fdf4);
+            align-items: center;
             padding: 20px;
+            background:
+                linear-gradient(
+                    135deg,
+                    #dcfce7,
+                    #f0fdf4
+                );
         }
 
         .login-card {
             width: 100%;
-            max-width: 420px;
+            max-width: 450px;
             background: white;
-            padding: 28px;
-            border-radius: 18px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
-            text-align: center;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow:
+                0 10px 35px rgba(0,0,0,0.10);
         }
 
         .logo {
+            text-align: center;
             font-size: 42px;
-            margin-bottom: 5px;
         }
 
         .login-card h1 {
-            margin: 5px 0;
+            text-align: center;
             color: #15803d;
+            margin-bottom: 5px;
         }
 
-        .subtitle {
+        .login-subtitle {
+            text-align: center;
             color: #64748b;
-            font-size: 14px;
-            margin-bottom: 22px;
+            margin-bottom: 25px;
         }
 
         .form-group {
-            text-align: left;
-            margin-bottom: 15px;
+            margin-bottom: 16px;
         }
 
-        label {
+        .form-group label {
             display: block;
-            font-weight: 600;
-            font-size: 14px;
             margin-bottom: 6px;
-            color: #374151;
+            font-weight: bold;
         }
 
-        input,
-        select {
+        .form-group input,
+        .form-group select {
             width: 100%;
-            padding: 10px 12px;
-            border: 1px solid #bbf7d0;
-            border-radius: 8px;
-            font-size: 14px;
+            padding: 12px;
+            border: 2px solid #bbf7d0;
+            border-radius: 10px;
+            font-size: 16px;
             outline: none;
-            background: white;
         }
 
-        input:focus,
-        select:focus {
+        .form-group input:focus,
+        .form-group select:focus {
             border-color: #16a34a;
-            box-shadow: 0 0 0 2px #dcfce7;
-        }
-
-        button {
-            border: none;
-            border-radius: 8px;
-            padding: 9px 15px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        button:hover {
-            transform: translateY(-1px);
         }
 
         .primary-btn {
             width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
             background: #16a34a;
             color: white;
-            margin-top: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
         }
 
         .primary-btn:hover {
@@ -114,186 +116,202 @@
 
         .voice-btn {
             width: 100%;
-            background: #dcfce7;
-            color: #15803d;
+            padding: 10px;
             margin-top: 10px;
+            border: 2px solid #16a34a;
+            border-radius: 10px;
+            background: white;
+            color: #15803d;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
         }
 
         .voice-status {
-            margin-top: 10px;
-            font-size: 12px;
-            color: #64748b;
+            text-align: center;
+            margin-top: 8px;
+            font-size: 13px;
+            color: #15803d;
         }
 
-        /* ================= DASHBOARD ================= */
+        /* ================================
+           DASHBOARD
+        ================================= */
 
-        .dashboard {
-            min-height: 100vh;
-            background: #f0fdf4;
+        #dashboard {
             display: none;
         }
 
         .topbar {
             background: #15803d;
             color: white;
-            padding: 12px 25px;
+            padding: 12px 20px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            gap: 15px;
+            justify-content: space-between;
+            gap: 10px;
+            flex-wrap: wrap;
         }
 
         .brand {
-            font-size: 20px;
+            font-size: 22px;
             font-weight: bold;
         }
 
         .topbar-right {
             display: flex;
-            align-items: center;
             gap: 8px;
+            align-items: center;
         }
 
-        .language-select {
-            width: auto;
-            min-width: 100px;
-            padding: 7px 10px;
+        .topbar select {
+            padding: 7px;
+            border-radius: 8px;
+            border: none;
         }
 
         .logout-btn {
+            padding: 7px 12px;
+            border: none;
+            border-radius: 8px;
             background: white;
             color: #15803d;
-            padding: 7px 12px;
+            cursor: pointer;
+            font-weight: bold;
         }
-
-        /* ================= CONTAINER ================= */
 
         .container {
+            width: 95%;
             max-width: 1200px;
             margin: auto;
-            padding: 20px;
+            padding: 20px 0 50px;
         }
 
-        /* ================= WELCOME ================= */
-
-        .welcome {
-            background: linear-gradient(135deg, #16a34a, #15803d);
+        .welcome-banner {
+            background: linear-gradient(
+                135deg,
+                #16a34a,
+                #15803d
+            );
             color: white;
-            padding: 20px;
-            border-radius: 14px;
+            padding: 22px;
+            border-radius: 18px;
             margin-bottom: 18px;
         }
 
-        .welcome h2 {
-            margin: 0 0 5px;
-            font-size: 22px;
+        .welcome-banner h2 {
+            margin: 0 0 8px;
         }
 
-        .welcome p {
-            margin: 5px 0 12px;
-            font-size: 14px;
-        }
+        /* ================================
+           STATS
+        ================================= */
 
-        .ai-status {
-            font-size: 13px;
-        }
-
-        /* ================= STATS ================= */
-
-        .stats {
+        .stats-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns:
+                repeat(4, 1fr);
             gap: 12px;
             margin-bottom: 18px;
         }
 
         .stat-card {
             background: white;
-            border-radius: 12px;
-            padding: 15px;
+            padding: 16px;
+            border-radius: 14px;
+            box-shadow:
+                0 3px 12px rgba(0,0,0,0.06);
             text-align: center;
-            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
-        }
-
-        .stat-card h3 {
-            margin: 0 0 8px;
-            font-size: 13px;
-            color: #64748b;
         }
 
         .stat-number {
-            font-size: 25px;
+            font-size: 28px;
             font-weight: bold;
             color: #15803d;
         }
 
-        /* ================= MAIN GRID ================= */
-
-        .main-grid {
-            display: grid;
-            grid-template-columns: 1.6fr 1fr;
-            gap: 18px;
+        .stat-label {
+            color: #64748b;
+            font-size: 13px;
         }
 
-        /* ================= CARDS ================= */
+        /* ================================
+           CARDS
+        ================================= */
 
         .card {
             background: white;
-            padding: 18px;
-            border-radius: 12px;
+            padding: 20px;
+            border-radius: 16px;
             margin-bottom: 18px;
-            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
+            box-shadow:
+                0 3px 15px rgba(0,0,0,0.06);
         }
 
         .card h2 {
             margin-top: 0;
-            margin-bottom: 15px;
-            font-size: 18px;
             color: #15803d;
         }
 
-        /* ================= ADD MEDICINE ================= */
+        /* ================================
+           MEDICINE FORM
+        ================================= */
 
-        .add-medicine {
+        .medicine-form {
             display: grid;
-            grid-template-columns: 1fr 1fr 150px auto;
+            grid-template-columns:
+                1.5fr 1fr 1fr auto;
             gap: 10px;
             align-items: end;
         }
 
-        .add-medicine button {
+        .medicine-form input {
+            width: 100%;
+            padding: 11px;
+            border: 2px solid #bbf7d0;
+            border-radius: 9px;
+        }
+
+        .add-btn {
+            padding: 11px 16px;
+            border: none;
+            border-radius: 9px;
             background: #16a34a;
             color: white;
+            font-weight: bold;
+            cursor: pointer;
         }
 
-        .add-medicine button:hover {
-            background: #15803d;
-        }
-
-        /* ================= MEDICINE ITEM ================= */
+        /* ================================
+           MEDICINE LIST
+        ================================= */
 
         .medicine-item {
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: space-between;
             gap: 12px;
             padding: 14px;
             border: 1px solid #dcfce7;
-            border-radius: 10px;
+            border-radius: 12px;
             margin-bottom: 10px;
-            background: #fafffb;
         }
 
-        .medicine-info h3 {
-            margin: 0 0 7px;
+        .medicine-info {
+            flex: 1;
+        }
+
+        .medicine-name {
+            font-size: 18px;
+            font-weight: bold;
             color: #166534;
-            font-size: 16px;
+            word-break: break-word;
         }
 
-        .medicine-info p {
-            margin: 4px 0;
+        .medicine-details {
             font-size: 13px;
             color: #64748b;
+            margin-top: 4px;
         }
 
         .medicine-actions {
@@ -303,795 +321,920 @@
         }
 
         .take-btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 8px;
             background: #16a34a;
             color: white;
+            cursor: pointer;
+            font-weight: bold;
         }
 
         .delete-btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 8px;
             background: #fee2e2;
             color: #b91c1c;
+            cursor: pointer;
+            font-weight: bold;
         }
 
         .status {
             display: inline-block;
+            margin-top: 5px;
             padding: 4px 8px;
             border-radius: 20px;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: bold;
-            margin-top: 5px;
         }
 
-        .status.pending {
+        .status-pending {
             background: #fef3c7;
             color: #92400e;
         }
 
-        .status.taken {
+        .status-taken {
             background: #dcfce7;
             color: #166534;
         }
 
-        .status.missed {
+        .status-missed {
             background: #fee2e2;
             color: #b91c1c;
         }
 
-        /* ================= NEXT REMINDER ================= */
+        /* ================================
+           NEXT REMINDER
+        ================================= */
 
         .next-reminder {
+            text-align: center;
             background: #f0fdf4;
-            border: 1px solid #bbf7d0;
+            border: 2px solid #bbf7d0;
+        }
+
+        .next-time {
+            font-size: 32px;
+            font-weight: bold;
+            color: #15803d;
+        }
+
+        /* ================================
+           AI CARD
+        ================================= */
+
+        .ai-card {
+            background: #ecfdf5;
+            border: 2px solid #bbf7d0;
+        }
+
+        .ai-online {
+            display: inline-block;
+            padding: 5px 9px;
+            background: #dcfce7;
+            color: #15803d;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        /* ================================
+           ACCESSIBILITY
+        ================================= */
+
+        .accessibility-card {
+            border: 2px solid #bbf7d0;
+        }
+
+        .accessibility-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
             padding: 14px;
-            border-radius: 9px;
+            margin-bottom: 10px;
+            background: #f0fdf4;
+            border-radius: 12px;
+        }
+
+        .accessibility-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .accessibility-icon {
+            font-size: 30px;
+        }
+
+        .accessibility-item strong {
             color: #166534;
         }
 
-        /* ================= CAREGIVER ================= */
+        .accessibility-item p {
+            margin: 5px 0 0;
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        /* ================================
+           CAREGIVER
+        ================================= */
 
         .caregiver-row {
             display: flex;
-            gap: 8px;
-            margin-bottom: 10px;
+            gap: 10px;
+            flex-wrap: wrap;
         }
 
         .caregiver-row input {
             flex: 1;
+            min-width: 200px;
+            padding: 11px;
+            border: 2px solid #bbf7d0;
+            border-radius: 9px;
         }
 
         .small-btn {
+            padding: 9px 13px;
+            border: none;
+            border-radius: 8px;
             background: #16a34a;
             color: white;
+            font-weight: bold;
+            cursor: pointer;
         }
 
-        .call-btn {
-            width: 100%;
-            background: #dcfce7;
-            color: #166534;
-            margin-bottom: 8px;
+        .secondary-btn {
+            padding: 9px 13px;
+            border: 1px solid #16a34a;
+            border-radius: 8px;
+            background: white;
+            color: #15803d;
+            font-weight: bold;
+            cursor: pointer;
         }
 
-        .ambulance-btn {
-            width: 100%;
-            background: #fee2e2;
-            color: #b91c1c;
-        }
-
-        /* ================= REPORT ================= */
-
-        .report-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 12px;
-        }
-
-        .report-table th,
-        .report-table td {
-            border: 1px solid #dcfce7;
-            padding: 8px;
-            text-align: left;
-            font-size: 13px;
-        }
-
-        .report-table th {
-            background: #f0fdf4;
-            color: #166534;
-        }
-
-        .report-btn {
-            width: 100%;
-            background: #16a34a;
+        .danger-btn {
+            padding: 9px 13px;
+            border: none;
+            border-radius: 8px;
+            background: #dc2626;
             color: white;
+            font-weight: bold;
+            cursor: pointer;
         }
 
-        /* ================= ACTIVITY ================= */
+        /* ================================
+           ACTIVITY
+        ================================= */
 
-        .activity {
-            max-height: 220px;
-            overflow-y: auto;
+        #activityLog {
+            list-style: none;
+            padding: 0;
+            margin: 0;
         }
 
-        .activity-item {
-            padding: 9px;
+        #activityLog li {
+            padding: 9px 0;
             border-bottom: 1px solid #dcfce7;
-            font-size: 12px;
-            color: #64748b;
+            font-size: 14px;
         }
 
-        .empty {
-            text-align: center;
-            color: #94a3b8;
-            padding: 15px;
-            font-size: 13px;
+        /* ================================
+           REPORT
+        ================================= */
+
+        .report-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
         }
 
-        /* ================= POPUP ================= */
+        /* ================================
+           REMINDER POPUP
+        ================================= */
 
-        .popup {
+        .reminder-popup {
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.45);
+            background: rgba(0, 0, 0, 0.78);
+            z-index: 9999;
             align-items: center;
             justify-content: center;
-            z-index: 9999;
             padding: 20px;
         }
 
-        .popup-card {
+        .reminder-box {
             background: white;
-            width: 100%;
-            max-width: 360px;
-            padding: 25px;
-            border-radius: 16px;
+            width: min(450px, 95%);
+            padding: 30px;
+            border-radius: 20px;
             text-align: center;
-            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.2);
+            border: 5px solid #16a34a;
+
+            animation:
+                reminderFlash 1s infinite;
         }
 
-        .popup-icon {
-            font-size: 45px;
+        @keyframes reminderFlash {
+
+            0% {
+                transform: scale(1);
+                border-color: #16a34a;
+            }
+
+            50% {
+                transform: scale(1.03);
+                border-color: #ef4444;
+            }
+
+            100% {
+                transform: scale(1);
+                border-color: #16a34a;
+            }
         }
 
-        .popup-card h2 {
+        .reminder-icon {
+            font-size: 55px;
+        }
+
+        .reminder-box h2 {
             color: #15803d;
-            margin: 10px 0;
         }
 
-        .popup-medicine {
-            font-size: 20px;
+        .popup-medicine-name {
+            font-size: 32px;
             font-weight: bold;
-            color: #166534;
-            margin: 15px 0 20px;
+            color: #15803d;
+            margin: 20px 0;
+            word-break: break-word;
         }
 
-        .popup-take {
+        #popupReminderText {
+            font-size: 20px;
+        }
+
+        .take-medicine-btn {
             width: 100%;
+            min-height: 65px;
+            border: none;
+            border-radius: 14px;
             background: #16a34a;
             color: white;
-            padding: 11px;
+            font-size: 22px;
+            font-weight: bold;
+            cursor: pointer;
         }
 
-        /* ================= MOBILE ================= */
+        .take-medicine-btn:focus,
+        button:focus,
+        input:focus,
+        select:focus {
+            outline: 4px solid #facc15;
+            outline-offset: 3px;
+        }
 
-        @media (max-width: 800px) {
+        /* ================================
+           RESPONSIVE
+        ================================= */
 
-            .stats {
-                grid-template-columns: repeat(2, 1fr);
+        @media(max-width: 850px) {
+
+            .stats-grid {
+                grid-template-columns:
+                    repeat(2, 1fr);
             }
 
-            .main-grid {
+            .medicine-form {
                 grid-template-columns: 1fr;
-            }
-
-            .add-medicine {
-                grid-template-columns: 1fr;
-            }
-
-            .topbar {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .topbar-right {
-                justify-content: space-between;
             }
         }
 
-        @media (max-width: 500px) {
+        @media(max-width: 600px) {
 
             .container {
-                padding: 12px;
+                width: 92%;
             }
 
-            .stats {
-                gap: 8px;
-            }
-
-            .stat-card {
-                padding: 12px 8px;
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
             }
 
             .medicine-item {
                 flex-direction: column;
-                align-items: flex-start;
+                align-items: stretch;
             }
 
             .medicine-actions {
-                width: 100%;
+                justify-content: flex-start;
             }
 
-            .medicine-actions button {
-                flex: 1;
+            .topbar {
+                padding: 10px;
+            }
+
+            .brand {
+                font-size: 18px;
+            }
+
+            .popup-medicine-name {
+                font-size: 26px;
             }
         }
+
     </style>
 </head>
 
 <body>
 
-    <!-- =====================================================
-         LOGIN
-    ===================================================== -->
+<!-- ======================================================
+     LOGIN
+====================================================== -->
 
-    <section id="loginSection" class="login-section">
+<section id="loginSection" class="login-container">
 
-        <div class="login-card">
+    <div class="login-card">
 
-            <div class="logo">
-                💊
-            </div>
+        <div class="logo">
+            💊
+        </div>
 
-            <h1>
-                JS MEDICARE
-            </h1>
+        <h1>JS MEDICARE</h1>
 
-            <p class="subtitle">
-                AI Powered Healthcare Assistant
-            </p>
+        <p class="login-subtitle">
+            AI Powered Healthcare Assistant
+        </p>
 
-            <div class="form-group">
+        <div class="form-group">
 
-                <label for="patientName">
-                    Patient Name
-                </label>
+            <label for="patientName">
+                Patient Name
+            </label>
 
-                <input
-                    type="text"
-                    id="patientName"
-                    placeholder="Enter patient name"
-                >
-
-            </div>
-
-            <div class="form-group">
-
-                <label for="patientPhone">
-                    Patient Phone Number
-                </label>
-
-                <input
-                    type="tel"
-                    id="patientPhone"
-                    placeholder="Enter phone number"
-                >
-
-            </div>
-
-            <div class="form-group">
-
-                <label for="languageSelect">
-                    Select Language
-                </label>
-
-                <select id="languageSelect">
-
-                    <option value="en">
-                        English
-                    </option>
-
-                    <option value="ta">
-                        தமிழ்
-                    </option>
-
-                    <option value="hi">
-                        हिन्दी
-                    </option>
-
-                    <option value="te">
-                        తెలుగు
-                    </option>
-
-                </select>
-
-            </div>
-
-            <button
-                type="button"
-                class="primary-btn"
-                onclick="login()"
+            <input
+                type="text"
+                id="patientName"
+                placeholder="Enter patient name"
+                autocomplete="name"
             >
-                Login
-            </button>
-
-            <button
-                type="button"
-                class="voice-btn"
-                onclick="enableMobileVoice()"
-            >
-                🔊 Enable Voice
-            </button>
-
-            <div
-                id="voiceStatus"
-                class="voice-status"
-            >
-                Voice will be used for medicine reminders.
-            </div>
 
         </div>
 
-    </section>
+        <div class="form-group">
+
+            <label for="patientPhone">
+                Patient Phone
+            </label>
+
+            <input
+                type="tel"
+                id="patientPhone"
+                placeholder="Enter phone number"
+                autocomplete="tel"
+            >
+
+        </div>
+
+        <div class="form-group">
+
+            <label for="languageSelect">
+                Language
+            </label>
+
+            <select id="languageSelect">
+
+                <option value="en">
+                    English
+                </option>
+
+                <option value="ta">
+                    தமிழ்
+                </option>
+
+                <option value="hi">
+                    हिन्दी
+                </option>
+
+                <option value="te">
+                    తెలుగు
+                </option>
+
+            </select>
+
+        </div>
+
+        <button
+            type="button"
+            class="primary-btn"
+            onclick="login()"
+        >
+            Login to MEDICARE
+        </button>
+
+        <button
+            type="button"
+            class="voice-btn"
+            onclick="enableMobileVoice()"
+            aria-label="Enable voice reminders"
+        >
+            🔊 Enable Voice
+        </button>
+
+        <div
+            id="voiceStatus"
+            class="voice-status"
+            aria-live="polite"
+        ></div>
+
+    </div>
+
+</section>
 
 
-    <!-- =====================================================
-         DASHBOARD
-    ===================================================== -->
+<!-- ======================================================
+     DASHBOARD
+====================================================== -->
 
-    <section id="dashboardSection" class="dashboard">
+<section id="dashboard">
 
-        <div class="topbar">
+    <header class="topbar">
 
-            <div class="brand">
-                💊 JS MEDICARE
+        <div class="brand">
+            💊 JS MEDICARE
+        </div>
+
+        <div class="topbar-right">
+
+            <select
+                id="dashboardLanguage"
+                onchange="changeLanguage(this.value)"
+                aria-label="Select language"
+            >
+
+                <option value="en">
+                    English
+                </option>
+
+                <option value="ta">
+                    தமிழ்
+                </option>
+
+                <option value="hi">
+                    हिन्दी
+                </option>
+
+                <option value="te">
+                    తెలుగు
+                </option>
+
+            </select>
+
+            <button
+                class="logout-btn"
+                onclick="logout()"
+            >
+                Logout
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <main class="container">
+
+        <!-- WELCOME -->
+
+        <section class="welcome-banner">
+
+            <h2 id="welcomeText">
+                Welcome to JS MEDICARE
+            </h2>
+
+            <p id="aiStatus">
+                AI Monitoring Online
+            </p>
+
+        </section>
+
+
+        <!-- STATS -->
+
+        <section class="stats-grid">
+
+            <div class="stat-card">
+
+                <div
+                    id="totalMedicines"
+                    class="stat-number"
+                >
+                    0
+                </div>
+
+                <div class="stat-label">
+                    Total Medicines
+                </div>
+
             </div>
 
-            <div class="topbar-right">
 
-                <select
-                    id="dashboardLanguage"
-                    class="language-select"
-                    onchange="changeLanguage(this.value)"
+            <div class="stat-card">
+
+                <div
+                    id="takenMedicines"
+                    class="stat-number"
                 >
+                    0
+                </div>
 
-                    <option value="en">
-                        English
-                    </option>
+                <div class="stat-label">
+                    Taken
+                </div>
 
-                    <option value="ta">
-                        தமிழ்
-                    </option>
+            </div>
 
-                    <option value="hi">
-                        हिन्दी
-                    </option>
 
-                    <option value="te">
-                        తెలుగు
-                    </option>
+            <div class="stat-card">
 
-                </select>
+                <div
+                    id="missedMedicines"
+                    class="stat-number"
+                >
+                    0
+                </div>
+
+                <div class="stat-label">
+                    Missed
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div
+                    id="adherence"
+                    class="stat-number"
+                >
+                    0%
+                </div>
+
+                <div class="stat-label">
+                    Adherence
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ADD MEDICINE -->
+
+        <section class="card">
+
+            <h2 id="addMedicineTitle">
+                Add Medicine
+            </h2>
+
+            <div class="medicine-form">
+
+                <div>
+
+                    <label for="medicineName">
+                        Medicine Name
+                    </label>
+
+                    <input
+                        id="medicineName"
+                        type="text"
+                        placeholder="Example: Paracetamol"
+                    >
+
+                </div>
+
+                <div>
+
+                    <label for="dosage">
+                        Dosage
+                    </label>
+
+                    <input
+                        id="dosage"
+                        type="text"
+                        placeholder="500 mg"
+                    >
+
+                </div>
+
+                <div>
+
+                    <label for="medicineTime">
+                        Time
+                    </label>
+
+                    <input
+                        id="medicineTime"
+                        type="time"
+                    >
+
+                </div>
 
                 <button
-                    type="button"
-                    class="logout-btn"
-                    onclick="logout()"
+                    class="add-btn"
+                    onclick="addMedicine()"
                 >
-                    Logout
+                    + Add
                 </button>
 
             </div>
 
-        </div>
+        </section>
 
 
-        <div class="container">
+        <!-- MEDICINES -->
 
-            <!-- WELCOME -->
+        <section class="card">
 
-            <div class="welcome">
+            <h2 id="myMedicinesTitle">
+                My Medicines
+            </h2>
 
-                <h2 id="welcomeTitle">
-                    Welcome to JS MEDICARE
-                </h2>
+            <div id="medicineList">
 
                 <p>
-                    AI Powered Medication Reminder
+                    No medicines added yet.
                 </p>
 
-                <div class="ai-status">
-                    🟢
-                    <span id="aiStatusText">
-                        AI Monitoring Online
-                    </span>
-                </div>
-
             </div>
 
+        </section>
 
-            <!-- STATISTICS -->
 
-            <div class="stats">
+        <!-- NEXT REMINDER -->
 
-                <div class="stat-card">
+        <section class="card next-reminder">
 
-                    <h3>
-                        Total Medicines
-                    </h3>
-
-                    <div
-                        id="totalMedicines"
-                        class="stat-number"
-                    >
-                        0
-                    </div>
-
-                </div>
-
-
-                <div class="stat-card">
-
-                    <h3>
-                        Taken
-                    </h3>
-
-                    <div
-                        id="takenMedicines"
-                        class="stat-number"
-                    >
-                        0
-                    </div>
-
-                </div>
-
-
-                <div class="stat-card">
-
-                    <h3>
-                        Missed
-                    </h3>
-
-                    <div
-                        id="missedMedicines"
-                        class="stat-number"
-                    >
-                        0
-                    </div>
-
-                </div>
-
-
-                <div class="stat-card">
-
-                    <h3>
-                        Adherence
-                    </h3>
-
-                    <div
-                        id="adherence"
-                        class="stat-number"
-                    >
-                        0%
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <div class="main-grid">
-
-                <!-- LEFT COLUMN -->
-
-                <div>
-
-                    <!-- ADD MEDICINE -->
-
-                    <div class="card">
-
-                        <h2>
-                            Add Medicine
-                        </h2>
-
-                        <div class="add-medicine">
-
-                            <div>
-
-                                <label for="medicineName">
-                                    Medicine Name
-                                </label>
-
-                                <input
-                                    type="text"
-                                    id="medicineName"
-                                    placeholder="Enter medicine name"
-                                >
-
-                            </div>
-
-
-                            <div>
-
-                                <label for="dosage">
-                                    Dosage
-                                </label>
-
-                                <input
-                                    type="text"
-                                    id="dosage"
-                                    placeholder="e.g. 500 mg"
-                                >
-
-                            </div>
-
-
-                            <div>
-
-                                <label for="medicineTime">
-                                    Time
-                                </label>
-
-                                <input
-                                    type="time"
-                                    id="medicineTime"
-                                >
-
-                            </div>
-
-
-                            <button
-                                type="button"
-                                onclick="addMedicine()"
-                            >
-                                Add
-                            </button>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- MEDICINE LIST -->
-
-                    <div class="card">
-
-                        <h2>
-                            My Medicines
-                        </h2>
-
-                        <div id="medicineList">
-
-                            <div class="empty">
-                                No medicines added yet.
-                            </div>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- NEXT REMINDER -->
-
-                    <div class="card">
-
-                        <h2>
-                            Next Reminder
-                        </h2>
-
-                        <div
-                            id="nextReminder"
-                            class="next-reminder"
-                        >
-                            No upcoming reminder.
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <!-- RIGHT COLUMN -->
-
-                <div>
-
-                    <!-- AI MONITORING -->
-
-                    <div class="card">
-
-                        <h2 id="aiTitle">
-                            AI Medication Monitoring
-                        </h2>
-
-                        <p id="aiMessage">
-                            Your medication schedule is being monitored automatically.
-                        </p>
-
-                    </div>
-
-
-                    <!-- CAREGIVER -->
-
-                    <div class="card">
-
-                        <h2>
-                            Caregiver
-                        </h2>
-
-                        <div class="caregiver-row">
-
-                            <input
-                                type="tel"
-                                id="caregiverPhone"
-                                placeholder="Caregiver phone number"
-                            >
-
-                            <button
-                                type="button"
-                                class="small-btn"
-                                onclick="saveCaregiver()"
-                            >
-                                Save
-                            </button>
-
-                        </div>
-
-
-                        <button
-                            type="button"
-                            class="call-btn"
-                            onclick="callCaregiver()"
-                        >
-                            📞 Call Caregiver
-                        </button>
-
-
-                        <button
-                            type="button"
-                            class="ambulance-btn"
-                            onclick="callAmbulance()"
-                        >
-                            🚑 Emergency
-                        </button>
-
-                    </div>
-
-
-                    <!-- REPORT -->
-
-                    <div class="card">
-
-                        <h2>
-                            Medication Report
-                        </h2>
-
-                        <table class="report-table">
-
-                            <tr>
-                                <th>
-                                    Total
-                                </th>
-
-                                <td id="reportTotal">
-                                    0
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <th>
-                                    Taken
-                                </th>
-
-                                <td id="reportTaken">
-                                    0
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <th>
-                                    Missed
-                                </th>
-
-                                <td id="reportMissed">
-                                    0
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <th>
-                                    Adherence
-                                </th>
-
-                                <td id="reportAdherence">
-                                    0%
-                                </td>
-                            </tr>
-
-                        </table>
-
-
-                        <button
-                            type="button"
-                            class="report-btn"
-                            onclick="generateMedicationReport()"
-                        >
-                            🖨️ Print Report
-                        </button>
-
-                    </div>
-
-
-                    <!-- ACTIVITY -->
-
-                    <div class="card">
-
-                        <h2>
-                            Activity Log
-                        </h2>
-
-                        <div
-                            id="activityLog"
-                            class="activity"
-                        >
-
-                            <div class="empty">
-                                No activity yet.
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- =====================================================
-         REMINDER POPUP
-    ===================================================== -->
-
-    <div
-        id="reminderPopup"
-        class="popup"
-    >
-
-        <div class="popup-card">
-
-            <div class="popup-icon">
-                💊
-            </div>
-
-            <h2>
-                Medicine Reminder
+            <h2 id="nextReminderTitle">
+                Next Reminder
             </h2>
 
             <div
-                id="popupMedicineName"
-                class="popup-medicine"
+                id="nextReminder"
+                class="next-time"
             >
-                Medicine
+                No reminder
             </div>
 
-            <button
-                type="button"
-                id="popupTakeButton"
-                class="popup-take"
-                onclick="markTakenFromPopup()"
-            >
-                ✓ I Took It
-            </button>
+        </section>
 
+
+        <!-- AI MONITORING -->
+
+        <section class="card ai-card">
+
+            <span class="ai-online">
+                ● AI Monitoring Online
+            </span>
+
+            <h2>
+                AI Medication Monitoring
+            </h2>
+
+            <p>
+                Your medication schedule is being
+                monitored automatically.
+            </p>
+
+            <p>
+                Voice, vibration and visual alerts
+                support accessible medication reminders.
+            </p>
+
+        </section>
+
+
+        <!-- ACCESSIBILITY -->
+
+        <section class="card accessibility-card">
+
+            <h2>
+                ♿ Accessibility Support
+            </h2>
+
+            <div class="accessibility-item">
+
+                <div class="accessibility-icon">
+                    👁️
+                </div>
+
+                <div>
+
+                    <strong>
+                        Blind / Visually Impaired
+                    </strong>
+
+                    <p>
+                        Regional-language voice reminders,
+                        spoken medicine names and
+                        screen-reader-friendly controls.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="accessibility-item">
+
+                <div class="accessibility-icon">
+                    👂
+                </div>
+
+                <div>
+
+                    <strong>
+                        Deaf / Hearing Impaired
+                    </strong>
+
+                    <p>
+                        Strong mobile vibration and
+                        flashing visual reminders are
+                        provided during the alert.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="accessibility-item">
+
+                <div class="accessibility-icon">
+                    🤝
+                </div>
+
+                <div>
+
+                    <strong>
+                        Caregiver Support
+                    </strong>
+
+                    <p>
+                        If the patient does not respond
+                        within one minute, the medicine
+                        is marked as missed and the
+                        caregiver can be notified.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- CAREGIVER -->
+
+        <section class="card">
+
+            <h2>
+                👨‍👩‍👧 Caregiver
+            </h2>
+
+            <div class="caregiver-row">
+
+                <input
+                    type="tel"
+                    id="caregiverPhone"
+                    placeholder="Caregiver phone number"
+                    aria-label="Caregiver phone number"
+                >
+
+                <button
+                    class="small-btn"
+                    onclick="saveCaregiver()"
+                >
+                    Save
+                </button>
+
+                <button
+                    class="secondary-btn"
+                    onclick="callCaregiver()"
+                >
+                    📞 Call
+                </button>
+
+                <button
+                    class="danger-btn"
+                    onclick="callAmbulance()"
+                >
+                    🚑 Emergency
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- REPORT -->
+
+        <section class="card">
+
+            <h2>
+                📊 Medication Report
+            </h2>
+
+            <div class="report-buttons">
+
+                <button
+                    class="small-btn"
+                    onclick="generateMedicationReport()"
+                >
+                    Generate Report
+                </button>
+
+                <button
+                    class="secondary-btn"
+                    onclick="window.print()"
+                >
+                    🖨️ Print
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- ACTIVITY -->
+
+        <section class="card">
+
+            <h2>
+                📋 Activity Log
+            </h2>
+
+            <ul id="activityLog">
+            </ul>
+
+        </section>
+
+    </main>
+
+</section>
+
+
+<!-- ======================================================
+     REMINDER POPUP
+====================================================== -->
+
+<div
+    id="reminderPopup"
+    class="reminder-popup"
+    role="alertdialog"
+    aria-modal="true"
+    aria-labelledby="popupMedicineName"
+    aria-describedby="popupReminderText"
+>
+
+    <div class="reminder-box">
+
+        <div
+            class="reminder-icon"
+            aria-hidden="true"
+        >
+            💊
         </div>
+
+        <h2>
+            Medicine Reminder
+        </h2>
+
+        <div
+            id="popupMedicineName"
+            class="popup-medicine-name"
+            aria-live="assertive"
+        >
+        </div>
+
+        <p id="popupReminderText">
+            It is time to take your medicine.
+        </p>
+
+        <button
+            id="popupTakeButton"
+            class="take-medicine-btn"
+            onclick="markTakenFromPopup()"
+            aria-label="I took my medicine"
+        >
+            ✓ I Took It
+        </button>
 
     </div>
 
+</div>
 
-    <!-- JAVASCRIPT -->
 
-    <script src="script.js"></script>
+<script src="script.js"></script>
 
 </body>
-
 </html>
