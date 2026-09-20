@@ -1,5 +1,8 @@
-let medicines = [];
+/* =========================================================
+   JS MEDICARE - COMPLETE SCRIPT
+   ========================================================= */
 
+let medicines = [];
 let activeReminder = null;
 
 let reminderCheckerTimer = null;
@@ -8,41 +11,39 @@ let reminderMissTimer = null;
 
 let patientName = "";
 let patientPhone = "";
-
 let selectedLanguage = "en";
 
 let voiceUnlocked = false;
 
 
-/* =====================================================
+/* =========================================================
    VOICE MEDICINE ENTRY
-===================================================== */
+   ========================================================= */
 
 let voiceRecognition = null;
 let voiceEntryActive = false;
 let voiceStep = null;
-let voiceStarting = false;
 
 
-/* =====================================================
-   "I TOOK IT" VOICE RECOGNITION
-===================================================== */
+/* =========================================================
+   "I TOOK IT" RECOGNITION
+   ========================================================= */
 
 let takenVoiceRecognition = null;
 let takenVoiceRestartTimer = null;
 let takenVoiceActive = false;
 
 
-/* =====================================================
+/* =========================================================
    VIBRATION
-===================================================== */
+   ========================================================= */
 
 let vibrationTimer = null;
 
 
-/* =====================================================
+/* =========================================================
    TRANSLATIONS
-===================================================== */
+   ========================================================= */
 
 const translations = {
 
@@ -50,98 +51,130 @@ const translations = {
         subtitle: "AI Powered Healthcare Assistant",
         aiMonitoring: "● AI Monitoring Online",
         welcome: "Welcome",
+
         reminder: "It is time to take your medicine.",
         taken: "Medicine taken successfully.",
         missed: "Medicine was missed.",
+
         noMedicines: "No medicines added.",
         noReminder: "No medicines scheduled.",
+
         namePrompt: "Please say the medicine name.",
         dosagePrompt: "Now please say the dosage.",
         timePrompt: "Now please say the medicine time.",
+
         confirmation: "Medicine details filled successfully.",
         listening: "Listening...",
-        voiceNotSupported: "Voice recognition is not supported in this browser."
+
+        voiceNotSupported:
+            "Voice recognition is not supported in this browser."
     },
 
     ta: {
         subtitle: "AI இயங்கும் சுகாதார உதவியாளர்",
         aiMonitoring: "● AI கண்காணிப்பு ஆன்லைனில் உள்ளது",
         welcome: "வரவேற்கிறோம்",
+
         reminder: "உங்கள் மருந்தை எடுத்துக்கொள்ள வேண்டிய நேரம் இது.",
         taken: "மருந்து வெற்றிகரமாக எடுத்துக்கொள்ளப்பட்டது.",
         missed: "மருந்து தவறிவிட்டது.",
+
         noMedicines: "மருந்துகள் எதுவும் சேர்க்கப்படவில்லை.",
         noReminder: "மருந்துகள் எதுவும் திட்டமிடப்படவில்லை.",
+
         namePrompt: "மருந்தின் பெயரை சொல்லுங்கள்.",
         dosagePrompt: "இப்போது மருந்தின் அளவை சொல்லுங்கள்.",
         timePrompt: "இப்போது மருந்து எடுத்துக்கொள்ளும் நேரத்தை சொல்லுங்கள்.",
+
         confirmation: "மருந்து விவரங்கள் வெற்றிகரமாக நிரப்பப்பட்டன.",
         listening: "கேட்கிறது...",
-        voiceNotSupported: "இந்த உலாவியில் குரல் வசதி ஆதரிக்கப்படவில்லை."
+
+        voiceNotSupported:
+            "இந்த உலாவியில் குரல் வசதி ஆதரிக்கப்படவில்லை."
     },
 
     hi: {
         subtitle: "AI संचालित स्वास्थ्य सहायक",
         aiMonitoring: "● AI निगरानी ऑनलाइन",
         welcome: "स्वागत है",
+
         reminder: "आपकी दवा लेने का समय हो गया है।",
         taken: "दवा सफलतापूर्वक ले ली गई है।",
         missed: "दवा छूट गई है।",
+
         noMedicines: "कोई दवा नहीं जोड़ी गई है।",
         noReminder: "कोई दवा निर्धारित नहीं है।",
+
         namePrompt: "कृपया दवा का नाम बोलें।",
         dosagePrompt: "अब दवा की मात्रा बोलें।",
         timePrompt: "अब दवा लेने का समय बोलें।",
+
         confirmation: "दवा की जानकारी सफलतापूर्वक भर दी गई है।",
         listening: "सुन रहा है...",
-        voiceNotSupported: "इस ब्राउज़र में वॉइस रिकग्निशन समर्थित नहीं है।"
+
+        voiceNotSupported:
+            "इस ब्राउज़र में वॉइस रिकग्निशन समर्थित नहीं है।"
     },
 
     te: {
         subtitle: "AI ఆధారిత ఆరోగ్య సహాయకుడు",
         aiMonitoring: "● AI పర్యవేక్షణ ఆన్‌లైన్‌లో ఉంది",
         welcome: "స్వాగతం",
+
         reminder: "మీ మందు తీసుకునే సమయం వచ్చింది.",
         taken: "మందు విజయవంతంగా తీసుకున్నారు.",
         missed: "మందు మిస్ అయింది.",
+
         noMedicines: "మందులు ఏవీ జోడించలేదు.",
         noReminder: "మందులు ఏవీ షెడ్యూల్ చేయలేదు.",
+
         namePrompt: "దయచేసి మందు పేరు చెప్పండి.",
         dosagePrompt: "ఇప్పుడు మందు మోతాదు చెప్పండి.",
         timePrompt: "ఇప్పుడు మందు తీసుకునే సమయం చెప్పండి.",
+
         confirmation: "మందు వివరాలు విజయవంతంగా నింపబడ్డాయి.",
         listening: "వింటోంది...",
-        voiceNotSupported: "ఈ బ్రౌజర్‌లో వాయిస్ గుర్తింపు అందుబాటులో లేదు."
+
+        voiceNotSupported:
+            "ఈ బ్రౌజర్‌లో వాయిస్ గుర్తింపు అందుబాటులో లేదు."
     }
 
 };
 
 
+/* =========================================================
+   GET TRANSLATION
+   ========================================================= */
+
 function getText(key) {
 
-    return (
+    if (
         translations[selectedLanguage] &&
         translations[selectedLanguage][key]
-    ) || translations.en[key];
+    ) {
+        return translations[selectedLanguage][key];
+    }
 
+    return translations.en[key];
 }
 
 
-/* =====================================================
+/* =========================================================
    LANGUAGE
-===================================================== */
+   ========================================================= */
 
 function getBrowserLanguage() {
 
-    const map = {
+    const languageMap = {
+
         en: "en-IN",
         ta: "ta-IN",
         hi: "hi-IN",
         te: "te-IN"
+
     };
 
-    return map[selectedLanguage] || "en-IN";
-
+    return languageMap[selectedLanguage] || "en-IN";
 }
 
 
@@ -165,9 +198,9 @@ function applyLanguage() {
         document.getElementById("aiStatus");
 
     if (aiStatus) {
-        aiStatus.textContent = getText("aiMonitoring");
+        aiStatus.textContent =
+            getText("aiMonitoring");
     }
-
 }
 
 
@@ -175,6 +208,10 @@ function changeDashboardLanguage() {
 
     const select =
         document.getElementById("dashboardLanguage");
+
+    if (!select) {
+        return;
+    }
 
     selectedLanguage = select.value;
 
@@ -184,35 +221,33 @@ function changeDashboardLanguage() {
     );
 
     applyLanguage();
-
+    updateDashboard();
+    renderMedicines();
 }
 
 
-/* =====================================================
-   INITIALIZATION
-===================================================== */
+/* =========================================================
+   PAGE LOAD
+   ========================================================= */
 
 document.addEventListener(
     "DOMContentLoaded",
     function () {
 
         loadData();
-
         applyLanguage();
-
         updateDashboard();
-
         renderMedicines();
-
         startReminderChecker();
+        restoreLoginState();
 
     }
 );
 
 
-/* =====================================================
-   STORAGE
-===================================================== */
+/* =========================================================
+   LOAD DATA
+   ========================================================= */
 
 function loadData() {
 
@@ -255,8 +290,12 @@ function loadData() {
             "jsMedicareCaregiver"
         ) || "";
 
+
     const caregiverInput =
-        document.getElementById("caregiverPhone");
+        document.getElementById(
+            "caregiverPhone"
+        );
+
 
     if (caregiverInput) {
         caregiverInput.value = caregiver;
@@ -265,9 +304,55 @@ function loadData() {
 }
 
 
-/* =====================================================
+/* =========================================================
+   RESTORE LOGIN
+   ========================================================= */
+
+function restoreLoginState() {
+
+    if (!patientName) {
+        return;
+    }
+
+    const loginSection =
+        document.getElementById(
+            "loginSection"
+        );
+
+    const dashboard =
+        document.getElementById(
+            "dashboard"
+        );
+
+    if (!loginSection || !dashboard) {
+        return;
+    }
+
+
+    loginSection.style.display = "none";
+    dashboard.style.display = "block";
+
+
+    const dashboardLanguage =
+        document.getElementById(
+            "dashboardLanguage"
+        );
+
+
+    if (dashboardLanguage) {
+        dashboardLanguage.value =
+            selectedLanguage;
+    }
+
+
+    updateDashboard();
+
+}
+
+
+/* =========================================================
    SAVE MEDICINES
-===================================================== */
+   ========================================================= */
 
 function saveMedicines() {
 
@@ -279,41 +364,58 @@ function saveMedicines() {
 }
 
 
-/* =====================================================
+/* =========================================================
    LOGIN
-===================================================== */
+   ========================================================= */
 
 function login() {
 
-    const name =
+    const nameInput =
         document.getElementById(
             "patientName"
-        ).value.trim();
+        );
 
-    const phone =
+    const phoneInput =
         document.getElementById(
             "patientPhone"
-        ).value.trim();
+        );
 
-    const language =
+    const languageInput =
         document.getElementById(
             "languageSelect"
-        ).value;
+        );
+
+
+    const name =
+        nameInput
+            ? nameInput.value.trim()
+            : "";
+
+
+    const phone =
+        phoneInput
+            ? phoneInput.value.trim()
+            : "";
+
+
+    const language =
+        languageInput
+            ? languageInput.value
+            : "en";
 
 
     if (!name) {
 
-        alert("Please enter patient name.");
+        alert(
+            "Please enter patient name."
+        );
 
         return;
-
     }
 
 
     patientName = name;
-
     patientPhone = phone;
-
     selectedLanguage = language;
 
 
@@ -333,50 +435,68 @@ function login() {
     );
 
 
-    document.getElementById(
-        "loginSection"
-    ).style.display = "none";
+    const loginSection =
+        document.getElementById(
+            "loginSection"
+        );
+
+    const dashboard =
+        document.getElementById(
+            "dashboard"
+        );
 
 
-    document.getElementById(
-        "dashboard"
-    ).style.display = "block";
+    if (loginSection) {
+        loginSection.style.display = "none";
+    }
+
+    if (dashboard) {
+        dashboard.style.display = "block";
+    }
 
 
-    document.getElementById(
-        "dashboardLanguage"
-    ).value = selectedLanguage;
-
-
+    applyLanguage();
     updateDashboard();
-
     renderMedicines();
 
 }
 
 
-/* =====================================================
+/* =========================================================
    LOGOUT
-===================================================== */
+   ========================================================= */
 
 function logout() {
 
     stopReminderCompletely();
+    stopVoiceMedicineEntry();
 
-    document.getElementById(
-        "dashboard"
-    ).style.display = "none";
 
-    document.getElementById(
-        "loginSection"
-    ).style.display = "flex";
+    const dashboard =
+        document.getElementById(
+            "dashboard"
+        );
+
+    const loginSection =
+        document.getElementById(
+            "loginSection"
+        );
+
+
+    if (dashboard) {
+        dashboard.style.display = "none";
+    }
+
+    if (loginSection) {
+        loginSection.style.display = "flex";
+    }
 
 }
 
 
-/* =====================================================
+/* =========================================================
    DASHBOARD
-===================================================== */
+   ========================================================= */
 
 function updateDashboard() {
 
@@ -385,12 +505,15 @@ function updateDashboard() {
             "welcomeText"
         );
 
+
     if (welcome) {
 
         welcome.textContent =
-            getText("welcome") +
-            ", " +
-            patientName;
+            patientName
+                ? getText("welcome") +
+                  ", " +
+                  patientName
+                : getText("welcome");
 
     }
 
@@ -398,33 +521,59 @@ function updateDashboard() {
     const total =
         medicines.length;
 
+
     const taken =
         medicines.filter(
-            m => m.status === "taken"
+            function (medicine) {
+                return medicine.status === "taken";
+            }
         ).length;
+
 
     const missed =
         medicines.filter(
-            m => m.status === "missed"
+            function (medicine) {
+                return medicine.status === "missed";
+            }
         ).length;
 
 
-    document.getElementById(
-        "totalMedicines"
-    ).textContent = total;
+    const totalElement =
+        document.getElementById(
+            "totalMedicines"
+        );
+
+    const takenElement =
+        document.getElementById(
+            "takenMedicines"
+        );
+
+    const missedElement =
+        document.getElementById(
+            "missedMedicines"
+        );
+
+    const adherenceElement =
+        document.getElementById(
+            "adherence"
+        );
 
 
-    document.getElementById(
-        "takenMedicines"
-    ).textContent = taken;
+    if (totalElement) {
+        totalElement.textContent = total;
+    }
 
+    if (takenElement) {
+        takenElement.textContent = taken;
+    }
 
-    document.getElementById(
-        "missedMedicines"
-    ).textContent = missed;
+    if (missedElement) {
+        missedElement.textContent = missed;
+    }
 
 
     let adherence = 0;
+
 
     if (total > 0) {
 
@@ -436,10 +585,10 @@ function updateDashboard() {
     }
 
 
-    document.getElementById(
-        "adherence"
-    ).textContent =
-        adherence + "%";
+    if (adherenceElement) {
+        adherenceElement.textContent =
+            adherence + "%";
+    }
 
 
     updateNextReminder();
@@ -447,52 +596,73 @@ function updateDashboard() {
 }
 
 
-/* =====================================================
+/* =========================================================
    ADD MEDICINE
-===================================================== */
+   ========================================================= */
 
 function addMedicine() {
 
-    const name =
+    const nameElement =
         document.getElementById(
             "medicineName"
-        ).value.trim();
+        );
 
-    const dosage =
+    const dosageElement =
         document.getElementById(
             "dosage"
-        ).value.trim();
+        );
 
-    const time =
+    const timeElement =
         document.getElementById(
             "medicineTime"
-        ).value;
+        );
+
+
+    const name =
+        nameElement
+            ? nameElement.value.trim()
+            : "";
+
+
+    const dosage =
+        dosageElement
+            ? dosageElement.value.trim()
+            : "";
+
+
+    const time =
+        timeElement
+            ? timeElement.value
+            : "";
 
 
     if (!name) {
 
-        alert("Please enter medicine name.");
+        alert(
+            "Please enter medicine name."
+        );
 
         return;
-
     }
 
 
     if (!dosage) {
 
-        alert("Please enter dosage.");
+        alert(
+            "Please enter dosage."
+        );
 
         return;
-
     }
 
 
     if (!time) {
 
-        alert("Please select medicine time.");
+        alert(
+            "Please select medicine time."
+        );
 
         return;
-
     }
 
 
@@ -520,23 +690,21 @@ function addMedicine() {
     medicines.push(medicine);
 
     saveMedicines();
-
     renderMedicines();
-
     updateDashboard();
 
 
-    document.getElementById(
-        "medicineName"
-    ).value = "";
+    if (nameElement) {
+        nameElement.value = "";
+    }
 
-    document.getElementById(
-        "dosage"
-    ).value = "";
+    if (dosageElement) {
+        dosageElement.value = "";
+    }
 
-    document.getElementById(
-        "medicineTime"
-    ).value = "";
+    if (timeElement) {
+        timeElement.value = "";
+    }
 
 
     logActivity(
@@ -547,9 +715,9 @@ function addMedicine() {
 }
 
 
-/* =====================================================
+/* =========================================================
    RENDER MEDICINES
-===================================================== */
+   ========================================================= */
 
 function renderMedicines() {
 
@@ -559,13 +727,17 @@ function renderMedicines() {
         );
 
 
+    if (!list) {
+        return;
+    }
+
+
     if (!medicines.length) {
 
         list.innerHTML =
             getText("noMedicines");
 
         return;
-
     }
 
 
@@ -580,6 +752,7 @@ function renderMedicines() {
                     "div"
                 );
 
+
             item.className =
                 "medicine-item";
 
@@ -588,11 +761,16 @@ function renderMedicines() {
                 "pending";
 
 
-            if (medicine.status === "taken") {
+            if (
+                medicine.status === "taken"
+            ) {
                 statusClass = "taken";
             }
 
-            if (medicine.status === "missed") {
+
+            if (
+                medicine.status === "missed"
+            ) {
                 statusClass = "missed";
             }
 
@@ -642,9 +820,9 @@ function renderMedicines() {
 }
 
 
-/* =====================================================
+/* =========================================================
    DELETE MEDICINE
-===================================================== */
+   ========================================================= */
 
 function deleteMedicine(id) {
 
@@ -652,50 +830,60 @@ function deleteMedicine(id) {
         activeReminder &&
         activeReminder.id === id
     ) {
-
         stopReminderCompletely();
-
     }
 
 
     medicines =
         medicines.filter(
-            medicine =>
-                medicine.id !== id
+            function (medicine) {
+                return medicine.id !== id;
+            }
         );
 
 
     saveMedicines();
-
     renderMedicines();
-
     updateDashboard();
 
 }
 
 
-/* =====================================================
-   TIME FORMAT
-===================================================== */
+/* =========================================================
+   FORMAT TIME
+   ========================================================= */
 
 function formatTime(time) {
 
-    if (!time) return "";
+    if (!time) {
+        return "";
+    }
+
 
     const parts =
         time.split(":");
 
+
     let hour =
-        parseInt(parts[0]);
+        parseInt(
+            parts[0],
+            10
+        );
+
 
     const minute =
         parts[1];
 
+
     const suffix =
-        hour >= 12 ? "PM" : "AM";
+        hour >= 12
+            ? "PM"
+            : "AM";
+
 
     hour =
         hour % 12 || 12;
+
 
     return (
         hour +
@@ -708,9 +896,9 @@ function formatTime(time) {
 }
 
 
-/* =====================================================
+/* =========================================================
    REMINDER CHECKER
-===================================================== */
+   ========================================================= */
 
 function startReminderChecker() {
 
@@ -731,9 +919,9 @@ function startReminderChecker() {
 }
 
 
-/* =====================================================
+/* =========================================================
    CHECK REMINDERS
-===================================================== */
+   ========================================================= */
 
 function checkReminders() {
 
@@ -765,8 +953,15 @@ function checkReminders() {
 
 
     const today =
-        now.toISOString()
-            .split("T")[0];
+        now.getFullYear() +
+        "-" +
+        String(
+            now.getMonth() + 1
+        ).padStart(2, "0") +
+        "-" +
+        String(
+            now.getDate()
+        ).padStart(2, "0");
 
 
     medicines.forEach(
@@ -787,7 +982,10 @@ function checkReminders() {
 
                 saveMedicines();
 
-                triggerReminder(medicine);
+
+                triggerReminder(
+                    medicine
+                );
 
             }
 
@@ -797,11 +995,9 @@ function checkReminders() {
 }
 
 
-/* =====================================================
+/* =========================================================
    TRIGGER REMINDER
-   IMPORTANT:
-   VOICE RECOGNITION STARTS ONLY AFTER TTS FINISHES
-===================================================== */
+========================================================= */
 
 function triggerReminder(medicine) {
 
@@ -810,7 +1006,8 @@ function triggerReminder(medicine) {
     }
 
 
-    activeReminder = medicine;
+    activeReminder =
+        medicine;
 
 
     const popup =
@@ -825,11 +1022,15 @@ function triggerReminder(medicine) {
         );
 
 
-    popupName.textContent =
-        medicine.name;
+    if (popupName) {
+        popupName.textContent =
+            medicine.name;
+    }
 
 
-    popup.classList.add("show");
+    if (popup) {
+        popup.classList.add("show");
+    }
 
 
     startContinuousVibration();
@@ -839,16 +1040,21 @@ function triggerReminder(medicine) {
         reminderVoiceTimer
     );
 
-
     clearTimeout(
         reminderMissTimer
     );
 
 
-    // First reminder speech.
-    // Recognition starts AFTER speech finishes.
     speakReminder(
-        medicine,
+        medicine
+    );
+
+
+    /*
+       Start listening quickly.
+    */
+
+    setTimeout(
         function () {
 
             if (
@@ -860,11 +1066,15 @@ function triggerReminder(medicine) {
 
             }
 
-        }
+        },
+        1200
     );
 
 
-    // Repeat reminder every 10 seconds.
+    /*
+       Repeat reminder every 10 seconds.
+    */
+
     reminderVoiceTimer =
         setInterval(
             function () {
@@ -878,7 +1088,11 @@ function triggerReminder(medicine) {
 
 
                 speakReminder(
-                    activeReminder,
+                    activeReminder
+                );
+
+
+                setTimeout(
                     function () {
 
                         if (activeReminder) {
@@ -887,7 +1101,8 @@ function triggerReminder(medicine) {
 
                         }
 
-                    }
+                    },
+                    1200
                 );
 
             },
@@ -895,7 +1110,10 @@ function triggerReminder(medicine) {
         );
 
 
-    // Miss after 60 seconds.
+    /*
+       After 60 seconds -> missed.
+    */
+
     reminderMissTimer =
         setTimeout(
             function () {
@@ -919,14 +1137,11 @@ function triggerReminder(medicine) {
 }
 
 
-/* =====================================================
+/* =========================================================
    SPEAK REMINDER
-===================================================== */
+========================================================= */
 
-function speakReminder(
-    medicine,
-    callback
-) {
+function speakReminder(medicine) {
 
     const message =
         medicine.name +
@@ -937,16 +1152,15 @@ function speakReminder(
 
 
     speakText(
-        message,
-        callback
+        message
     );
 
 }
 
 
-/* =====================================================
+/* =========================================================
    TEXT TO SPEECH
-===================================================== */
+========================================================= */
 
 function speakText(
     text,
@@ -962,7 +1176,6 @@ function speakText(
         }
 
         return;
-
     }
 
 
@@ -979,11 +1192,16 @@ function speakText(
         getBrowserLanguage();
 
 
-    utterance.rate = 0.9;
+    utterance.rate =
+        0.9;
 
-    utterance.pitch = 1;
 
-    utterance.volume = 1;
+    utterance.pitch =
+        1;
+
+
+    utterance.volume =
+        1;
 
 
     utterance.onend =
@@ -1013,9 +1231,9 @@ function speakText(
 }
 
 
-/* =====================================================
-   VIBRATION
-===================================================== */
+/* =========================================================
+   CONTINUOUS VIBRATION
+========================================================= */
 
 function startContinuousVibration() {
 
@@ -1027,8 +1245,11 @@ function startContinuousVibration() {
         "function"
     ) {
 
-        return;
+        console.log(
+            "Vibration API not supported."
+        );
 
+        return;
     }
 
 
@@ -1041,9 +1262,7 @@ function startContinuousVibration() {
         setInterval(
             function () {
 
-                if (
-                    activeReminder
-                ) {
+                if (activeReminder) {
 
                     navigator.vibrate(
                         [500, 500]
@@ -1065,7 +1284,8 @@ function stopContinuousVibration() {
     );
 
 
-    vibrationTimer = null;
+    vibrationTimer =
+        null;
 
 
     if (
@@ -1080,9 +1300,9 @@ function stopContinuousVibration() {
 }
 
 
-/* =====================================================
+/* =========================================================
    POPUP TAKE BUTTON
-===================================================== */
+========================================================= */
 
 function markTakenFromPopup() {
 
@@ -1098,21 +1318,30 @@ function markTakenFromPopup() {
 }
 
 
-/* =====================================================
+/* =========================================================
    MARK TAKEN
-===================================================== */
+========================================================= */
 
 function markTaken(id) {
 
     const medicine =
         medicines.find(
-            m => m.id === id
+            function (item) {
+                return item.id === id;
+            }
         );
 
 
     if (!medicine) {
         return;
     }
+
+
+    /*
+       STOP EVERYTHING IMMEDIATELY.
+    */
+
+    stopReminderCompletely();
 
 
     medicine.status =
@@ -1125,10 +1354,6 @@ function markTaken(id) {
 
     saveMedicines();
 
-
-    stopReminderCompletely();
-
-
     renderMedicines();
 
     updateDashboard();
@@ -1140,22 +1365,31 @@ function markTaken(id) {
     );
 
 
-    speakText(
-        getText("taken")
+    setTimeout(
+        function () {
+
+            speakText(
+                getText("taken")
+            );
+
+        },
+        100
     );
 
 }
 
 
-/* =====================================================
+/* =========================================================
    MARK MISSED
-===================================================== */
+========================================================= */
 
 function markMissed(id) {
 
     const medicine =
         medicines.find(
-            m => m.id === id
+            function (item) {
+                return item.id === id;
+            }
         );
 
 
@@ -1176,66 +1410,6 @@ function markMissed(id) {
 
 
     stopTakenVoiceRecognition();
-
-    stopContinuousVibration();
-
-
-    clearInterval(
-        reminderVoiceTimer
-    );
-
-
-    clearTimeout(
-        reminderMissTimer
-    );
-
-
-    window.speechSynthesis.cancel();
-
-
-    const popup =
-        document.getElementById(
-            "reminderPopup"
-        );
-
-
-    popup.classList.remove("show");
-
-
-    activeReminder = null;
-
-
-    renderMedicines();
-
-    updateDashboard();
-
-
-    logActivity(
-        "Medicine missed: " +
-        medicine.name
-    );
-
-
-    speakText(
-        getText("missed")
-    );
-
-
-    sendCaregiverSMS(
-        medicine
-    );
-
-}
-
-
-/* =====================================================
-   STOP REMINDER COMPLETELY
-===================================================== */
-
-function stopReminderCompletely() {
-
-    stopTakenVoiceRecognition();
-
     stopContinuousVibration();
 
 
@@ -1250,7 +1424,6 @@ function stopReminderCompletely() {
 
 
     reminderVoiceTimer = null;
-
     reminderMissTimer = null;
 
 
@@ -1278,18 +1451,102 @@ function stopReminderCompletely() {
     }
 
 
-    activeReminder = null;
+    activeReminder =
+        null;
+
+
+    renderMedicines();
+    updateDashboard();
+
+
+    logActivity(
+        "Medicine missed: " +
+        medicine.name
+    );
+
+
+    speakText(
+        getText("missed")
+    );
+
+
+    /*
+       IMPORTANT:
+       SMS is generated in the selected
+       regional language.
+    */
+
+    sendCaregiverSMS(
+        medicine
+    );
 
 }
 
 
-/* =====================================================
-   "I TOOK IT" SPEECH RECOGNITION
-===================================================== */
+/* =========================================================
+   STOP EVERYTHING
+========================================================= */
+
+function stopReminderCompletely() {
+
+    stopTakenVoiceRecognition();
+
+    stopContinuousVibration();
+
+
+    clearInterval(
+        reminderVoiceTimer
+    );
+
+
+    clearTimeout(
+        reminderMissTimer
+    );
+
+
+    reminderVoiceTimer = null;
+    reminderMissTimer = null;
+
+
+    if (
+        "speechSynthesis" in window
+    ) {
+
+        window.speechSynthesis.cancel();
+
+    }
+
+
+    const popup =
+        document.getElementById(
+            "reminderPopup"
+        );
+
+
+    if (popup) {
+
+        popup.classList.remove(
+            "show"
+        );
+
+    }
+
+
+    activeReminder =
+        null;
+
+}
+
+
+/* =========================================================
+   START "I TOOK IT" RECOGNITION
+========================================================= */
 
 function startTakenVoiceRecognition() {
 
-    stopTakenVoiceRecognition();
+    if (!activeReminder) {
+        return;
+    }
 
 
     const SpeechRecognition =
@@ -1298,16 +1555,22 @@ function startTakenVoiceRecognition() {
 
 
     if (!SpeechRecognition) {
+
+        console.log(
+            "SpeechRecognition not supported."
+        );
+
         return;
     }
 
 
-    if (!activeReminder) {
+    if (takenVoiceRecognition) {
         return;
     }
 
 
-    takenVoiceActive = true;
+    takenVoiceActive =
+        true;
 
 
     createTakenVoiceRecognition();
@@ -1315,9 +1578,9 @@ function startTakenVoiceRecognition() {
 }
 
 
-/* =====================================================
-   CREATE TAKEN RECOGNITION
-===================================================== */
+/* =========================================================
+   CREATE "I TOOK IT" RECOGNITION
+========================================================= */
 
 function createTakenVoiceRecognition() {
 
@@ -1341,38 +1604,53 @@ function createTakenVoiceRecognition() {
 
     try {
 
-        takenVoiceRecognition =
+        const recognition =
             new SpeechRecognition();
 
 
-        takenVoiceRecognition.lang =
+        takenVoiceRecognition =
+            recognition;
+
+
+        recognition.lang =
             getBrowserLanguage();
 
 
-        takenVoiceRecognition.continuous =
-            false;
+        recognition.continuous =
+            true;
 
 
-        takenVoiceRecognition.interimResults =
-            false;
+        recognition.interimResults =
+            true;
 
 
-        takenVoiceRecognition.maxAlternatives =
+        recognition.maxAlternatives =
             5;
 
 
-        takenVoiceRecognition.onresult =
+        recognition.onstart =
+            function () {
+
+                console.log(
+                    "🎤 Listening for I took it..."
+                );
+
+            };
+
+
+        recognition.onresult =
             function (event) {
 
                 if (
-                    !activeReminder ||
-                    !takenVoiceActive
+                    !takenVoiceActive ||
+                    !activeReminder
                 ) {
                     return;
                 }
 
 
-                let text = "";
+                let combinedText =
+                    "";
 
 
                 for (
@@ -1381,33 +1659,50 @@ function createTakenVoiceRecognition() {
                     i++
                 ) {
 
-                    text +=
-                        event.results[i][0].transcript +
-                        " ";
+                    const transcript =
+                        event.results[i][0]
+                            .transcript
+                            .trim();
+
+
+                    combinedText +=
+                        " " +
+                        transcript;
+
+
+                    console.log(
+                        "🎤 Heard:",
+                        transcript
+                    );
 
                 }
 
 
-                text =
+                combinedText =
                     normalizeSpeechText(
-                        text
+                        combinedText
                     );
 
 
-                console.log(
-                    "Heard:",
-                    text
-                );
-
+                /*
+                   CHECK IMMEDIATELY.
+                */
 
                 if (
                     detectTakenCommand(
-                        text
+                        combinedText
                     )
                 ) {
 
-                    // IMPORTANT:
-                    // stop recognition immediately
+                    console.log(
+                        "✅ I TOOK IT DETECTED"
+                    );
+
+
+                    const medicineId =
+                        activeReminder.id;
+
+
                     takenVoiceActive =
                         false;
 
@@ -1417,19 +1712,70 @@ function createTakenVoiceRecognition() {
                     );
 
 
-                    const id =
-                        activeReminder.id;
+                    stopTakenVoiceRecognition();
 
 
-                    markTaken(id);
+                    markTaken(
+                        medicineId
+                    );
 
                 }
 
             };
 
 
-        takenVoiceRecognition.onend =
+        recognition.onerror =
+            function (event) {
+
+                console.log(
+                    "Voice error:",
+                    event.error
+                );
+
+
+                if (
+                    event.error ===
+                    "not-allowed"
+                ) {
+
+                    takenVoiceActive =
+                        false;
+
+                    return;
+                }
+
+
+                if (
+                    event.error ===
+                    "service-not-allowed"
+                ) {
+
+                    takenVoiceActive =
+                        false;
+
+                    return;
+                }
+
+
+                if (
+                    takenVoiceActive &&
+                    activeReminder
+                ) {
+
+                    scheduleTakenVoiceRestart();
+
+                }
+
+            };
+
+
+        recognition.onend =
             function () {
+
+                console.log(
+                    "Recognition ended"
+                );
+
 
                 takenVoiceRecognition =
                     null;
@@ -1447,41 +1793,7 @@ function createTakenVoiceRecognition() {
             };
 
 
-        takenVoiceRecognition.onerror =
-            function (event) {
-
-                console.log(
-                    "Taken recognition error:",
-                    event.error
-                );
-
-
-                takenVoiceRecognition =
-                    null;
-
-
-                if (
-                    takenVoiceActive &&
-                    activeReminder
-                ) {
-
-                    if (
-                        event.error !==
-                            "not-allowed" &&
-                        event.error !==
-                            "service-not-allowed"
-                    ) {
-
-                        scheduleTakenVoiceRestart();
-
-                    }
-
-                }
-
-            };
-
-
-        takenVoiceRecognition.start();
+        recognition.start();
 
     } catch (error) {
 
@@ -1509,9 +1821,9 @@ function createTakenVoiceRecognition() {
 }
 
 
-/* =====================================================
-   RESTART TAKEN RECOGNITION
-===================================================== */
+/* =========================================================
+   QUICK RESTART
+========================================================= */
 
 function scheduleTakenVoiceRestart() {
 
@@ -1526,7 +1838,8 @@ function scheduleTakenVoiceRestart() {
 
                 if (
                     takenVoiceActive &&
-                    activeReminder
+                    activeReminder &&
+                    !takenVoiceRecognition
                 ) {
 
                     createTakenVoiceRecognition();
@@ -1534,19 +1847,20 @@ function scheduleTakenVoiceRestart() {
                 }
 
             },
-            700
+            300
         );
 
 }
 
 
-/* =====================================================
-   STOP TAKEN RECOGNITION
-===================================================== */
+/* =========================================================
+   STOP "I TOOK IT" RECOGNITION
+========================================================= */
 
 function stopTakenVoiceRecognition() {
 
-    takenVoiceActive = false;
+    takenVoiceActive =
+        false;
 
 
     clearTimeout(
@@ -1554,22 +1868,20 @@ function stopTakenVoiceRecognition() {
     );
 
 
-    takenVoiceRestartTimer = null;
+    takenVoiceRestartTimer =
+        null;
 
 
     if (takenVoiceRecognition) {
 
         try {
-
             takenVoiceRecognition.stop();
+        } catch (error) {}
 
-        } catch (e) {}
 
         try {
-
             takenVoiceRecognition.abort();
-
-        } catch (e) {}
+        } catch (error) {}
 
     }
 
@@ -1580,9 +1892,9 @@ function stopTakenVoiceRecognition() {
 }
 
 
-/* =====================================================
+/* =========================================================
    DETECT "I TOOK IT"
-===================================================== */
+========================================================= */
 
 function detectTakenCommand(text) {
 
@@ -1592,82 +1904,64 @@ function detectTakenCommand(text) {
 
 
     text =
-        normalizeSpeechText(
-            text
-        );
+        normalizeSpeechText(text);
 
 
-    const commands = [
+    console.log(
+        "Checking command:",
+        text
+    );
 
-        // English
+
+    /* =====================================================
+       ENGLISH
+    ===================================================== */
+
+    const englishCommands = [
+
         "i took it",
         "i took the medicine",
         "i took my medicine",
         "i took medicine",
+
         "i have taken it",
         "i have taken the medicine",
         "i have taken my medicine",
         "i have taken medicine",
+
         "i already took it",
         "i already took the medicine",
-        "i took",
+
         "took it",
         "took the medicine",
         "took medicine",
+
         "medicine taken",
         "medicine is taken",
         "medicine was taken",
+
         "medicine done",
         "medicine completed",
+
+        "i am done",
+        "i'm done",
+
         "taken",
         "done",
         "completed",
-        "finished",
-
-        // Tamil
-        "எடுத்துவிட்டேன்",
-        "எடுத்து விட்டேன்",
-        "மருந்து எடுத்துவிட்டேன்",
-        "மருந்து எடுத்தேன்",
-        "மருந்தை எடுத்துவிட்டேன்",
-        "மருந்து எடுத்தாச்சு",
-        "மருந்தை எடுத்தாச்சு",
-        "எடுத்தாச்சு",
-        "முடிந்தது",
-
-        // Hindi
-        "मैंने दवा ले ली",
-        "मैंने दवाई ले ली",
-        "दवा ले ली",
-        "दवाई ले ली",
-        "दवा लिया",
-        "दवाई लिया",
-        "ले लिया",
-        "ले ली",
-        "हो गया",
-
-        // Telugu
-        "నేను మందు తీసుకున్నాను",
-        "మందు తీసుకున్నాను",
-        "మందు తీసుకున్నా",
-        "తీసుకున్నాను",
-        "తీసుకున్నా",
-        "మందు తీసుకున్న",
-        "పూర్తయింది"
+        "finished"
 
     ];
 
 
     for (
-        let i = 0;
-        i < commands.length;
-        i++
+        const command of englishCommands
     ) {
 
         if (
             text.includes(
                 normalizeSpeechText(
-                    commands[i]
+                    command
                 )
             )
         ) {
@@ -1679,14 +1973,30 @@ function detectTakenCommand(text) {
     }
 
 
-    // Additional English matching
+    /*
+       Flexible English detection.
+    */
+
+    const hasTook =
+        text.includes("took");
+
+
+    const hasTaken =
+        text.includes("taken");
+
+
+    const hasMedicine =
+        text.includes("medicine") ||
+        text.includes("medication");
+
+
+    const hasIt =
+        text.includes("it");
+
+
     if (
-        /\b(i\s+)?took\b/.test(text) &&
-        (
-            text.includes("it") ||
-            text.includes("medicine") ||
-            text.includes("medication")
-        )
+        (hasTook || hasTaken) &&
+        (hasMedicine || hasIt)
     ) {
 
         return true;
@@ -1694,16 +2004,127 @@ function detectTakenCommand(text) {
     }
 
 
-    if (
-        /\b(have\s+)?taken\b/.test(text) &&
-        (
-            text.includes("it") ||
-            text.includes("medicine") ||
-            text.includes("medication")
-        )
+    /* =====================================================
+       TAMIL
+    ===================================================== */
+
+    const tamilCommands = [
+
+        "எடுத்துவிட்டேன்",
+        "எடுத்து விட்டேன்",
+
+        "மருந்து எடுத்துவிட்டேன்",
+        "மருந்து எடுத்தேன்",
+
+        "மருந்தை எடுத்துவிட்டேன்",
+
+        "மருந்து எடுத்தாச்சு",
+        "மருந்தை எடுத்தாச்சு",
+
+        "எடுத்தாச்சு",
+
+        "முடிந்தது"
+
+    ];
+
+
+    for (
+        const command of tamilCommands
     ) {
 
-        return true;
+        if (
+            text.includes(
+                normalizeSpeechText(
+                    command
+                )
+            )
+        ) {
+
+            return true;
+
+        }
+
+    }
+
+
+    /* =====================================================
+       HINDI
+    ===================================================== */
+
+    const hindiCommands = [
+
+        "मैंने दवा ले ली",
+        "मैंने दवाई ले ली",
+
+        "दवा ले ली",
+        "दवाई ले ली",
+
+        "दवा लिया",
+        "दवाई लिया",
+
+        "ले लिया",
+        "ले ली",
+
+        "हो गया"
+
+    ];
+
+
+    for (
+        const command of hindiCommands
+    ) {
+
+        if (
+            text.includes(
+                normalizeSpeechText(
+                    command
+                )
+            )
+        ) {
+
+            return true;
+
+        }
+
+    }
+
+
+    /* =====================================================
+       TELUGU
+    ===================================================== */
+
+    const teluguCommands = [
+
+        "నేను మందు తీసుకున్నాను",
+        "మందు తీసుకున్నాను",
+
+        "మందు తీసుకున్నా",
+
+        "తీసుకున్నాను",
+        "తీసుకున్నా",
+
+        "మందు తీసుకున్న",
+
+        "పూర్తయింది"
+
+    ];
+
+
+    for (
+        const command of teluguCommands
+    ) {
+
+        if (
+            text.includes(
+                normalizeSpeechText(
+                    command
+                )
+            )
+        ) {
+
+            return true;
+
+        }
 
     }
 
@@ -1713,13 +2134,13 @@ function detectTakenCommand(text) {
 }
 
 
-/* =====================================================
-   NORMALIZE SPEECH TEXT
-===================================================== */
+/* =========================================================
+   NORMALIZE SPEECH
+========================================================= */
 
 function normalizeSpeechText(text) {
 
-    return text
+    return String(text)
         .toLowerCase()
         .replace(/[.,!?;:]/g, " ")
         .replace(/\s+/g, " ")
@@ -1728,9 +2149,9 @@ function normalizeSpeechText(text) {
 }
 
 
-/* =====================================================
+/* =========================================================
    VOICE MEDICINE ENTRY
-===================================================== */
+========================================================= */
 
 function startVoiceMedicineEntry() {
 
@@ -1748,31 +2169,47 @@ function startVoiceMedicineEntry() {
         );
 
         return;
-
     }
 
 
     stopVoiceMedicineEntry();
 
 
-    document.getElementById(
-        "medicineName"
-    ).value = "";
+    const medicineName =
+        document.getElementById(
+            "medicineName"
+        );
+
+    const dosage =
+        document.getElementById(
+            "dosage"
+        );
+
+    const medicineTime =
+        document.getElementById(
+            "medicineTime"
+        );
 
 
-    document.getElementById(
-        "dosage"
-    ).value = "";
+    if (medicineName) {
+        medicineName.value = "";
+    }
+
+    if (dosage) {
+        dosage.value = "";
+    }
+
+    if (medicineTime) {
+        medicineTime.value = "";
+    }
 
 
-    document.getElementById(
-        "medicineTime"
-    ).value = "";
+    voiceEntryActive =
+        true;
 
 
-    voiceEntryActive = true;
-
-    voiceStep = "name";
+    voiceStep =
+        "name";
 
 
     updateVoiceStepUI();
@@ -1788,9 +2225,7 @@ function startVoiceMedicineEntry() {
         function () {
 
             if (voiceEntryActive) {
-
                 startVoiceStepRecognition();
-
             }
 
         }
@@ -1799,9 +2234,9 @@ function startVoiceMedicineEntry() {
 }
 
 
-/* =====================================================
+/* =========================================================
    VOICE STEP RECOGNITION
-===================================================== */
+========================================================= */
 
 function startVoiceStepRecognition() {
 
@@ -1824,7 +2259,7 @@ function startVoiceStepRecognition() {
 
         try {
             voiceRecognition.abort();
-        } catch (e) {}
+        } catch (error) {}
 
     }
 
@@ -1862,7 +2297,12 @@ function startVoiceStepRecognition() {
     voiceRecognition.onresult =
         function (event) {
 
-            let transcript =
+            if (!voiceEntryActive) {
+                return;
+            }
+
+
+            const transcript =
                 event.results[0][0]
                     .transcript
                     .trim();
@@ -1884,23 +2324,18 @@ function startVoiceStepRecognition() {
             );
 
 
-            if (
-                voiceEntryActive
-            ) {
+            if (voiceEntryActive) {
 
                 setVoiceStatus(
                     "Please try again."
                 );
 
+
                 setTimeout(
                     function () {
 
-                        if (
-                            voiceEntryActive
-                        ) {
-
+                        if (voiceEntryActive) {
                             startVoiceStepRecognition();
-
                         }
 
                     },
@@ -1927,16 +2362,19 @@ function startVoiceStepRecognition() {
 
     } catch (error) {
 
-        console.log(error);
+        console.log(
+            "Voice entry start error:",
+            error
+        );
 
     }
 
 }
 
 
-/* =====================================================
+/* =========================================================
    PROCESS VOICE STEP
-===================================================== */
+========================================================= */
 
 function processVoiceStep(
     transcript
@@ -1947,17 +2385,27 @@ function processVoiceStep(
     }
 
 
+    /* NAME */
+
     if (
         voiceStep === "name"
     ) {
 
-        document.getElementById(
-            "medicineName"
-        ).value =
-            transcript;
+        const medicineName =
+            document.getElementById(
+                "medicineName"
+            );
 
 
-        voiceStep = "dosage";
+        if (medicineName) {
+            medicineName.value =
+                transcript;
+        }
+
+
+        voiceStep =
+            "dosage";
+
 
         updateVoiceStepUI();
 
@@ -1966,12 +2414,8 @@ function processVoiceStep(
             getText("dosagePrompt"),
             function () {
 
-                if (
-                    voiceEntryActive
-                ) {
-
+                if (voiceEntryActive) {
                     startVoiceStepRecognition();
-
                 }
 
             }
@@ -1983,23 +2427,27 @@ function processVoiceStep(
     }
 
 
+    /* DOSAGE */
+
     if (
         voiceStep === "dosage"
     ) {
 
         const dosage =
-            extractDosage(
-                transcript
+            document.getElementById(
+                "dosage"
             );
 
 
-        document.getElementById(
-            "dosage"
-        ).value =
-            dosage;
+        if (dosage) {
+            dosage.value =
+                transcript;
+        }
 
 
-        voiceStep = "time";
+        voiceStep =
+            "time";
+
 
         updateVoiceStepUI();
 
@@ -2008,12 +2456,8 @@ function processVoiceStep(
             getText("timePrompt"),
             function () {
 
-                if (
-                    voiceEntryActive
-                ) {
-
+                if (voiceEntryActive) {
                     startVoiceStepRecognition();
-
                 }
 
             }
@@ -2024,6 +2468,8 @@ function processVoiceStep(
 
     }
 
+
+    /* TIME */
 
     if (
         voiceStep === "time"
@@ -2041,33 +2487,37 @@ function processVoiceStep(
                 "Please say a valid time, for example eight PM.",
                 function () {
 
-                    if (
-                        voiceEntryActive
-                    ) {
-
+                    if (voiceEntryActive) {
                         startVoiceStepRecognition();
-
                     }
 
                 }
             );
+
 
             return;
 
         }
 
 
-        document.getElementById(
-            "medicineTime"
-        ).value =
-            convertedTime;
+        const medicineTime =
+            document.getElementById(
+                "medicineTime"
+            );
+
+
+        if (medicineTime) {
+            medicineTime.value =
+                convertedTime;
+        }
 
 
         voiceEntryActive =
             false;
 
 
-        voiceStep = null;
+        voiceStep =
+            null;
 
 
         updateVoiceStepUI();
@@ -2087,33 +2537,18 @@ function processVoiceStep(
 }
 
 
-/* =====================================================
-   EXTRACT DOSAGE
-===================================================== */
-
-function extractDosage(text) {
-
-    text =
-        text.trim();
-
-
-    return text;
-
-}
-
-
-/* =====================================================
+/* =========================================================
    CONVERT SPOKEN TIME
-===================================================== */
+========================================================= */
 
 function convertSpokenTime(text) {
 
     text =
-        text.toLowerCase()
+        text
+            .toLowerCase()
             .trim();
 
 
-    // 8:30 pm
     let match =
         text.match(
             /(\d{1,2}):(\d{2})\s*(am|pm)?/
@@ -2123,20 +2558,35 @@ function convertSpokenTime(text) {
     if (match) {
 
         let hour =
-            parseInt(match[1]);
+            parseInt(
+                match[1],
+                10
+            );
 
-        let minute =
-            parseInt(match[2]);
 
-        let period =
+        const minute =
+            parseInt(
+                match[2],
+                10
+            );
+
+
+        const period =
             match[3];
 
 
-        if (period === "pm" && hour < 12) {
+        if (
+            period === "pm" &&
+            hour < 12
+        ) {
             hour += 12;
         }
 
-        if (period === "am" && hour === 12) {
+
+        if (
+            period === "am" &&
+            hour === 12
+        ) {
             hour = 0;
         }
 
@@ -2150,7 +2600,6 @@ function convertSpokenTime(text) {
     }
 
 
-    // 8 pm
     match =
         text.match(
             /(\d{1,2})\s*(am|pm)/
@@ -2160,7 +2609,11 @@ function convertSpokenTime(text) {
     if (match) {
 
         let hour =
-            parseInt(match[1]);
+            parseInt(
+                match[1],
+                10
+            );
+
 
         const period =
             match[2];
@@ -2170,9 +2623,7 @@ function convertSpokenTime(text) {
             period === "pm" &&
             hour < 12
         ) {
-
             hour += 12;
-
         }
 
 
@@ -2180,9 +2631,7 @@ function convertSpokenTime(text) {
             period === "am" &&
             hour === 12
         ) {
-
             hour = 0;
-
         }
 
 
@@ -2239,9 +2688,7 @@ function convertSpokenTime(text) {
                 isPM &&
                 hour < 12
             ) {
-
                 hour += 12;
-
             }
 
 
@@ -2249,9 +2696,7 @@ function convertSpokenTime(text) {
                 isAM &&
                 hour === 12
             ) {
-
                 hour = 0;
-
             }
 
 
@@ -2265,19 +2710,44 @@ function convertSpokenTime(text) {
     }
 
 
+    match =
+        text.match(
+            /\b([01]?\d|2[0-3])\b/
+        );
+
+
+    if (match) {
+
+        const hour =
+            parseInt(
+                match[1],
+                10
+            );
+
+
+        return (
+            String(hour).padStart(2, "0") +
+            ":00"
+        );
+
+    }
+
+
     return null;
 
 }
 
 
-/* =====================================================
-   VOICE STEP UI
-===================================================== */
+/* =========================================================
+   UPDATE VOICE STEP UI
+========================================================= */
 
 function updateVoiceStepUI() {
 
     document
-        .querySelectorAll(".voice-step")
+        .querySelectorAll(
+            ".voice-step"
+        )
         .forEach(
             function (element) {
 
@@ -2301,19 +2771,17 @@ function updateVoiceStepUI() {
 
 
     if (active) {
-
         active.classList.add(
             "active"
         );
-
     }
 
 }
 
 
-/* =====================================================
-   VOICE STATUS
-===================================================== */
+/* =========================================================
+   VOICE ENTRY STATUS
+========================================================= */
 
 function setVoiceStatus(
     message
@@ -2326,36 +2794,37 @@ function setVoiceStatus(
 
 
     if (element) {
-
         element.textContent =
             message;
-
     }
 
 }
 
 
-/* =====================================================
-   STOP VOICE ENTRY
-===================================================== */
+/* =========================================================
+   STOP VOICE MEDICINE ENTRY
+========================================================= */
 
 function stopVoiceMedicineEntry() {
 
     voiceEntryActive =
         false;
 
-    voiceStep = null;
+
+    voiceStep =
+        null;
 
 
     if (voiceRecognition) {
 
         try {
             voiceRecognition.stop();
-        } catch (e) {}
+        } catch (error) {}
+
 
         try {
             voiceRecognition.abort();
-        } catch (e) {}
+        } catch (error) {}
 
     }
 
@@ -2369,9 +2838,9 @@ function stopVoiceMedicineEntry() {
 }
 
 
-/* =====================================================
+/* =========================================================
    ENABLE MOBILE VOICE
-===================================================== */
+========================================================= */
 
 function enableMobileVoice() {
 
@@ -2380,41 +2849,111 @@ function enableMobileVoice() {
         window.webkitSpeechRecognition;
 
 
-    if (!SpeechRecognition) {
-
+    const status =
         document.getElementById(
             "voiceStatus"
-        ).textContent =
-            getText(
-                "voiceNotSupported"
-            );
+        );
+
+
+    if (!SpeechRecognition) {
+
+        if (status) {
+
+            status.textContent =
+                getText(
+                    "voiceNotSupported"
+                );
+
+        }
 
         return;
+    }
+
+
+    voiceUnlocked =
+        true;
+
+
+    if (status) {
+
+        status.textContent =
+            "Voice enabled successfully.";
 
     }
 
 
-    voiceUnlocked = true;
+    try {
+
+        const testRecognition =
+            new SpeechRecognition();
 
 
-    document.getElementById(
-        "voiceStatus"
-    ).textContent =
-        "Voice enabled successfully.";
+        testRecognition.lang =
+            getBrowserLanguage();
+
+
+        testRecognition.continuous =
+            false;
+
+
+        testRecognition.interimResults =
+            false;
+
+
+        testRecognition.onresult =
+            function () {};
+
+
+        testRecognition.onerror =
+            function () {};
+
+
+        testRecognition.onend =
+            function () {};
+
+
+        testRecognition.start();
+
+
+        setTimeout(
+            function () {
+
+                try {
+                    testRecognition.stop();
+                } catch (error) {}
+
+            },
+            500
+        );
+
+    } catch (error) {
+
+        console.log(
+            "Voice permission:",
+            error
+        );
+
+    }
 
 }
 
 
-/* =====================================================
-   CAREGIVER
-===================================================== */
+/* =========================================================
+   SAVE CAREGIVER
+========================================================= */
 
 function saveCaregiver() {
 
-    const phone =
+    const input =
         document.getElementById(
             "caregiverPhone"
-        ).value.trim();
+        );
+
+
+    const phone =
+        input
+            ? input.value.trim()
+            : "";
 
 
     if (!phone) {
@@ -2424,7 +2963,6 @@ function saveCaregiver() {
         );
 
         return;
-
     }
 
 
@@ -2441,9 +2979,9 @@ function saveCaregiver() {
 }
 
 
-/* =====================================================
+/* =========================================================
    CALL CAREGIVER
-===================================================== */
+========================================================= */
 
 function callCaregiver() {
 
@@ -2460,7 +2998,6 @@ function callCaregiver() {
         );
 
         return;
-
     }
 
 
@@ -2470,9 +3007,9 @@ function callCaregiver() {
 }
 
 
-/* =====================================================
+/* =========================================================
    CALL AMBULANCE
-===================================================== */
+========================================================= */
 
 function callAmbulance() {
 
@@ -2482,9 +3019,9 @@ function callAmbulance() {
 }
 
 
-/* =====================================================
-   CAREGIVER SMS
-===================================================== */
+/* =========================================================
+   CAREGIVER SMS - REGIONAL LANGUAGE
+========================================================= */
 
 function sendCaregiverSMS(
     medicine
@@ -2497,17 +3034,116 @@ function sendCaregiverSMS(
 
 
     if (!caregiver) {
+
+        console.log(
+            "No caregiver number saved."
+        );
+
         return;
     }
 
 
-    const message =
-        "JS MEDICARE Alert: " +
-        medicine.name +
-        " (" +
-        medicine.dosage +
-        ") was missed.";
+    let message = "";
 
+
+    /* =====================================================
+       ENGLISH SMS
+    ===================================================== */
+
+    if (
+        selectedLanguage === "en"
+    ) {
+
+        message =
+            "JS MEDICARE Alert: " +
+            medicine.name +
+            " (" +
+            medicine.dosage +
+            ") was missed. " +
+            "Please check on the patient.";
+
+    }
+
+
+    /* =====================================================
+       TAMIL SMS
+    ===================================================== */
+
+    else if (
+        selectedLanguage === "ta"
+    ) {
+
+        message =
+            "JS MEDICARE எச்சரிக்கை: " +
+            medicine.name +
+            " (" +
+            medicine.dosage +
+            ") மருந்து தவறிவிட்டது. " +
+            "தயவுசெய்து நோயாளியை கவனிக்கவும்.";
+
+    }
+
+
+    /* =====================================================
+       HINDI SMS
+    ===================================================== */
+
+    else if (
+        selectedLanguage === "hi"
+    ) {
+
+        message =
+            "JS MEDICARE चेतावनी: " +
+            medicine.name +
+            " (" +
+            medicine.dosage +
+            ") दवा छूट गई है। " +
+            "कृपया मरीज की जांच करें।";
+
+    }
+
+
+    /* =====================================================
+       TELUGU SMS
+    ===================================================== */
+
+    else if (
+        selectedLanguage === "te"
+    ) {
+
+        message =
+            "JS MEDICARE హెచ్చరిక: " +
+            medicine.name +
+            " (" +
+            medicine.dosage +
+            ") మందు మిస్ అయింది. " +
+            "దయచేసి రోగిని తనిఖీ చేయండి.";
+
+    }
+
+
+    /*
+       Safety fallback.
+    */
+
+    if (!message) {
+
+        message =
+            "JS MEDICARE Alert: " +
+            medicine.name +
+            " (" +
+            medicine.dosage +
+            ") was missed.";
+
+    }
+
+
+    /*
+       Open phone SMS application.
+
+       The browser/APK opens the SMS app;
+       it does not silently send the SMS.
+    */
 
     window.location.href =
         "sms:" +
@@ -2520,9 +3156,9 @@ function sendCaregiverSMS(
 }
 
 
-/* =====================================================
+/* =========================================================
    ACTIVITY LOG
-===================================================== */
+========================================================= */
 
 function logActivity(
     message
@@ -2561,7 +3197,7 @@ function logActivity(
 
 
     if (
-        log.textContent ===
+        log.textContent.trim() ===
         "No activity yet."
     ) {
 
@@ -2575,9 +3211,9 @@ function logActivity(
 }
 
 
-/* =====================================================
+/* =========================================================
    NEXT REMINDER
-===================================================== */
+========================================================= */
 
 function updateNextReminder() {
 
@@ -2595,15 +3231,23 @@ function updateNextReminder() {
     const pending =
         medicines
             .filter(
-                medicine =>
-                    medicine.status !==
-                    "taken"
+                function (medicine) {
+
+                    return (
+                        medicine.status !==
+                        "taken"
+                    );
+
+                }
             )
             .sort(
-                (a, b) =>
-                    a.time.localeCompare(
+                function (a, b) {
+
+                    return a.time.localeCompare(
                         b.time
-                    )
+                    );
+
+                }
             );
 
 
@@ -2613,7 +3257,6 @@ function updateNextReminder() {
             getText("noReminder");
 
         return;
-
     }
 
 
@@ -2640,13 +3283,15 @@ function updateNextReminder() {
 }
 
 
-/* =====================================================
+/* =========================================================
    MEDICATION REPORT
-===================================================== */
+========================================================= */
 
 function generateMedicationReport() {
 
     let html = `
+
+        <!DOCTYPE html>
 
         <html>
 
@@ -2659,8 +3304,12 @@ function generateMedicationReport() {
             <style>
 
                 body {
-                    font-family: Arial;
+                    font-family: Arial, sans-serif;
                     padding: 30px;
+                }
+
+                h1 {
+                    color: #198754;
                 }
 
                 table {
@@ -2719,19 +3368,27 @@ function generateMedicationReport() {
                 <tr>
 
                     <td>
-                        ${escapeHTML(medicine.name)}
+                        ${escapeHTML(
+                            medicine.name
+                        )}
                     </td>
 
                     <td>
-                        ${escapeHTML(medicine.dosage)}
+                        ${escapeHTML(
+                            medicine.dosage
+                        )}
                     </td>
 
                     <td>
-                        ${formatTime(medicine.time)}
+                        ${formatTime(
+                            medicine.time
+                        )}
                     </td>
 
                     <td>
-                        ${medicine.status}
+                        ${escapeHTML(
+                            medicine.status
+                        )}
                     </td>
 
                 </tr>
@@ -2767,7 +3424,6 @@ function generateMedicationReport() {
         );
 
         return;
-
     }
 
 
@@ -2794,31 +3450,34 @@ function generateMedicationReport() {
 }
 
 
-/* =====================================================
+/* =========================================================
    ESCAPE HTML
-===================================================== */
+========================================================= */
 
-function escapeHTML(
-    value
-) {
+function escapeHTML(value) {
 
     return String(value)
+
         .replace(
             /&/g,
             "&amp;"
         )
+
         .replace(
             /</g,
             "&lt;"
         )
+
         .replace(
             />/g,
             "&gt;"
         )
+
         .replace(
             /"/g,
             "&quot;"
         )
+
         .replace(
             /'/g,
             "&#039;"
