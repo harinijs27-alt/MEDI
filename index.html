@@ -2,8 +2,13 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>MEDICARE AI - Medication Reminder</title>
 
@@ -17,8 +22,14 @@
         }
 
         body {
-            background: linear-gradient(135deg, #e0f7fa, #e8eaf6);
+            background: linear-gradient(
+                135deg,
+                #e0f7fa,
+                #e8eaf6
+            );
+
             min-height: 100vh;
+
             color: #263238;
         }
 
@@ -29,17 +40,29 @@
         }
 
         header {
-            background: linear-gradient(135deg, #00695c, #00897b);
+            background: linear-gradient(
+                135deg,
+                #00695c,
+                #00897b
+            );
+
             color: white;
+
             padding: 20px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+
+            box-shadow:
+                0 3px 10px rgba(0,0,0,0.2);
         }
 
         .header-content {
             display: flex;
+
             justify-content: space-between;
+
             align-items: center;
+
             flex-wrap: wrap;
+
             gap: 15px;
         }
 
@@ -57,8 +80,11 @@
         input,
         button {
             padding: 12px;
+
             border-radius: 8px;
+
             border: 1px solid #ccc;
+
             font-size: 15px;
         }
 
@@ -68,7 +94,9 @@
 
         button {
             cursor: pointer;
+
             border: none;
+
             font-weight: bold;
         }
 
@@ -96,31 +124,49 @@
             color: white;
         }
 
+        .btn-secondary {
+            background: #455a64;
+            color: white;
+        }
+
         .login-section {
             min-height: 100vh;
+
             display: flex;
+
             align-items: center;
+
             justify-content: center;
         }
 
         .login-card {
             background: white;
+
             padding: 35px;
+
             width: 100%;
+
             max-width: 450px;
+
             border-radius: 18px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+
+            box-shadow:
+                0 10px 30px rgba(0,0,0,0.15);
         }
 
         .login-card h1 {
             color: #00695c;
+
             margin-bottom: 10px;
+
             text-align: center;
         }
 
         .login-card p {
             text-align: center;
+
             margin-bottom: 25px;
+
             color: #607d8b;
         }
 
@@ -130,7 +176,9 @@
 
         .form-group label {
             display: block;
+
             margin-bottom: 7px;
+
             font-weight: bold;
         }
 
@@ -141,8 +189,11 @@
 
         .login-btn {
             width: 100%;
+
             background: #00897b;
+
             color: white;
+
             padding: 14px;
         }
 
@@ -160,58 +211,87 @@
 
         .ai-status {
             display: inline-block;
+
             margin-top: 8px;
+
             padding: 7px 12px;
+
             background: #c8e6c9;
+
             color: #2e7d32;
+
             border-radius: 20px;
+
             font-size: 13px;
+
             font-weight: bold;
         }
 
         .stats {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
             gap: 15px;
+
             margin-bottom: 25px;
         }
 
         .stat-card {
             background: white;
+
             padding: 20px;
+
             border-radius: 15px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+
+            box-shadow:
+                0 4px 12px rgba(0,0,0,0.08);
+
             text-align: center;
         }
 
         .stat-card h3 {
             color: #607d8b;
+
             font-size: 14px;
         }
 
         .stat-card .number {
             font-size: 30px;
+
             font-weight: bold;
+
             color: #00695c;
+
             margin-top: 8px;
         }
 
         .card {
             background: white;
+
             padding: 25px;
+
             border-radius: 15px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+
+            box-shadow:
+                0 4px 12px rgba(0,0,0,0.08);
+
             margin-bottom: 25px;
         }
 
         .card h2 {
             color: #00695c;
+
             margin-bottom: 20px;
         }
 
         .medicine-form {
             display: grid;
-            grid-template-columns: 2fr 1fr 1fr auto;
+
+            grid-template-columns:
+                2fr 1fr 1fr auto;
+
             gap: 12px;
         }
 
@@ -221,29 +301,41 @@
 
         .medicine-list {
             display: flex;
+
             flex-direction: column;
+
             gap: 12px;
         }
 
         .medicine-item {
             border: 1px solid #ddd;
+
             border-left: 5px solid #00897b;
+
             padding: 15px;
+
             border-radius: 10px;
+
             display: flex;
+
             justify-content: space-between;
+
             align-items: center;
+
             gap: 15px;
+
             flex-wrap: wrap;
         }
 
         .medicine-info h3 {
             color: #263238;
+
             margin-bottom: 6px;
         }
 
         .medicine-info p {
             color: #607d8b;
+
             margin: 3px 0;
         }
 
@@ -265,14 +357,25 @@
 
         .medicine-actions {
             display: flex;
+
             gap: 8px;
+
+            flex-wrap: wrap;
         }
 
         .next-reminder {
-            background: linear-gradient(135deg, #00897b, #26a69a);
+            background: linear-gradient(
+                135deg,
+                #00897b,
+                #26a69a
+            );
+
             color: white;
+
             padding: 22px;
+
             border-radius: 15px;
+
             margin-bottom: 25px;
         }
 
@@ -282,18 +385,24 @@
 
         .next-reminder-time {
             font-size: 25px;
+
             font-weight: bold;
         }
 
         .actions {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
             gap: 12px;
         }
 
         .action-btn {
             padding: 18px;
+
             color: white;
+
             border-radius: 10px;
         }
 
@@ -311,53 +420,85 @@
 
         .ai-box {
             background: #f3e5f5;
+
             border-left: 5px solid #8e24aa;
+
             padding: 18px;
+
             border-radius: 10px;
         }
 
         .ai-box h3 {
             color: #6a1b9a;
+
             margin-bottom: 8px;
         }
 
         .report-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+
+            grid-template-columns:
+                repeat(2, 1fr);
+
             gap: 15px;
         }
 
         .report-item {
             background: #f5f5f5;
+
             padding: 15px;
+
             border-radius: 10px;
         }
 
         .log {
             max-height: 250px;
+
             overflow-y: auto;
         }
 
         .log-item {
             padding: 10px;
-            border-bottom: 1px solid #ddd;
+
+            border-bottom:
+                1px solid #ddd;
+
             font-size: 14px;
         }
 
         #voiceStatus {
             margin-top: 12px;
+
             font-weight: bold;
+
             color: #00695c;
+
+            min-height: 20px;
         }
 
         .hidden {
             display: none !important;
         }
 
+        .voice-help {
+            margin-top: 10px;
+
+            padding: 10px;
+
+            background: #e0f2f1;
+
+            border-radius: 8px;
+
+            color: #00695c;
+
+            font-size: 13px;
+        }
+
         @media(max-width: 800px) {
 
             .stats {
-                grid-template-columns: repeat(2, 1fr);
+                grid-template-columns:
+                    repeat(2, 1fr);
             }
 
             .medicine-form {
@@ -371,6 +512,7 @@
             .report-grid {
                 grid-template-columns: 1fr;
             }
+
         }
 
         @media(max-width: 500px) {
@@ -381,26 +523,43 @@
 
             .header-content {
                 flex-direction: column;
+
                 align-items: flex-start;
             }
+
+            .logo {
+                font-size: 24px;
+            }
+
         }
 
     </style>
+
 </head>
+
 
 <body>
 
-<!-- ================= LOGIN ================= -->
 
-<section id="loginSection" class="login-section">
+<!-- =====================================================
+     LOGIN
+===================================================== -->
+
+<section
+    id="loginSection"
+    class="login-section"
+>
 
     <div class="login-card">
 
-        <h1>MEDICARE AI</h1>
+        <h1>
+            MEDICARE AI
+        </h1>
 
         <p id="loginSubtitle">
             AI Powered Healthcare Assistant
         </p>
+
 
         <div class="form-group">
 
@@ -416,6 +575,7 @@
 
         </div>
 
+
         <div class="form-group">
 
             <label id="phoneLabel">
@@ -429,6 +589,7 @@
             >
 
         </div>
+
 
         <div class="form-group">
 
@@ -458,6 +619,7 @@
 
         </div>
 
+
         <button
             class="login-btn"
             onclick="login()"
@@ -471,401 +633,508 @@
 </section>
 
 
-<!-- ================= DASHBOARD ================= -->
 
-<section id="dashboardSection" class="dashboard">
+<!-- =====================================================
+     DASHBOARD
+===================================================== -->
 
-    <header>
+<section
+    id="dashboardSection"
+    class="dashboard"
+>
 
-        <div class="container header-content">
+<header>
 
-            <div>
+    <div class="container header-content">
 
-                <div class="logo">
-                    MEDICARE AI
-                </div>
+        <div>
 
-                <div
-                    class="subtitle"
-                    id="headerSubtitle"
-                >
-                    AI Powered Healthcare Assistant
-                </div>
-
+            <div class="logo">
+                MEDICARE AI
             </div>
-
-            <select
-                id="dashboardLanguage"
-                onchange="changeLanguage(this.value)"
-            >
-
-                <option value="en">
-                    English
-                </option>
-
-                <option value="ta">
-                    தமிழ்
-                </option>
-
-                <option value="hi">
-                    हिन्दी
-                </option>
-
-                <option value="te">
-                    తెలుగు
-                </option>
-
-            </select>
-
-        </div>
-
-    </header>
-
-
-    <main class="container">
-
-        <!-- Dashboard heading -->
-
-        <div class="dashboard-header">
-
-            <h1 id="welcomeTitle">
-                Welcome
-            </h1>
-
-            <div class="ai-status">
-                ●
-                <span id="aiStatusText">
-                    AI Monitoring Online
-                </span>
-            </div>
-
-        </div>
-
-
-        <!-- Statistics -->
-
-        <div class="stats">
-
-            <div class="stat-card">
-
-                <h3 id="totalLabel">
-                    Total Medicines
-                </h3>
-
-                <div
-                    class="number"
-                    id="totalMedicines"
-                >
-                    0
-                </div>
-
-            </div>
-
-
-            <div class="stat-card">
-
-                <h3 id="takenLabel">
-                    Taken
-                </h3>
-
-                <div
-                    class="number"
-                    id="takenMedicines"
-                >
-                    0
-                </div>
-
-            </div>
-
-
-            <div class="stat-card">
-
-                <h3 id="missedLabel">
-                    Missed
-                </h3>
-
-                <div
-                    class="number"
-                    id="missedMedicines"
-                >
-                    0
-                </div>
-
-            </div>
-
-
-            <div class="stat-card">
-
-                <h3 id="adherenceLabel">
-                    Adherence
-                </h3>
-
-                <div
-                    class="number"
-                    id="adherence"
-                >
-                    0%
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- Next reminder -->
-
-        <div class="next-reminder">
-
-            <h3 id="nextReminderTitle">
-                Next Medication Reminder
-            </h3>
 
             <div
-                class="next-reminder-time"
-                id="nextReminder"
+                class="subtitle"
+                id="headerSubtitle"
             >
-                No reminders
+                AI Powered Healthcare Assistant
             </div>
 
         </div>
 
 
-        <!-- Add Medicine -->
+        <select
+            id="dashboardLanguage"
+            onchange="changeLanguage(this.value)"
+        >
 
-        <div class="card">
+            <option value="en">
+                English
+            </option>
 
-            <h2 id="addMedicineTitle">
-                Add Medicine
-            </h2>
+            <option value="ta">
+                தமிழ்
+            </option>
 
-            <div class="medicine-form">
+            <option value="hi">
+                हिन्दी
+            </option>
 
-                <input
-                    type="text"
-                    id="medicineName"
-                    placeholder="Medicine name"
-                >
+            <option value="te">
+                తెలుగు
+            </option>
 
-                <input
-                    type="text"
-                    id="dosage"
-                    placeholder="Dosage"
-                >
+        </select>
 
-                <input
-                    type="time"
-                    id="medicineTime"
-                >
+    </div>
 
-                <button
-                    class="btn-primary"
-                    onclick="addMedicine()"
-                    id="addButton"
-                >
-                    Add Medicine
-                </button>
+</header>
 
+
+<main class="container">
+
+
+<!-- =====================================================
+     DASHBOARD HEADER
+===================================================== -->
+
+<div class="dashboard-header">
+
+    <h1 id="welcomeTitle">
+        Welcome
+    </h1>
+
+    <div class="ai-status">
+
+        ●
+
+        <span id="aiStatusText">
+            AI Monitoring Online
+        </span>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     STATISTICS
+===================================================== -->
+
+<div class="stats">
+
+
+    <div class="stat-card">
+
+        <h3 id="totalLabel">
+            Total Medicines
+        </h3>
+
+        <div
+            class="number"
+            id="totalMedicines"
+        >
+            0
+        </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+        <h3 id="takenLabel">
+            Taken
+        </h3>
+
+        <div
+            class="number"
+            id="takenMedicines"
+        >
+            0
+        </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+        <h3 id="missedLabel">
+            Missed
+        </h3>
+
+        <div
+            class="number"
+            id="missedMedicines"
+        >
+            0
+        </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+        <h3 id="adherenceLabel">
+            Adherence
+        </h3>
+
+        <div
+            class="number"
+            id="adherence"
+        >
+            0%
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     NEXT REMINDER
+===================================================== -->
+
+<div class="next-reminder">
+
+    <h3 id="nextReminderTitle">
+        Next Medication Reminder
+    </h3>
+
+    <div
+        class="next-reminder-time"
+        id="nextReminder"
+    >
+        No reminders
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     ADD MEDICINE
+===================================================== -->
+
+<div class="card">
+
+    <h2 id="addMedicineTitle">
+        Add Medicine
+    </h2>
+
+
+    <div class="medicine-form">
+
+        <input
+            type="text"
+            id="medicineName"
+            placeholder="Medicine name"
+        >
+
+
+        <input
+            type="text"
+            id="dosage"
+            placeholder="Dosage"
+        >
+
+
+        <input
+            type="time"
+            id="medicineTime"
+        >
+
+
+        <button
+            class="btn-primary"
+            onclick="addMedicine()"
+            id="addButton"
+        >
+            Add Medicine
+        </button>
+
+    </div>
+
+
+    <div id="voiceStatus">
+        Voice reminder ready
+    </div>
+
+
+    <button
+        type="button"
+        class="btn-success"
+        onclick="enableMobileVoice()"
+        id="enableVoiceButton"
+        style="
+            width:100%;
+            margin-top:12px;
+        "
+    >
+        🔊 Enable Mobile Voice
+    </button>
+
+
+    <div class="voice-help">
+
+        📱 For mobile:
+        tap <b>Enable Mobile Voice</b> once
+        after opening the dashboard.
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     MEDICINE LIST
+===================================================== -->
+
+<div class="card">
+
+    <h2 id="medicineListTitle">
+        Medicine Schedule
+    </h2>
+
+
+    <div
+        id="medicineList"
+        class="medicine-list"
+    >
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     AI ASSISTANT
+===================================================== -->
+
+<div class="card">
+
+    <div class="ai-box">
+
+        <h3 id="aiTitle">
+            AI Healthcare Assistant
+        </h3>
+
+        <p id="aiMessage">
+
+            Your medication schedule is being
+            monitored automatically.
+
+        </p>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     CAREGIVER
+===================================================== -->
+
+<div class="card">
+
+    <h2 id="caregiverTitle">
+        Caregiver
+    </h2>
+
+
+    <div class="form-group">
+
+        <label id="caregiverPhoneLabel">
+            Caregiver Phone Number
+        </label>
+
+
+        <input
+            type="tel"
+            id="caregiverPhone"
+            placeholder="Enter caregiver phone number"
+        >
+
+    </div>
+
+
+    <button
+        class="btn-primary"
+        onclick="saveCaregiver()"
+        id="saveCaregiverButton"
+    >
+        Save Caregiver
+    </button>
+
+</div>
+
+
+
+<!-- =====================================================
+     REPORT
+===================================================== -->
+
+<div class="card">
+
+    <h2 id="reportTitle">
+        Medication Report
+    </h2>
+
+
+    <div class="report-grid">
+
+
+        <div class="report-item">
+
+            <strong id="reportTotalText">
+                Total Medicines
+            </strong>
+
+            <div id="reportTotal">
+                0
             </div>
-
-            <div id="voiceStatus"></div>
 
         </div>
 
 
-        <!-- Medicine list -->
+        <div class="report-item">
 
-        <div class="card">
+            <strong id="reportTakenText">
+                Medicines Taken
+            </strong>
 
-            <h2 id="medicineListTitle">
-                Medicine Schedule
-            </h2>
-
-            <div
-                id="medicineList"
-                class="medicine-list"
-            >
-
+            <div id="reportTaken">
+                0
             </div>
 
         </div>
 
 
-        <!-- AI Assistant -->
+        <div class="report-item">
 
-        <div class="card">
+            <strong id="reportMissedText">
+                Medicines Missed
+            </strong>
 
-            <div class="ai-box">
-
-                <h3 id="aiTitle">
-                    AI Healthcare Assistant
-                </h3>
-
-                <p id="aiMessage">
-                    Your medication schedule is being monitored automatically.
-                </p>
-
+            <div id="reportMissed">
+                0
             </div>
 
         </div>
 
 
-        <!-- Caregiver -->
+        <div class="report-item">
 
-        <div class="card">
+            <strong id="reportAdherenceText">
+                Adherence
+            </strong>
 
-            <h2 id="caregiverTitle">
-                Caregiver
-            </h2>
-
-            <div class="form-group">
-
-                <label id="caregiverPhoneLabel">
-                    Caregiver Phone Number
-                </label>
-
-                <input
-                    type="tel"
-                    id="caregiverPhone"
-                    placeholder="Enter caregiver phone number"
-                >
-
-            </div>
-
-            <button
-                class="btn-primary"
-                onclick="saveCaregiver()"
-                id="saveCaregiverButton"
-            >
-                Save Caregiver
-            </button>
-
-        </div>
-
-
-        <!-- Report -->
-
-        <div class="card">
-
-            <h2 id="reportTitle">
-                Medication Report
-            </h2>
-
-            <div class="report-grid">
-
-                <div class="report-item">
-
-                    <strong id="reportTotalText">
-                        Total Medicines
-                    </strong>
-
-                    <div id="reportTotal">
-                        0
-                    </div>
-
-                </div>
-
-
-                <div class="report-item">
-
-                    <strong id="reportTakenText">
-                        Medicines Taken
-                    </strong>
-
-                    <div id="reportTaken">
-                        0
-                    </div>
-
-                </div>
-
-
-                <div class="report-item">
-
-                    <strong id="reportMissedText">
-                        Medicines Missed
-                    </strong>
-
-                    <div id="reportMissed">
-                        0
-                    </div>
-
-                </div>
-
-
-                <div class="report-item">
-
-                    <strong id="reportAdherenceText">
-                        Adherence
-                    </strong>
-
-                    <div id="reportAdherence">
-                        0%
-                    </div>
-
-                </div>
-
+            <div id="reportAdherence">
+                0%
             </div>
 
         </div>
 
-
-        <!-- Logs -->
-
-        <div class="card">
-
-            <h2 id="logTitle">
-                Activity Log
-            </h2>
-
-            <div
-                id="activityLog"
-                class="log"
-            >
-
-            </div>
-
-        </div>
+    </div>
 
 
-        <!-- Buttons -->
+    <button
+        class="btn-primary"
+        onclick="generateMedicationReport()"
+        id="fullReportButton"
+        style="
+            width:100%;
+            margin-top:18px;
+            padding:15px;
+            font-size:16px;
+        "
+    >
 
-        <div class="card">
+        📄 View Full Medication Report
 
-            <div class="actions">
+    </button>
 
-                <button
-                    class="action-btn caregiver"
-                    onclick="callCaregiver()"
-                    id="callCaregiverButton"
-                >
-                    📞 Call Caregiver
-                </button>
+</div>
 
-                <button
-                    class="action-btn ambulance"
-                    onclick="callAmbulance()"
-                    id="ambulanceButton"
-                >
-                    🚑 Emergency
-                </button>
 
-                <button
-                    class="action-btn logout"
-                    onclick="logout()"
-                    id="logoutButton"
-                >
-                    Logout
-                </button>
 
-            </div>
+<!-- =====================================================
+     ACTIVITY LOG
+===================================================== -->
 
-        </div>
+<div class="card">
 
-    </main>
+    <h2 id="logTitle">
+        Activity Log
+    </h2>
+
+
+    <div
+        id="activityLog"
+        class="log"
+    >
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     ACTION BUTTONS
+===================================================== -->
+
+<div class="card">
+
+    <div class="actions">
+
+
+        <button
+            class="action-btn caregiver"
+            onclick="callCaregiver()"
+            id="callCaregiverButton"
+        >
+
+            📞 Call Caregiver
+
+        </button>
+
+
+        <button
+            class="action-btn ambulance"
+            onclick="callAmbulance()"
+            id="ambulanceButton"
+        >
+
+            🚑 Emergency
+
+        </button>
+
+
+        <button
+            class="action-btn logout"
+            onclick="logout()"
+            id="logoutButton"
+        >
+
+            Logout
+
+        </button>
+
+
+    </div>
+
+</div>
+
+
+</main>
 
 </section>
 
 
-<!-- NO AUDIO / BUZZER IS USED -->
 
 <script src="script.js"></script>
 
