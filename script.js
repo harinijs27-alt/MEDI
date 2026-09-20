@@ -1,5 +1,5 @@
 // =====================================================
-// JS MEDICARE - COMPLETE SCRIPT
+// JS MEDICARE - COMPLETE CORRECTED SCRIPT
 // =====================================================
 
 let medicines = [];
@@ -16,26 +16,29 @@ let selectedLanguage = "en";
 
 let voiceUnlocked = false;
 
-// -----------------------------------------------------
+
+// =====================================================
 // MEDICINE VOICE ENTRY
-// -----------------------------------------------------
+// =====================================================
 
 let voiceRecognition = null;
 let voiceEntryActive = false;
 let voiceStep = null;
 let voiceStarting = false;
 
-// -----------------------------------------------------
+
+// =====================================================
 // "I TOOK IT" VOICE RECOGNITION
-// -----------------------------------------------------
+// =====================================================
 
 let takenVoiceRecognition = null;
 let takenVoiceRestartTimer = null;
 let takenVoiceActive = false;
 
-// -----------------------------------------------------
+
+// =====================================================
 // VIBRATION
-// -----------------------------------------------------
+// =====================================================
 
 let vibrationTimer = null;
 
@@ -361,6 +364,10 @@ function changeLanguage(value) {
     saveData();
 
     applyLanguage();
+
+    renderMedicines();
+
+    updateDashboard();
 }
 
 
@@ -374,8 +381,10 @@ function updateLanguageButtons() {
         const key =
             element.getAttribute("data-i18n");
 
-        if (translations[selectedLanguage] &&
-            translations[selectedLanguage][key]) {
+        if (
+            translations[selectedLanguage] &&
+            translations[selectedLanguage][key]
+        ) {
 
             element.textContent =
                 translations[selectedLanguage][key];
@@ -527,15 +536,18 @@ function speakText(text, callback) {
         window.speechSynthesis.getVoices();
 
 
+    const languageCode =
+        getBrowserLanguage()
+            .split("-")[0]
+            .toLowerCase();
+
+
     const matchingVoice =
         voices.find(function (voice) {
 
             return voice.lang
                 .toLowerCase()
-                .startsWith(
-                    getBrowserLanguage()
-                        .split("-")[0]
-                );
+                .startsWith(languageCode);
 
         });
 
@@ -571,7 +583,6 @@ function speakText(text, callback) {
 function stopAllSpeech() {
 
     if ("speechSynthesis" in window) {
-
         window.speechSynthesis.cancel();
     }
 }
@@ -635,29 +646,24 @@ function addMedicine() {
 
     const medicine = {
 
-        id:
-            Date.now(),
+        id: Date.now(),
 
-        name:
-            name,
+        name: name,
 
-        dosage:
-            dosage,
+        dosage: dosage,
 
-        time:
-            time,
+        time: time,
 
-        status:
-            "pending",
+        status: "pending",
 
         createdAt:
             new Date().toISOString(),
 
-        takenAt:
-            null,
+        takenAt: null,
 
-        missedAt:
-            null
+        missedAt: null,
+
+        lastTriggeredDate: null
     };
 
 
@@ -670,6 +676,7 @@ function addMedicine() {
     updateDashboard();
 
     updateNextReminder();
+
 
     logActivity(
         `Medicine "${name}" added`
@@ -690,7 +697,7 @@ function addMedicine() {
 
 
     speakText(
-        `${name} ${getText("voiceDone")}`
+        `${name}. ${getText("voiceDone")}`
     );
 }
 
@@ -709,7 +716,7 @@ function startVoiceMedicineEntry() {
     if (!SpeechRecognition) {
 
         alert(
-            "Voice recognition is not supported in this browser. Please use Google Chrome."
+            "Voice recognition is not supported. Please use Google Chrome."
         );
 
         return;
@@ -720,6 +727,7 @@ function startVoiceMedicineEntry() {
 
 
     voiceEntryActive = true;
+
     voiceStep = "name";
 
 
@@ -759,13 +767,15 @@ function clearVoiceFields() {
 
 
     if (name) name.value = "";
+
     if (dosage) dosage.value = "";
+
     if (time) time.value = "";
 }
 
 
 // =====================================================
-// START ONE VOICE STEP
+// START VOICE STEP
 // =====================================================
 
 function startVoiceStepRecognition() {
@@ -796,38 +806,44 @@ function startVoiceStepRecognition() {
     if (voiceRecognition) {
 
         try {
-            voiceRecognition.stop();
+            voiceRecognition.abort();
         } catch (e) {}
 
         voiceRecognition = null;
     }
 
 
-    voiceRecognition =
+    const recognition =
         new SpeechRecognition();
 
 
-    voiceRecognition.lang =
+    voiceRecognition =
+        recognition;
+
+
+    recognition.lang =
         getBrowserLanguage();
 
-    voiceRecognition.continuous = false;
-    voiceRecognition.interimResults = false;
-    voiceRecognition.maxAlternatives = 3;
+    recognition.continuous = false;
+
+    recognition.interimResults = false;
+
+    recognition.maxAlternatives = 3;
 
 
-    voiceRecognition.onstart =
+    recognition.onstart =
         function () {
 
             voiceStarting = false;
 
             console.log(
-                "Voice listening:",
+                "Listening for:",
                 voiceStep
             );
         };
 
 
-    voiceRecognition.onresult =
+    recognition.onresult =
         function (event) {
 
             if (!voiceEntryActive) {
@@ -867,7 +883,7 @@ function startVoiceStepRecognition() {
         };
 
 
-    voiceRecognition.onerror =
+    recognition.onerror =
         function (event) {
 
             voiceStarting = false;
@@ -879,8 +895,8 @@ function startVoiceStepRecognition() {
 
 
             if (
-                event.error ===
-                "not-allowed"
+                event.error === "not-allowed" ||
+                event.error === "service-not-allowed"
             ) {
 
                 voiceEntryActive = false;
@@ -892,28 +908,28 @@ function startVoiceStepRecognition() {
         };
 
 
-    voiceRecognition.onend =
+    recognition.onend =
         function () {
 
             voiceStarting = false;
 
-            voiceRecognition = null;
+            if (voiceRecognition === recognition) {
 
-            // Do NOT automatically change step here.
-            // processVoiceStep() controls the next step.
+                voiceRecognition = null;
+            }
         };
 
 
     try {
 
-        voiceRecognition.start();
+        recognition.start();
 
     } catch (error) {
 
         voiceStarting = false;
 
         console.log(
-            "Could not start voice recognition:",
+            "Could not start recognition:",
             error
         );
     }
@@ -933,10 +949,6 @@ function processVoiceStep(
         return;
     }
 
-
-    // -------------------------------------------------
-    // MEDICINE NAME
-    // -------------------------------------------------
 
     if (step === "name") {
 
@@ -973,15 +985,7 @@ function processVoiceStep(
     }
 
 
-    // -------------------------------------------------
-    // DOSAGE
-    // -------------------------------------------------
-
     if (step === "dosage") {
-
-        const dosage =
-            extractDosage(text);
-
 
         const input =
             document.getElementById(
@@ -990,7 +994,9 @@ function processVoiceStep(
 
 
         if (input) {
-            input.value = dosage;
+
+            input.value =
+                extractDosage(text);
         }
 
 
@@ -1015,10 +1021,6 @@ function processVoiceStep(
         return;
     }
 
-
-    // -------------------------------------------------
-    // TIME
-    // -------------------------------------------------
 
     if (step === "time") {
 
@@ -1051,7 +1053,9 @@ function processVoiceStep(
 
 
         if (input) {
-            input.value = convertedTime;
+
+            input.value =
+                convertedTime;
         }
 
 
@@ -1060,11 +1064,6 @@ function processVoiceStep(
         voiceStep = null;
 
         updateVoiceStepUI("done");
-
-
-        speakText(
-            getText("voiceDone")
-        );
 
 
         const status =
@@ -1078,12 +1077,17 @@ function processVoiceStep(
             status.textContent =
                 getText("voiceDone");
         }
+
+
+        speakText(
+            getText("voiceDone")
+        );
     }
 }
 
 
 // =====================================================
-// EXTRACT DOSAGE
+// DOSAGE
 // =====================================================
 
 function extractDosage(text) {
@@ -1092,63 +1096,47 @@ function extractDosage(text) {
         text.trim();
 
 
-    // 500 mg
-    const mg =
+    let match =
         text.match(
             /(\d+(?:\.\d+)?)\s*(mg|milligram|milligrams)/i
         );
 
-    if (mg) {
 
-        return (
-            mg[1] +
-            " mg"
-        );
+    if (match) {
+        return match[1] + " mg";
     }
 
 
-    // ml
-    const ml =
+    match =
         text.match(
             /(\d+(?:\.\d+)?)\s*(ml|milliliter|milliliters)/i
         );
 
-    if (ml) {
 
-        return (
-            ml[1] +
-            " ml"
-        );
+    if (match) {
+        return match[1] + " ml";
     }
 
 
-    // tablet
-    const tablet =
+    match =
         text.match(
             /(\d+(?:\.\d+)?)\s*(tablet|tablets)/i
         );
 
-    if (tablet) {
 
-        return (
-            tablet[1] +
-            " tablet"
-        );
+    if (match) {
+        return match[1] + " tablet";
     }
 
 
-    // capsule
-    const capsule =
+    match =
         text.match(
             /(\d+(?:\.\d+)?)\s*(capsule|capsules)/i
         );
 
-    if (capsule) {
 
-        return (
-            capsule[1] +
-            " capsule"
-        );
+    if (match) {
+        return match[1] + " capsule";
     }
 
 
@@ -1157,7 +1145,7 @@ function extractDosage(text) {
 
 
 // =====================================================
-// CONVERT SPOKEN TIME
+// TIME CONVERSION
 // =====================================================
 
 function convertSpokenTime(text) {
@@ -1171,6 +1159,7 @@ function convertSpokenTime(text) {
     value =
         value
             .replace(/o'clock/g, "")
+            .replace(/o clock/g, "")
             .replace(/a\.?\s*m\.?/g, "am")
             .replace(/p\.?\s*m\.?/g, "pm")
             .replace(/\s+/g, " ")
@@ -1178,6 +1167,7 @@ function convertSpokenTime(text) {
 
 
     // 8:30 pm
+
     let match =
         value.match(
             /^(\d{1,2}):(\d{2})\s*(am|pm)?$/i
@@ -1201,7 +1191,6 @@ function convertSpokenTime(text) {
             period.toLowerCase() === "pm" &&
             hour < 12
         ) {
-
             hour += 12;
         }
 
@@ -1211,7 +1200,6 @@ function convertSpokenTime(text) {
             period.toLowerCase() === "am" &&
             hour === 12
         ) {
-
             hour = 0;
         }
 
@@ -1233,6 +1221,7 @@ function convertSpokenTime(text) {
 
 
     // 8 pm
+
     match =
         value.match(
             /^(\d{1,2})\s*(am|pm)$/i
@@ -1252,7 +1241,6 @@ function convertSpokenTime(text) {
             period === "pm" &&
             hour < 12
         ) {
-
             hour += 12;
         }
 
@@ -1261,7 +1249,6 @@ function convertSpokenTime(text) {
             period === "am" &&
             hour === 12
         ) {
-
             hour = 0;
         }
 
@@ -1279,45 +1266,32 @@ function convertSpokenTime(text) {
     }
 
 
-    // Number words
     const numbers = {
 
-        "one": 1,
-        "two": 2,
-        "three": 3,
-        "four": 4,
-        "five": 5,
-        "six": 6,
-        "seven": 7,
-        "eight": 8,
-        "nine": 9,
-        "ten": 10,
-        "eleven": 11,
-        "twelve": 12
+        one: 1,
+        two: 2,
+        three: 3,
+        four: 4,
+        five: 5,
+        six: 6,
+        seven: 7,
+        eight: 8,
+        nine: 9,
+        ten: 10,
+        eleven: 11,
+        twelve: 12
     };
 
 
-    let normalized =
-        value
-            .replace(/\s+/g, " ")
-            .trim();
+    for (const word in numbers) {
 
-
-    for (
-        const word in numbers
-    ) {
-
-        if (
-            normalized.includes(word)
-        ) {
+        if (value.includes(word)) {
 
             let hour =
                 numbers[word];
 
 
-            if (
-                normalized.includes("pm")
-            ) {
+            if (value.includes("pm")) {
 
                 if (hour < 12) {
                     hour += 12;
@@ -1326,7 +1300,7 @@ function convertSpokenTime(text) {
 
 
             if (
-                normalized.includes("am") &&
+                value.includes("am") &&
                 hour === 12
             ) {
 
@@ -1335,8 +1309,8 @@ function convertSpokenTime(text) {
 
 
             if (
-                normalized.includes("am") ||
-                normalized.includes("pm")
+                value.includes("am") ||
+                value.includes("pm")
             ) {
 
                 return (
@@ -1349,6 +1323,7 @@ function convertSpokenTime(text) {
 
 
     // 24-hour format
+
     match =
         value.match(
             /^(\d{1,2})$/
@@ -1465,10 +1440,6 @@ function stopVoiceMedicineEntry() {
 
 
     if (voiceRecognition) {
-
-        try {
-            voiceRecognition.stop();
-        } catch (e) {}
 
         try {
             voiceRecognition.abort();
@@ -1729,10 +1700,6 @@ function startReminderChecker() {
 }
 
 
-// =====================================================
-// CHECK REMINDERS
-// =====================================================
-
 function checkReminders() {
 
     if (activeReminder) {
@@ -1766,23 +1733,24 @@ function checkReminders() {
         function (medicine) {
 
             if (
-                medicine.status ===
-                "pending" &&
-                medicine.time ===
-                currentTime
+                medicine.status === "pending" &&
+                medicine.time === currentTime
             ) {
 
-                const lastTriggered =
-                    medicine.lastTriggeredDate;
-
-
                 const today =
-                    now.toISOString()
-                        .split("T")[0];
+                    now.getFullYear() +
+                    "-" +
+                    String(
+                        now.getMonth() + 1
+                    ).padStart(2, "0") +
+                    "-" +
+                    String(
+                        now.getDate()
+                    ).padStart(2, "0");
 
 
                 if (
-                    lastTriggered !==
+                    medicine.lastTriggeredDate !==
                     today
                 ) {
 
@@ -1847,31 +1815,46 @@ function triggerReminder(
 
     if (popup) {
 
-        popup.classList.add(
-            "show"
-        );
+        popup.classList.add("show");
 
-        popup.style.display =
-            "flex";
+        popup.style.display = "flex";
     }
 
 
-    // Voice reminder
+    // Stop anything already running
+
+    stopTakenVoiceRecognition();
+
+    stopAllSpeech();
+
+
+    // -------------------------------------------------
+    // IMPORTANT:
+    // SPEAK FIRST.
+    // ONLY AFTER SPEAKING FINISHES,
+    // START MICROPHONE.
+    // -------------------------------------------------
+
     speakReminder(
-        medicine
+        medicine,
+        function () {
+
+            if (
+                activeReminder &&
+                activeReminder.id === medicine.id
+            ) {
+
+                startTakenVoiceRecognition();
+            }
+
+        }
     );
 
 
-    // Vibration
-    startContinuousVibration();
+    // -------------------------------------------------
+    // REPEAT EVERY 10 SECONDS
+    // -------------------------------------------------
 
-
-    // IMPORTANT:
-    // Listen for "I took it"
-    startTakenVoiceRecognition();
-
-
-    // Repeat voice every 10 seconds
     clearInterval(
         reminderVoiceTimer
     );
@@ -1881,19 +1864,56 @@ function triggerReminder(
         setInterval(
             function () {
 
-                if (activeReminder) {
+                if (
+                    !activeReminder ||
+                    activeReminder.id !== medicine.id
+                ) {
 
-                    speakReminder(
-                        activeReminder
-                    );
+                    return;
                 }
+
+
+                // Stop microphone BEFORE speaking
+
+                stopTakenVoiceRecognition();
+
+
+                // Speak reminder
+
+                speakReminder(
+                    activeReminder,
+                    function () {
+
+                        // After speech finishes,
+                        // immediately listen again
+
+                        if (
+                            activeReminder &&
+                            activeReminder.id === medicine.id
+                        ) {
+
+                            startTakenVoiceRecognition();
+                        }
+
+                    }
+                );
 
             },
             10000
         );
 
 
-    // Miss after 60 seconds
+    // -------------------------------------------------
+    // VIBRATION
+    // -------------------------------------------------
+
+    startContinuousVibration();
+
+
+    // -------------------------------------------------
+    // MISS AFTER 60 SECONDS
+    // -------------------------------------------------
+
     clearTimeout(
         reminderMissTimer
     );
@@ -1905,10 +1925,8 @@ function triggerReminder(
 
                 if (
                     activeReminder &&
-                    activeReminder.id ===
-                    medicine.id &&
-                    medicine.status ===
-                    "pending"
+                    activeReminder.id === medicine.id &&
+                    medicine.status === "pending"
                 ) {
 
                     markMissed(
@@ -1927,7 +1945,8 @@ function triggerReminder(
 // =====================================================
 
 function speakReminder(
-    medicine
+    medicine,
+    callback
 ) {
 
     const message =
@@ -1939,7 +1958,8 @@ function speakReminder(
 
 
     speakText(
-        message
+        message,
+        callback
     );
 }
 
@@ -1985,14 +2005,14 @@ function markTaken(
 
 
     medicine.takenAt =
-        new Date()
-            .toISOString();
+        new Date().toISOString();
 
 
     saveData();
 
 
     // STOP EVERYTHING
+
     stopTakenVoiceRecognition();
 
     stopContinuousVibration();
@@ -2050,8 +2070,7 @@ function markMissed(
 
 
     medicine.missedAt =
-        new Date()
-            .toISOString();
+        new Date().toISOString();
 
 
     saveData();
@@ -2063,6 +2082,10 @@ function markMissed(
 
     clearInterval(
         reminderVoiceTimer
+    );
+
+    clearTimeout(
+        reminderMissTimer
     );
 
 
@@ -2100,7 +2123,7 @@ function markMissed(
 
 
 // =====================================================
-// CLOSE REMINDER POPUP
+// CLOSE POPUP
 // =====================================================
 
 function closeReminderPopup() {
@@ -2124,7 +2147,7 @@ function closeReminderPopup() {
 
 
 // =====================================================
-// CONTINUOUS VIBRATION
+// VIBRATION
 // =====================================================
 
 function startContinuousVibration() {
@@ -2132,9 +2155,7 @@ function startContinuousVibration() {
     stopContinuousVibration();
 
 
-    if (
-        !navigator.vibrate
-    ) {
+    if (!navigator.vibrate) {
 
         console.log(
             "Vibration API not supported on this device."
@@ -2144,7 +2165,6 @@ function startContinuousVibration() {
     }
 
 
-    // Start immediately
     try {
 
         navigator.vibrate([
@@ -2158,7 +2178,6 @@ function startContinuousVibration() {
     } catch (error) {}
 
 
-    // Repeat vibration
     vibrationTimer =
         setInterval(
             function () {
@@ -2187,23 +2206,18 @@ function startContinuousVibration() {
 }
 
 
-// =====================================================
-// STOP VIBRATION
-// =====================================================
-
 function stopContinuousVibration() {
 
     clearInterval(
         vibrationTimer
     );
 
+
     vibrationTimer =
         null;
 
 
-    if (
-        navigator.vibrate
-    ) {
+    if (navigator.vibrate) {
 
         try {
             navigator.vibrate(0);
@@ -2218,7 +2232,9 @@ function stopContinuousVibration() {
 
 function startTakenVoiceRecognition() {
 
-    stopTakenVoiceRecognition();
+    if (!activeReminder) {
+        return;
+    }
 
 
     const SpeechRecognition =
@@ -2229,16 +2245,23 @@ function startTakenVoiceRecognition() {
     if (!SpeechRecognition) {
 
         console.log(
-            "Speech Recognition not supported."
+            "Speech recognition is not supported."
         );
 
         return;
     }
 
 
-    if (!activeReminder) {
+    // If already listening, don't create another one
+
+    if (takenVoiceActive) {
         return;
     }
+
+
+    clearTimeout(
+        takenVoiceRestartTimer
+    );
 
 
     takenVoiceActive =
@@ -2250,7 +2273,7 @@ function startTakenVoiceRecognition() {
 
 
 // =====================================================
-// CREATE FRESH "I TOOK IT" LISTENER
+// CREATE NEW LISTENER
 // =====================================================
 
 function createTakenVoiceRecognition() {
@@ -2274,37 +2297,53 @@ function createTakenVoiceRecognition() {
     }
 
 
-    takenVoiceRecognition =
+    // Always create a NEW recognition object
+
+    const recognition =
         new SpeechRecognition();
 
 
-    takenVoiceRecognition.lang =
+    takenVoiceRecognition =
+        recognition;
+
+
+    recognition.lang =
         getBrowserLanguage();
 
 
-    takenVoiceRecognition.continuous =
+    recognition.continuous =
         false;
 
 
-    takenVoiceRecognition.interimResults =
+    recognition.interimResults =
         false;
 
 
-    takenVoiceRecognition.maxAlternatives =
+    recognition.maxAlternatives =
         5;
 
 
-    takenVoiceRecognition.onstart =
+    recognition.onstart =
         function () {
 
             console.log(
-                "🎤 Listening for: I took it"
+                "🎤 MICROPHONE LISTENING..."
             );
+
         };
 
 
-    takenVoiceRecognition.onresult =
+    recognition.onresult =
         function (event) {
+
+            if (
+                !takenVoiceActive ||
+                !activeReminder
+            ) {
+
+                return;
+            }
+
 
             let heardText =
                 "";
@@ -2318,8 +2357,7 @@ function createTakenVoiceRecognition() {
 
                 heardText +=
                     event.results[i][0]
-                        .transcript +
-                    " ";
+                        .transcript + " ";
             }
 
 
@@ -2338,7 +2376,7 @@ function createTakenVoiceRecognition() {
 
 
             console.log(
-                "Heard:",
+                "🎤 YOU SAID:",
                 heardText
             );
 
@@ -2350,8 +2388,12 @@ function createTakenVoiceRecognition() {
             ) {
 
                 console.log(
-                    "✅ TAKEN COMMAND DETECTED"
+                    "✅ I TOOK IT DETECTED"
                 );
+
+
+                const medicineId =
+                    activeReminder.id;
 
 
                 takenVoiceActive =
@@ -2359,25 +2401,24 @@ function createTakenVoiceRecognition() {
 
 
                 try {
-                    takenVoiceRecognition.stop();
+                    recognition.stop();
                 } catch (e) {}
 
 
-                if (activeReminder) {
+                // Immediately mark medicine taken
 
-                    markTaken(
-                        activeReminder.id
-                    );
-                }
+                markTaken(
+                    medicineId
+                );
             }
         };
 
 
-    takenVoiceRecognition.onerror =
+    recognition.onerror =
         function (event) {
 
             console.log(
-                "Taken voice error:",
+                "🎤 Recognition error:",
                 event.error
             );
 
@@ -2391,32 +2432,56 @@ function createTakenVoiceRecognition() {
             }
 
 
+            // These errors simply mean:
+            // listen again
+
             if (
-                event.error ===
-                    "no-speech" ||
-
-                event.error ===
-                    "audio-capture" ||
-
-                event.error ===
-                    "network" ||
-
-                event.error ===
-                    "aborted"
+                event.error === "no-speech" ||
+                event.error === "audio-capture" ||
+                event.error === "network" ||
+                event.error === "aborted"
             ) {
 
                 scheduleTakenVoiceRestart();
             }
+
+
+            if (
+                event.error === "not-allowed" ||
+                event.error === "service-not-allowed"
+            ) {
+
+                takenVoiceActive =
+                    false;
+
+
+                console.log(
+                    "Microphone permission denied."
+                );
+            }
         };
 
 
-    takenVoiceRecognition.onend =
+    recognition.onend =
         function () {
 
             console.log(
-                "🎤 Taken voice recognition ended"
+                "🎤 Microphone stopped"
             );
 
+
+            if (
+                takenVoiceRecognition ===
+                recognition
+            ) {
+
+                takenVoiceRecognition =
+                    null;
+            }
+
+
+            // If reminder is still active,
+            // listen again
 
             if (
                 takenVoiceActive &&
@@ -2430,12 +2495,12 @@ function createTakenVoiceRecognition() {
 
     try {
 
-        takenVoiceRecognition.start();
+        recognition.start();
 
     } catch (error) {
 
         console.log(
-            "Could not start taken recognition:",
+            "Recognition start error:",
             error
         );
 
@@ -2446,7 +2511,7 @@ function createTakenVoiceRecognition() {
 
 
 // =====================================================
-// RESTART "I TOOK IT" LISTENER
+// RESTART LISTENER
 // =====================================================
 
 function scheduleTakenVoiceRestart() {
@@ -2478,13 +2543,13 @@ function scheduleTakenVoiceRestart() {
                 }
 
             },
-            700
+            500
         );
 }
 
 
 // =====================================================
-// DETECT TAKEN COMMAND
+// DETECT "I TOOK IT"
 // =====================================================
 
 function detectTakenCommand(
@@ -2510,56 +2575,44 @@ function detectTakenCommand(
             );
 
 
-    // -------------------------------------------------
+    console.log(
+        "Checking command:",
+        text
+    );
+
+
+    // =================================================
     // ENGLISH
-    // -------------------------------------------------
+    // =================================================
 
     const englishCommands = [
 
         "i took it",
-
         "i took the medicine",
-
         "i took my medicine",
-
         "i took medicine",
-
         "i have taken it",
-
         "i have taken the medicine",
-
         "i have taken my medicine",
-
         "i have taken medicine",
-
         "i already took it",
-
         "i already took the medicine",
 
         "i took",
-
         "took it",
-
         "took the medicine",
-
         "took medicine",
 
         "medicine taken",
-
         "medicine is taken",
-
         "medicine was taken",
 
         "medicine done",
-
         "medicine completed",
 
         "taken",
-
         "done",
-
         "completed",
-
         "finished"
     ];
 
@@ -2574,7 +2627,7 @@ function detectTakenCommand(
         ) {
 
             console.log(
-                "English command matched:",
+                "✅ English command:",
                 command
             );
 
@@ -2583,28 +2636,20 @@ function detectTakenCommand(
     }
 
 
-    // -------------------------------------------------
+    // =================================================
     // TAMIL
-    // -------------------------------------------------
+    // =================================================
 
     const tamilCommands = [
 
         "எடுத்துவிட்டேன்",
-
         "எடுத்து விட்டேன்",
-
         "மருந்து எடுத்துவிட்டேன்",
-
         "மருந்து எடுத்தேன்",
-
         "மருந்தை எடுத்துவிட்டேன்",
-
         "மருந்து எடுத்தாச்சு",
-
         "மருந்தை எடுத்தாச்சு",
-
         "எடுத்தாச்சு",
-
         "முடிந்தது"
     ];
 
@@ -2617,38 +2662,25 @@ function detectTakenCommand(
             text.includes(command)
         ) {
 
-            console.log(
-                "Tamil command matched:",
-                command
-            );
-
             return true;
         }
     }
 
 
-    // -------------------------------------------------
+    // =================================================
     // HINDI
-    // -------------------------------------------------
+    // =================================================
 
     const hindiCommands = [
 
         "मैंने दवा ले ली",
-
         "मैंने दवाई ले ली",
-
         "दवा ले ली",
-
         "दवाई ले ली",
-
         "दवा लिया",
-
         "दवाई लिया",
-
         "ले लिया",
-
         "ले ली",
-
         "हो गया"
     ];
 
@@ -2661,34 +2693,23 @@ function detectTakenCommand(
             text.includes(command)
         ) {
 
-            console.log(
-                "Hindi command matched:",
-                command
-            );
-
             return true;
         }
     }
 
 
-    // -------------------------------------------------
+    // =================================================
     // TELUGU
-    // -------------------------------------------------
+    // =================================================
 
     const teluguCommands = [
 
         "నేను మందు తీసుకున్నాను",
-
         "మందు తీసుకున్నాను",
-
         "మందు తీసుకున్నా",
-
         "తీసుకున్నాను",
-
         "తీసుకున్నా",
-
         "మందు తీసుకున్న",
-
         "పూర్తయింది"
     ];
 
@@ -2700,11 +2721,6 @@ function detectTakenCommand(
         if (
             text.includes(command)
         ) {
-
-            console.log(
-                "Telugu command matched:",
-                command
-            );
 
             return true;
         }
@@ -2734,20 +2750,23 @@ function stopTakenVoiceRecognition() {
         null;
 
 
-    if (takenVoiceRecognition) {
+    const recognition =
+        takenVoiceRecognition;
+
+
+    takenVoiceRecognition =
+        null;
+
+
+    if (recognition) {
 
         try {
-            takenVoiceRecognition.stop();
+            recognition.stop();
         } catch (e) {}
-
 
         try {
-            takenVoiceRecognition.abort();
+            recognition.abort();
         } catch (e) {}
-
-
-        takenVoiceRecognition =
-            null;
     }
 }
 
@@ -2799,10 +2818,6 @@ function saveCaregiver() {
     );
 }
 
-
-// =====================================================
-// CALL CAREGIVER
-// =====================================================
 
 function callCaregiver() {
 
@@ -2872,6 +2887,7 @@ function sendCaregiverSMS(
 
     const message =
         `JS MEDICARE ALERT: ${medicine.name} (${medicine.dosage}) was not marked as taken within 60 seconds.`;
+
 
     const smsUrl =
         "sms:" +
