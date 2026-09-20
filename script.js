@@ -1,21 +1,28 @@
 // ============================================================
-// MEDICARE AI - MEDICATION REMINDER
+// MEDICARE AI
+// COMPLETE MEDICATION REMINDER SCRIPT
 // ============================================================
 
-// Medicine storage
+
+// ============================================================
+// GLOBAL VARIABLES
+// ============================================================
+
 let medicines = [];
 
-// Currently active reminder
 let activeReminder = null;
 
-// Reminder checking loop
 let reminderLoop = null;
 
-// Voice repetition loop
 let reminderLoopRepeat = null;
 
-// Missed medicine timer
 let missedTimer = null;
+
+let mobileVoiceEnabled = false;
+
+let availableVoices = [];
+
+let reminderCheckerStarted = false;
 
 
 // ============================================================
@@ -26,85 +33,125 @@ const translations = {
 
     en: {
 
-        subtitle: "AI Powered Healthcare Assistant",
+        subtitle:
+            "AI Powered Healthcare Assistant",
 
-        aiStatus: "AI Monitoring Online",
+        aiStatus:
+            "AI Monitoring Online",
 
-        welcome: "Welcome",
+        welcome:
+            "Welcome",
 
-        total: "Total Medicines",
+        total:
+            "Total Medicines",
 
-        taken: "Taken",
+        taken:
+            "Taken",
 
-        missed: "Missed",
+        missed:
+            "Missed",
 
-        adherence: "Adherence",
+        adherence:
+            "Adherence",
 
-        nextReminder: "Next Medication Reminder",
+        nextReminder:
+            "Next Medication Reminder",
 
-        noReminder: "No reminders",
+        noReminder:
+            "No reminders",
 
-        addMedicine: "Add Medicine",
+        addMedicine:
+            "Add Medicine",
 
-        medicineList: "Medicine Schedule",
+        medicineList:
+            "Medicine Schedule",
 
-        medicineName: "Medicine name",
+        medicineName:
+            "Medicine Name",
 
-        dosage: "Dosage",
+        dosage:
+            "Dosage",
 
-        add: "Add Medicine",
+        add:
+            "Add Medicine",
 
-        pending: "Pending",
+        pending:
+            "Pending",
 
-        takenStatus: "Taken",
+        takenStatus:
+            "Taken",
 
-        missedStatus: "Missed",
+        missedStatus:
+            "Missed",
 
-        take: "Taken",
+        take:
+            "Take",
 
-        delete: "Delete",
+        delete:
+            "Delete",
 
-        caregiver: "Caregiver",
+        caregiver:
+            "Caregiver",
 
-        caregiverPhone: "Caregiver Phone Number",
+        caregiverPhone:
+            "Caregiver Phone Number",
 
-        saveCaregiver: "Save Caregiver",
+        saveCaregiver:
+            "Save Caregiver",
 
-        report: "Medication Report",
+        report:
+            "Medication Report",
 
-        totalMedicines: "Total Medicines",
+        totalMedicines:
+            "Total Medicines",
 
-        medicinesTaken: "Medicines Taken",
+        medicinesTaken:
+            "Medicines Taken",
 
-        medicinesMissed: "Medicines Missed",
+        medicinesMissed:
+            "Medicines Missed",
 
-        activityLog: "Activity Log",
+        medicinesPending:
+            "Pending Medicines",
 
-        callCaregiver: "📞 Call Caregiver",
+        activityLog:
+            "Activity Log",
 
-        emergency: "🚑 Emergency",
+        callCaregiver:
+            "Call Caregiver",
 
-        logout: "Logout",
+        emergency:
+            "Emergency",
 
-        aiTitle: "AI Healthcare Assistant",
+        logout:
+            "Logout",
+
+        aiTitle:
+            "AI Healthcare Assistant",
 
         aiMessage:
             "Your medication schedule is being monitored automatically.",
 
-        patientName: "Patient Name",
+        patientName:
+            "Patient Name",
 
-        phone: "Phone Number",
+        phone:
+            "Phone Number",
 
-        language: "Select Language",
+        language:
+            "Select Language",
 
-        login: "Login",
+        login:
+            "Login",
 
-        voiceReady: "Voice reminder ready",
+        voiceReady:
+            "Voice reminder ready",
 
-        medicineAdded: "Medicine added successfully",
+        medicineAdded:
+            "Medicine added successfully",
 
         medicineAlreadyExists:
-            "This medicine already exists at this time.",
+            "This medicine is already scheduled at this time.",
 
         invalidDetails:
             "Please enter medicine name, dosage and time.",
@@ -113,102 +160,162 @@ const translations = {
             "Caregiver number saved.",
 
         voiceReminder:
-            "Time to take",
+            "Voice reminder",
 
         reminderMissed:
-            "You missed your medicine",
+            "Medicine was missed",
 
         caregiverAlert:
-            "Medicine missed. Please check the patient.",
+            "Caregiver alert sent.",
 
         medicineDeleted:
-            "Medicine deleted."
+            "Medicine deleted.",
+
+        enableVoice:
+            "Enable Mobile Voice",
+
+        fullReport:
+            "View Full Medication Report",
+
+        scheduledTime:
+            "Scheduled Time",
+
+        status:
+            "Status",
+
+        actionTime:
+            "Taken / Missed Time",
+
+        reportGenerated:
+            "Report Generated",
+
+        printSave:
+            "Print / Save as PDF"
 
     },
 
 
     ta: {
 
-        subtitle: "செயற்கை நுண்ணறிவு சுகாதார உதவியாளர்",
+        subtitle:
+            "AI இயக்கும் சுகாதார உதவியாளர்",
 
-        aiStatus: "AI கண்காணிப்பு செயல்பாட்டில் உள்ளது",
+        aiStatus:
+            "AI கண்காணிப்பு செயல்பாட்டில் உள்ளது",
 
-        welcome: "வரவேற்கிறோம்",
+        welcome:
+            "வரவேற்கிறோம்",
 
-        total: "மொத்த மருந்துகள்",
+        total:
+            "மொத்த மருந்துகள்",
 
-        taken: "எடுத்தது",
+        taken:
+            "எடுத்தவை",
 
-        missed: "தவறியது",
+        missed:
+            "தவறியவை",
 
-        adherence: "பின்பற்றுதல்",
+        adherence:
+            "மருந்து பின்பற்றல்",
 
-        nextReminder: "அடுத்த மருந்து நினைவூட்டல்",
+        nextReminder:
+            "அடுத்த மருந்து நினைவூட்டல்",
 
-        noReminder: "நினைவூட்டல்கள் இல்லை",
+        noReminder:
+            "நினைவூட்டல் இல்லை",
 
-        addMedicine: "மருந்தை சேர்க்கவும்",
+        addMedicine:
+            "மருந்து சேர்க்கவும்",
 
-        medicineList: "மருந்து அட்டவணை",
+        medicineList:
+            "மருந்து அட்டவணை",
 
-        medicineName: "மருந்தின் பெயர்",
+        medicineName:
+            "மருந்தின் பெயர்",
 
-        dosage: "அளவு",
+        dosage:
+            "அளவு",
 
-        add: "மருந்தை சேர்க்கவும்",
+        add:
+            "மருந்து சேர்க்கவும்",
 
-        pending: "நிலுவையில்",
+        pending:
+            "நிலுவையில்",
 
-        takenStatus: "எடுத்துவிட்டார்",
+        takenStatus:
+            "எடுத்துவிட்டார்",
 
-        missedStatus: "தவறியது",
+        missedStatus:
+            "தவறிவிட்டது",
 
-        take: "எடுத்துவிட்டேன்",
+        take:
+            "எடுத்தேன்",
 
-        delete: "நீக்கு",
+        delete:
+            "நீக்கு",
 
-        caregiver: "பராமரிப்பாளர்",
+        caregiver:
+            "பராமரிப்பாளர்",
 
-        caregiverPhone: "பராமரிப்பாளர் தொலைபேசி எண்",
+        caregiverPhone:
+            "பராமரிப்பாளர் தொலைபேசி எண்",
 
-        saveCaregiver: "சேமிக்கவும்",
+        saveCaregiver:
+            "பராமரிப்பாளரை சேமிக்கவும்",
 
-        report: "மருந்து அறிக்கை",
+        report:
+            "மருந்து அறிக்கை",
 
-        totalMedicines: "மொத்த மருந்துகள்",
+        totalMedicines:
+            "மொத்த மருந்துகள்",
 
-        medicinesTaken: "எடுத்த மருந்துகள்",
+        medicinesTaken:
+            "எடுத்த மருந்துகள்",
 
-        medicinesMissed: "தவறிய மருந்துகள்",
+        medicinesMissed:
+            "தவறிய மருந்துகள்",
 
-        activityLog: "செயல்பாட்டு பதிவு",
+        medicinesPending:
+            "நிலுவையில் உள்ள மருந்துகள்",
 
-        callCaregiver: "📞 பராமரிப்பாளரை அழைக்கவும்",
+        activityLog:
+            "செயல்பாட்டு பதிவு",
 
-        emergency: "🚑 அவசர உதவி",
+        callCaregiver:
+            "பராமரிப்பாளரை அழைக்கவும்",
 
-        logout: "வெளியேறு",
+        emergency:
+            "அவசரம்",
 
-        aiTitle: "AI சுகாதார உதவியாளர்",
+        logout:
+            "வெளியேறு",
+
+        aiTitle:
+            "AI சுகாதார உதவியாளர்",
 
         aiMessage:
             "உங்கள் மருந்து அட்டவணை தானாக கண்காணிக்கப்படுகிறது.",
 
-        patientName: "நோயாளியின் பெயர்",
+        patientName:
+            "நோயாளர் பெயர்",
 
-        phone: "தொலைபேசி எண்",
+        phone:
+            "தொலைபேசி எண்",
 
-        language: "மொழியை தேர்வு செய்யவும்",
+        language:
+            "மொழியை தேர்வு செய்யவும்",
 
-        login: "உள்நுழைக",
+        login:
+            "உள்நுழைவு",
 
-        voiceReady: "குரல் நினைவூட்டல் தயாராக உள்ளது",
+        voiceReady:
+            "குரல் நினைவூட்டல் தயாராக உள்ளது",
 
         medicineAdded:
             "மருந்து வெற்றிகரமாக சேர்க்கப்பட்டது",
 
         medicineAlreadyExists:
-            "இந்த நேரத்தில் இந்த மருந்து ஏற்கனவே உள்ளது.",
+            "இந்த மருந்து ஏற்கனவே இந்த நேரத்தில் உள்ளது.",
 
         invalidDetails:
             "மருந்தின் பெயர், அளவு மற்றும் நேரத்தை உள்ளிடவும்.",
@@ -217,224 +324,365 @@ const translations = {
             "பராமரிப்பாளர் எண் சேமிக்கப்பட்டது.",
 
         voiceReminder:
-            "மருந்தை எடுத்துக்கொள்ளும் நேரம்",
+            "குரல் நினைவூட்டல்",
 
         reminderMissed:
-            "நீங்கள் மருந்தை எடுக்க தவறிவிட்டீர்கள்",
+            "மருந்து தவறிவிட்டது",
 
         caregiverAlert:
-            "மருந்து தவறியுள்ளது. நோயாளியை சரிபார்க்கவும்.",
+            "பராமரிப்பாளருக்கு தகவல் அனுப்பப்பட்டது.",
 
         medicineDeleted:
-            "மருந்து நீக்கப்பட்டது."
+            "மருந்து நீக்கப்பட்டது.",
+
+        enableVoice:
+            "மொபைல் குரலை செயல்படுத்தவும்",
+
+        fullReport:
+            "முழு மருந்து அறிக்கையை பார்க்கவும்",
+
+        scheduledTime:
+            "திட்டமிட்ட நேரம்",
+
+        status:
+            "நிலை",
+
+        actionTime:
+            "எடுத்த / தவறிய நேரம்",
+
+        reportGenerated:
+            "அறிக்கை உருவாக்கப்பட்ட நேரம்",
+
+        printSave:
+            "அச்சிடு / PDF ஆக சேமி"
 
     },
 
 
     hi: {
 
-        subtitle: "AI संचालित स्वास्थ्य सहायक",
+        subtitle:
+            "AI संचालित स्वास्थ्य सहायक",
 
-        aiStatus: "AI निगरानी ऑनलाइन",
+        aiStatus:
+            "AI निगरानी ऑनलाइन",
 
-        welcome: "स्वागत है",
+        welcome:
+            "स्वागत है",
 
-        total: "कुल दवाइयाँ",
+        total:
+            "कुल दवाइयाँ",
 
-        taken: "ली गई",
+        taken:
+            "ली गई",
 
-        missed: "छूटी",
+        missed:
+            "छूटी हुई",
 
-        adherence: "पालन",
+        adherence:
+            "दवा पालन",
 
-        nextReminder: "अगली दवा की याद दिलाना",
+        nextReminder:
+            "अगला दवा रिमाइंडर",
 
-        noReminder: "कोई रिमाइंडर नहीं",
+        noReminder:
+            "कोई रिमाइंडर नहीं",
 
-        addMedicine: "दवा जोड़ें",
+        addMedicine:
+            "दवा जोड़ें",
 
-        medicineList: "दवा अनुसूची",
+        medicineList:
+            "दवा अनुसूची",
 
-        medicineName: "दवा का नाम",
+        medicineName:
+            "दवा का नाम",
 
-        dosage: "खुराक",
+        dosage:
+            "खुराक",
 
-        add: "दवा जोड़ें",
+        add:
+            "दवा जोड़ें",
 
-        pending: "लंबित",
+        pending:
+            "लंबित",
 
-        takenStatus: "ली गई",
+        takenStatus:
+            "ली गई",
 
-        missedStatus: "छूटी",
+        missedStatus:
+            "छूट गई",
 
-        take: "ले ली",
+        take:
+            "लिया",
 
-        delete: "हटाएं",
+        delete:
+            "हटाएं",
 
-        caregiver: "देखभालकर्ता",
+        caregiver:
+            "देखभालकर्ता",
 
-        caregiverPhone: "देखभालकर्ता फोन नंबर",
+        caregiverPhone:
+            "देखभालकर्ता फोन नंबर",
 
-        saveCaregiver: "सेव करें",
+        saveCaregiver:
+            "देखभालकर्ता सेव करें",
 
-        report: "दवा रिपोर्ट",
+        report:
+            "दवा रिपोर्ट",
 
-        totalMedicines: "कुल दवाइयाँ",
+        totalMedicines:
+            "कुल दवाइयाँ",
 
-        medicinesTaken: "ली गई दवाइयाँ",
+        medicinesTaken:
+            "ली गई दवाइयाँ",
 
-        medicinesMissed: "छूटी हुई दवाइयाँ",
+        medicinesMissed:
+            "छूटी हुई दवाइयाँ",
 
-        activityLog: "गतिविधि लॉग",
+        medicinesPending:
+            "लंबित दवाइयाँ",
 
-        callCaregiver: "📞 देखभालकर्ता को कॉल करें",
+        activityLog:
+            "गतिविधि लॉग",
 
-        emergency: "🚑 आपातकाल",
+        callCaregiver:
+            "देखभालकर्ता को कॉल करें",
 
-        logout: "लॉग आउट",
+        emergency:
+            "आपातकाल",
 
-        aiTitle: "AI स्वास्थ्य सहायक",
+        logout:
+            "लॉग आउट",
+
+        aiTitle:
+            "AI स्वास्थ्य सहायक",
 
         aiMessage:
-            "आपकी दवा अनुसूची स्वचालित रूप से निगरानी की जा रही है।",
+            "आपकी दवा अनुसूची की स्वचालित निगरानी की जा रही है।",
 
-        patientName: "मरीज का नाम",
+        patientName:
+            "मरीज का नाम",
 
-        phone: "फोन नंबर",
+        phone:
+            "फोन नंबर",
 
-        language: "भाषा चुनें",
+        language:
+            "भाषा चुनें",
 
-        login: "लॉगिन",
+        login:
+            "लॉगिन",
 
-        voiceReady: "वॉयस रिमाइंडर तैयार है",
+        voiceReady:
+            "वॉयस रिमाइंडर तैयार है",
 
         medicineAdded:
-            "दवा सफलतापूर्वक जोड़ दी गई है",
+            "दवा सफलतापूर्वक जोड़ी गई",
 
         medicineAlreadyExists:
-            "इस समय यह दवा पहले से मौजूद है।",
+            "यह दवा इस समय पहले से निर्धारित है।",
 
         invalidDetails:
-            "कृपया दवा का नाम, खुराक और समय दर्ज करें।",
+            "दवा का नाम, खुराक और समय दर्ज करें।",
 
         caregiverSaved:
             "देखभालकर्ता नंबर सेव किया गया।",
 
         voiceReminder:
-            "दवा लेने का समय हो गया है",
+            "वॉयस रिमाइंडर",
 
         reminderMissed:
-            "आप दवा लेना भूल गए हैं",
+            "दवा छूट गई",
 
         caregiverAlert:
-            "दवा छूट गई है। कृपया मरीज की जांच करें।",
+            "देखभालकर्ता को सूचना भेजी गई।",
 
         medicineDeleted:
-            "दवा हटा दी गई।"
+            "दवा हटा दी गई।",
+
+        enableVoice:
+            "मोबाइल वॉयस सक्षम करें",
+
+        fullReport:
+            "पूरी दवा रिपोर्ट देखें",
+
+        scheduledTime:
+            "निर्धारित समय",
+
+        status:
+            "स्थिति",
+
+        actionTime:
+            "ली / छूटी समय",
+
+        reportGenerated:
+            "रिपोर्ट बनाई गई",
+
+        printSave:
+            "प्रिंट / PDF के रूप में सेव करें"
 
     },
 
 
     te: {
 
-        subtitle: "AI ఆధారిత ఆరోగ్య సహాయకుడు",
+        subtitle:
+            "AI ఆధారిత ఆరోగ్య సహాయకుడు",
 
-        aiStatus: "AI పర్యవేక్షణ ఆన్‌లైన్‌లో ఉంది",
+        aiStatus:
+            "AI పర్యవేక్షణ ఆన్‌లైన్‌లో ఉంది",
 
-        welcome: "స్వాగతం",
+        welcome:
+            "స్వాగతం",
 
-        total: "మొత్తం మందులు",
+        total:
+            "మొత్తం మందులు",
 
-        taken: "తీసుకున్నవి",
+        taken:
+            "తీసుకున్నవి",
 
-        missed: "మిస్ అయినవి",
+        missed:
+            "తప్పిపోయినవి",
 
-        adherence: "పాటింపు",
+        adherence:
+            "మందుల అనుసరణ",
 
-        nextReminder: "తదుపరి మందు రిమైండర్",
+        nextReminder:
+            "తదుపరి మందు రిమైండర్",
 
-        noReminder: "రిమైండర్లు లేవు",
+        noReminder:
+            "రిమైండర్ లేదు",
 
-        addMedicine: "మందును జోడించండి",
+        addMedicine:
+            "మందు జోడించండి",
 
-        medicineList: "మందుల షెడ్యూల్",
+        medicineList:
+            "మందుల షెడ్యూల్",
 
-        medicineName: "మందు పేరు",
+        medicineName:
+            "మందు పేరు",
 
-        dosage: "మోతాదు",
+        dosage:
+            "మోతాదు",
 
-        add: "మందును జోడించండి",
+        add:
+            "మందు జోడించండి",
 
-        pending: "పెండింగ్",
+        pending:
+            "పెండింగ్",
 
-        takenStatus: "తీసుకున్నారు",
+        takenStatus:
+            "తీసుకున్నారు",
 
-        missedStatus: "మిస్ అయింది",
+        missedStatus:
+            "తప్పిపోయింది",
 
-        take: "తీసుకున్నాను",
+        take:
+            "తీసుకున్నాను",
 
-        delete: "తొలగించు",
+        delete:
+            "తొలగించు",
 
-        caregiver: "సంరక్షకుడు",
+        caregiver:
+            "సంరక్షకుడు",
 
-        caregiverPhone: "సంరక్షకుడి ఫోన్ నంబర్",
+        caregiverPhone:
+            "సంరక్షకుడి ఫోన్ నంబర్",
 
-        saveCaregiver: "సేవ్ చేయండి",
+        saveCaregiver:
+            "సంరక్షకుడిని సేవ్ చేయండి",
 
-        report: "మందుల నివేదిక",
+        report:
+            "మందుల నివేదిక",
 
-        totalMedicines: "మొత్తం మందులు",
+        totalMedicines:
+            "మొత్తం మందులు",
 
-        medicinesTaken: "తీసుకున్న మందులు",
+        medicinesTaken:
+            "తీసుకున్న మందులు",
 
-        medicinesMissed: "మిస్ అయిన మందులు",
+        medicinesMissed:
+            "తప్పిపోయిన మందులు",
 
-        activityLog: "కార్యకలాప లాగ్",
+        medicinesPending:
+            "పెండింగ్ మందులు",
 
-        callCaregiver: "📞 సంరక్షకుడికి కాల్ చేయండి",
+        activityLog:
+            "కార్యాచరణ లాగ్",
 
-        emergency: "🚑 అత్యవసరం",
+        callCaregiver:
+            "సంరక్షకుడికి కాల్ చేయండి",
 
-        logout: "లాగ్ అవుట్",
+        emergency:
+            "అత్యవసరం",
 
-        aiTitle: "AI ఆరోగ్య సహాయకుడు",
+        logout:
+            "లాగ్ అవుట్",
+
+        aiTitle:
+            "AI ఆరోగ్య సహాయకుడు",
 
         aiMessage:
             "మీ మందుల షెడ్యూల్ స్వయంచాలకంగా పర్యవేక్షించబడుతోంది.",
 
-        patientName: "రోగి పేరు",
+        patientName:
+            "రోగి పేరు",
 
-        phone: "ఫోన్ నంబర్",
+        phone:
+            "ఫోన్ నంబర్",
 
-        language: "భాషను ఎంచుకోండి",
+        language:
+            "భాషను ఎంచుకోండి",
 
-        login: "లాగిన్",
+        login:
+            "లాగిన్",
 
-        voiceReady: "వాయిస్ రిమైండర్ సిద్ధంగా ఉంది",
+        voiceReady:
+            "వాయిస్ రిమైండర్ సిద్ధంగా ఉంది",
 
         medicineAdded:
             "మందు విజయవంతంగా జోడించబడింది",
 
         medicineAlreadyExists:
-            "ఈ సమయంలో ఈ మందు ఇప్పటికే ఉంది.",
+            "ఈ మందు ఇప్పటికే ఈ సమయంలో షెడ్యూల్ చేయబడింది.",
 
         invalidDetails:
-            "దయచేసి మందు పేరు, మోతాదు మరియు సమయాన్ని నమోదు చేయండి.",
+            "మందు పేరు, మోతాదు మరియు సమయం నమోదు చేయండి.",
 
         caregiverSaved:
             "సంరక్షకుడి నంబర్ సేవ్ చేయబడింది.",
 
         voiceReminder:
-            "మందు తీసుకునే సమయం వచ్చింది",
+            "వాయిస్ రిమైండర్",
 
         reminderMissed:
-            "మీరు మందు తీసుకోవడం మిస్ అయ్యారు",
+            "మందు తప్పిపోయింది",
 
         caregiverAlert:
-            "మందు మిస్ అయింది. దయచేసి రోగిని తనిఖీ చేయండి.",
+            "సంరక్షకుడికి సమాచారం పంపబడింది.",
 
         medicineDeleted:
-            "మందు తొలగించబడింది."
+            "మందు తొలగించబడింది.",
+
+        enableVoice:
+            "మొబైల్ వాయిస్‌ను ప్రారంభించండి",
+
+        fullReport:
+            "పూర్తి మందుల నివేదికను చూడండి",
+
+        scheduledTime:
+            "షెడ్యూల్ సమయం",
+
+        status:
+            "స్థితి",
+
+        actionTime:
+            "తీసుకున్న / తప్పిపోయిన సమయం",
+
+        reportGenerated:
+            "నివేదిక రూపొందించిన సమయం",
+
+        printSave:
+            "ప్రింట్ / PDFగా సేవ్ చేయండి"
 
     }
 
@@ -442,19 +690,30 @@ const translations = {
 
 
 // ============================================================
-// LANGUAGE SETTINGS
+// GET LANGUAGE
 // ============================================================
 
 function getLanguage() {
 
-    return localStorage.getItem("selectedLanguage") || "en";
+    return (
+        localStorage.getItem(
+            "selectedLanguage"
+        ) || "en"
+    );
 
 }
 
 
+// ============================================================
+// CHANGE LANGUAGE
+// ============================================================
+
 function changeLanguage(lang) {
 
-    localStorage.setItem("selectedLanguage", lang);
+    localStorage.setItem(
+        "selectedLanguage",
+        lang
+    );
 
     applyLanguage(lang);
 
@@ -462,80 +721,207 @@ function changeLanguage(lang) {
 
     updateDashboard();
 
+    updateNextReminder();
+
+    prepareSpeech();
+
 }
 
 
+// ============================================================
+// APPLY LANGUAGE
+// ============================================================
+
 function applyLanguage(lang) {
 
-    const t = translations[lang] || translations.en;
+    const t =
+        translations[lang] ||
+        translations.en;
 
 
-    // Header
-    setText("headerSubtitle", t.subtitle);
+    const setText =
+        function(id, text) {
 
-    setText("aiStatusText", t.aiStatus);
+            const element =
+                document.getElementById(id);
 
-    setText("welcomeTitle",
-        `${t.welcome}, ${localStorage.getItem("patientName") || ""}`);
+            if (element) {
 
+                element.textContent =
+                    text;
 
-    // Dashboard
-    setText("totalLabel", t.total);
+            }
 
-    setText("takenLabel", t.taken);
-
-    setText("missedLabel", t.missed);
-
-    setText("adherenceLabel", t.adherence);
-
-    setText("nextReminderTitle", t.nextReminder);
-
-    setText("addMedicineTitle", t.addMedicine);
-
-    setText("medicineListTitle", t.medicineList);
-
-    setText("caregiverTitle", t.caregiver);
-
-    setText("caregiverPhoneLabel", t.caregiverPhone);
-
-    setText("saveCaregiverButton", t.saveCaregiver);
-
-    setText("reportTitle", t.report);
-
-    setText("reportTotalText", t.totalMedicines);
-
-    setText("reportTakenText", t.medicinesTaken);
-
-    setText("reportMissedText", t.medicinesMissed);
-
-    setText("reportAdherenceText", t.adherence);
-
-    setText("logTitle", t.activityLog);
-
-    setText("callCaregiverButton", t.callCaregiver);
-
-    setText("ambulanceButton", t.emergency);
-
-    setText("logoutButton", t.logout);
-
-    setText("aiTitle", t.aiTitle);
-
-    setText("aiMessage", t.aiMessage);
+        };
 
 
-    // Login
-    setText("loginSubtitle", t.subtitle);
+    const setPlaceholder =
+        function(id, text) {
 
-    setText("nameLabel", t.patientName);
+            const element =
+                document.getElementById(id);
 
-    setText("phoneLabel", t.phone);
+            if (element) {
 
-    setText("languageLabel", t.language);
+                element.placeholder =
+                    text;
 
-    setText("loginButton", t.login);
+            }
+
+        };
 
 
-    // Placeholders
+    setText(
+        "loginSubtitle",
+        t.subtitle
+    );
+
+    setText(
+        "headerSubtitle",
+        t.subtitle
+    );
+
+    setText(
+        "aiStatusText",
+        t.aiStatus
+    );
+
+    setText(
+        "nameLabel",
+        t.patientName
+    );
+
+    setText(
+        "phoneLabel",
+        t.phone
+    );
+
+    setText(
+        "languageLabel",
+        t.language
+    );
+
+    setText(
+        "loginButton",
+        t.login
+    );
+
+    setText(
+        "totalLabel",
+        t.total
+    );
+
+    setText(
+        "takenLabel",
+        t.taken
+    );
+
+    setText(
+        "missedLabel",
+        t.missed
+    );
+
+    setText(
+        "adherenceLabel",
+        t.adherence
+    );
+
+    setText(
+        "nextReminderTitle",
+        t.nextReminder
+    );
+
+    setText(
+        "addMedicineTitle",
+        t.addMedicine
+    );
+
+    setText(
+        "medicineListTitle",
+        t.medicineList
+    );
+
+    setText(
+        "caregiverTitle",
+        t.caregiver
+    );
+
+    setText(
+        "caregiverPhoneLabel",
+        t.caregiverPhone
+    );
+
+    setText(
+        "saveCaregiverButton",
+        t.saveCaregiver
+    );
+
+    setText(
+        "reportTitle",
+        t.report
+    );
+
+    setText(
+        "reportTotalText",
+        t.totalMedicines
+    );
+
+    setText(
+        "reportTakenText",
+        t.medicinesTaken
+    );
+
+    setText(
+        "reportMissedText",
+        t.medicinesMissed
+    );
+
+    setText(
+        "reportAdherenceText",
+        t.adherence
+    );
+
+    setText(
+        "fullReportButton",
+        "📄 " + t.fullReport
+    );
+
+    setText(
+        "logTitle",
+        t.activityLog
+    );
+
+    setText(
+        "aiTitle",
+        t.aiTitle
+    );
+
+    setText(
+        "aiMessage",
+        t.aiMessage
+    );
+
+    setText(
+        "callCaregiverButton",
+        "📞 " + t.callCaregiver
+    );
+
+    setText(
+        "ambulanceButton",
+        "🚑 " + t.emergency
+    );
+
+    setText(
+        "logoutButton",
+        t.logout
+    );
+
+    setText(
+        "enableVoiceButton",
+        "🔊 " + t.enableVoice
+    );
+
+
     setPlaceholder(
         "patientName",
         t.patientName
@@ -561,45 +947,20 @@ function applyLanguage(lang) {
         t.caregiverPhone
     );
 
-    setText("addButton", t.add);
+
+    const name =
+        localStorage.getItem(
+            "patientName"
+        );
 
 
-    // Keep dropdown synchronized
-    const dashboardLanguage =
-        document.getElementById("dashboardLanguage");
+    if (name) {
 
-    if (dashboardLanguage) {
-        dashboardLanguage.value = lang;
-    }
+        setText(
+            "welcomeTitle",
+            `${t.welcome}, ${name}!`
+        );
 
-
-    const loginLanguage =
-        document.getElementById("languageSelect");
-
-    if (loginLanguage) {
-        loginLanguage.value = lang;
-    }
-
-}
-
-
-function setText(id, text) {
-
-    const element = document.getElementById(id);
-
-    if (element) {
-        element.textContent = text;
-    }
-
-}
-
-
-function setPlaceholder(id, text) {
-
-    const element = document.getElementById(id);
-
-    if (element) {
-        element.placeholder = text;
     }
 
 }
@@ -612,19 +973,28 @@ function setPlaceholder(id, text) {
 function login() {
 
     const name =
-        document.getElementById("patientName").value.trim();
+        document.getElementById(
+            "patientName"
+        ).value.trim();
+
 
     const phone =
-        document.getElementById("patientPhone").value.trim();
+        document.getElementById(
+            "patientPhone"
+        ).value.trim();
+
 
     const language =
-        document.getElementById("languageSelect").value;
+        document.getElementById(
+            "languageSelect"
+        ).value;
 
 
     if (!name || !phone) {
 
         alert(
-            translations[language].invalidDetails
+            translations[language]
+                .invalidDetails
         );
 
         return;
@@ -648,11 +1018,19 @@ function login() {
     );
 
 
-    document.getElementById("loginSection")
-        .style.display = "none";
+    document.getElementById(
+        "loginSection"
+    ).style.display = "none";
 
-    document.getElementById("dashboardSection")
-        .style.display = "block";
+
+    document.getElementById(
+        "dashboardSection"
+    ).style.display = "block";
+
+
+    document.getElementById(
+        "dashboardLanguage"
+    ).value = language;
 
 
     loadMedicines();
@@ -665,28 +1043,95 @@ function login() {
 
     updateNextReminder();
 
-    startReminderChecker();
-
     prepareSpeech();
 
+    enableMobileVoiceSilently();
+
+    startReminderChecker();
 
     addLog(
-        "User logged into MEDICARE AI"
+        translations[language].login
     );
 
 }
 
 
 // ============================================================
-// MEDICINE STORAGE KEY
+// STORAGE KEY
 // ============================================================
 
 function getMedicineStorageKey() {
 
     const phone =
-        localStorage.getItem("patientPhone") || "default";
+        localStorage.getItem(
+            "patientPhone"
+        ) || "default";
 
-    return "medicines_" + phone;
+    return (
+        "medicines_" +
+        phone
+    );
+
+}
+
+
+// ============================================================
+// SAVE MEDICINES
+// ============================================================
+
+function saveMedicines() {
+
+    localStorage.setItem(
+        getMedicineStorageKey(),
+        JSON.stringify(
+            medicines
+        )
+    );
+
+}
+
+
+// ============================================================
+// LOAD MEDICINES
+// ============================================================
+
+function loadMedicines() {
+
+    try {
+
+        const data =
+            localStorage.getItem(
+                getMedicineStorageKey()
+            );
+
+
+        medicines =
+            data
+                ? JSON.parse(data)
+                : [];
+
+
+        if (!Array.isArray(medicines)) {
+
+            medicines = [];
+
+        }
+
+    }
+
+    catch(error) {
+
+        console.log(
+            "Medicine loading error:",
+            error
+        );
+
+        medicines = [];
+
+    }
+
+
+    renderMedicines();
 
 }
 
@@ -698,43 +1143,57 @@ function getMedicineStorageKey() {
 function addMedicine() {
 
     const name =
-        document.getElementById("medicineName")
-            .value.trim();
+        document.getElementById(
+            "medicineName"
+        ).value.trim();
+
 
     const dosage =
-        document.getElementById("dosage")
-            .value.trim();
+        document.getElementById(
+            "dosage"
+        ).value.trim();
+
 
     const time =
-        document.getElementById("medicineTime")
-            .value;
+        document.getElementById(
+            "medicineTime"
+        ).value;
 
-    const lang = getLanguage();
 
-    const t = translations[lang];
+    const lang =
+        getLanguage();
+
+
+    const t =
+        translations[lang];
 
 
     if (!name || !dosage || !time) {
 
-        alert(t.invalidDetails);
+        alert(
+            t.invalidDetails
+        );
 
         return;
 
     }
 
 
-    const existing =
-        medicines.find(
+    const duplicate =
+        medicines.some(
             medicine =>
-                medicine.name.toLowerCase() === name.toLowerCase() &&
+                medicine.name.toLowerCase() ===
+                name.toLowerCase() &&
                 medicine.time === time &&
                 medicine.status === "Pending"
         );
 
 
-    if (existing) {
+    if (duplicate) {
 
-        alert(t.medicineAlreadyExists);
+        alert(
+            t.medicineAlreadyExists
+        );
 
         return;
 
@@ -754,12 +1213,19 @@ function addMedicine() {
         status: "Pending",
 
         createdAt:
-            new Date().toLocaleString()
+            new Date().toLocaleString(),
+
+        takenAt: "",
+
+        missedAt: ""
 
     };
 
 
-    medicines.push(medicine);
+    medicines.push(
+        medicine
+    );
+
 
     saveMedicines();
 
@@ -770,57 +1236,37 @@ function addMedicine() {
     updateNextReminder();
 
 
-    document.getElementById("medicineName").value = "";
-
-    document.getElementById("dosage").value = "";
-
-    document.getElementById("medicineTime").value = "";
+    document.getElementById(
+        "medicineName"
+    ).value = "";
 
 
-    document.getElementById("voiceStatus")
-        .textContent = t.voiceReady;
+    document.getElementById(
+        "dosage"
+    ).value = "";
+
+
+    document.getElementById(
+        "medicineTime"
+    ).value = "";
+
+
+    document.getElementById(
+        "voiceStatus"
+    ).textContent =
+        "💊 " + t.medicineAdded;
 
 
     addLog(
-        `${name} - ${time} - ${t.medicineAdded}`
+        "💊 " +
+        name +
+        " - " +
+        t.medicineAdded
     );
 
-}
 
-
-// ============================================================
-// SAVE MEDICINES
-// ============================================================
-
-function saveMedicines() {
-
-    localStorage.setItem(
-        getMedicineStorageKey(),
-        JSON.stringify(medicines)
-    );
-
-}
-
-
-// ============================================================
-// LOAD MEDICINES
-// ============================================================
-
-function loadMedicines() {
-
-    const stored =
-        localStorage.getItem(
-            getMedicineStorageKey()
-        );
-
-
-    medicines =
-        stored
-            ? JSON.parse(stored)
-            : [];
-
-
-    renderMedicines();
+    // Mobile browser user interaction
+    enableMobileVoiceSilently();
 
 }
 
@@ -832,22 +1278,45 @@ function loadMedicines() {
 function renderMedicines() {
 
     const list =
-        document.getElementById("medicineList");
+        document.getElementById(
+            "medicineList"
+        );
 
-    if (!list) return;
+
+    if (!list) {
+
+        return;
+
+    }
 
 
     list.innerHTML = "";
 
 
+    const lang =
+        getLanguage();
+
+
+    const t =
+        translations[lang];
+
+
     if (medicines.length === 0) {
 
-        const t = translations[getLanguage()];
-
         list.innerHTML = `
-            <div class="medicine-item">
+
+            <div
+                style="
+                    padding:20px;
+                    text-align:center;
+                    color:#607d8b;
+                "
+            >
+
                 ${t.noReminder}
+
             </div>
+
         `;
 
         return;
@@ -855,111 +1324,152 @@ function renderMedicines() {
     }
 
 
-    medicines
-        .sort((a, b) =>
-            a.time.localeCompare(b.time)
-        )
-        .forEach(medicine => {
-
-            const item =
-                document.createElement("div");
-
-            item.className =
-                "medicine-item";
+    const sorted =
+        medicines
+            .slice()
+            .sort(
+                (a, b) =>
+                    a.time.localeCompare(
+                        b.time
+                    )
+            );
 
 
-            let statusClass =
-                "pending";
-
-            if (medicine.status === "Taken") {
-
-                statusClass = "taken";
-
-            }
-
-            if (medicine.status === "Missed") {
-
-                statusClass = "missed";
-
-            }
+    sorted.forEach(
+        medicine => {
 
 
-            const t =
-                translations[getLanguage()];
-
-
-            let translatedStatus =
+            let statusText =
                 t.pending;
 
 
-            if (medicine.status === "Taken") {
+            if (
+                medicine.status ===
+                "Taken"
+            ) {
 
-                translatedStatus =
+                statusText =
                     t.takenStatus;
 
             }
 
-            if (medicine.status === "Missed") {
+            else if (
+                medicine.status ===
+                "Missed"
+            ) {
 
-                translatedStatus =
+                statusText =
                     t.missedStatus;
 
             }
 
 
-            item.innerHTML = `
+            let actionButtons = "";
 
-                <div class="medicine-info">
 
-                    <h3>
-                        💊 ${escapeHTML(medicine.name)}
-                    </h3>
+            if (
+                medicine.status ===
+                "Pending"
+            ) {
 
-                    <p>
-                        ${escapeHTML(medicine.dosage)}
-                    </p>
-
-                    <p>
-                        ⏰ ${medicine.time}
-                    </p>
-
-                    <p class="status ${statusClass}">
-                        ${translatedStatus}
-                    </p>
-
-                </div>
-
-                <div class="medicine-actions">
-
-                    ${
-                        medicine.status === "Pending"
-                        ?
-                        `
-                        <button
-                            class="btn-success"
-                            onclick="markTaken(${medicine.id})"
-                        >
-                            ${t.take}
-                        </button>
-                        `
-                        :
-                        ""
-                    }
+                actionButtons = `
 
                     <button
-                        class="btn-danger"
-                        onclick="deleteMedicine(${medicine.id})"
+                        class="btn-success"
+                        onclick="markTaken(${medicine.id})"
                     >
-                        ${t.delete}
+
+                        ✓ ${t.take}
+
                     </button>
 
+                `;
+
+            }
+
+
+            list.innerHTML += `
+
+                <div class="medicine-item">
+
+                    <div class="medicine-info">
+
+                        <h3>
+                            💊
+                            ${escapeHTML(
+                                medicine.name
+                            )}
+                        </h3>
+
+                        <p>
+                            <strong>
+                                ${t.dosage}:
+                            </strong>
+
+                            ${escapeHTML(
+                                medicine.dosage
+                            )}
+                        </p>
+
+                        <p>
+                            🕐
+                            ${medicine.time}
+                        </p>
+
+                        <p
+                            class="status
+                            ${medicine.status.toLowerCase()}"
+                        >
+
+                            ${statusText}
+
+                        </p>
+
+                        ${
+                            medicine.takenAt
+                            ? `
+                                <p>
+                                    ✓ ${medicine.takenAt}
+                                </p>
+                            `
+                            : ""
+                        }
+
+                        ${
+                            medicine.missedAt
+                            ? `
+                                <p>
+                                    ✕ ${medicine.missedAt}
+                                </p>
+                            `
+                            : ""
+                        }
+
+                    </div>
+
+
+                    <div class="medicine-actions">
+
+                        ${actionButtons}
+
+
+                        <button
+                            class="btn-danger"
+                            onclick="deleteMedicine(${medicine.id})"
+                        >
+
+                            🗑 ${t.delete}
+
+                        </button>
+
+                    </div>
+
                 </div>
+
             `;
 
-
-            list.appendChild(item);
-
-        });
+        }
+    );
 
 }
 
@@ -970,12 +1480,27 @@ function renderMedicines() {
 
 function escapeHTML(value) {
 
-    const div =
-        document.createElement("div");
-
-    div.textContent = value;
-
-    return div.innerHTML;
+    return String(value ?? "")
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
 
 }
 
@@ -989,11 +1514,13 @@ function updateDashboard() {
     const total =
         medicines.length;
 
+
     const taken =
         medicines.filter(
             medicine =>
                 medicine.status === "Taken"
         ).length;
+
 
     const missed =
         medicines.filter(
@@ -1009,51 +1536,81 @@ function updateDashboard() {
     const adherence =
         completed > 0
             ? Math.round(
-                (taken / completed) * 100
+                (taken / completed) *
+                100
             )
             : 0;
 
 
-    setText(
+    setElementText(
         "totalMedicines",
         total
     );
 
-    setText(
+
+    setElementText(
         "takenMedicines",
         taken
     );
 
-    setText(
+
+    setElementText(
         "missedMedicines",
         missed
     );
 
-    setText(
+
+    setElementText(
         "adherence",
         adherence + "%"
     );
 
 
-    setText(
+    setElementText(
         "reportTotal",
         total
     );
 
-    setText(
+
+    setElementText(
         "reportTaken",
         taken
     );
 
-    setText(
+
+    setElementText(
         "reportMissed",
         missed
     );
 
-    setText(
+
+    setElementText(
         "reportAdherence",
         adherence + "%"
     );
+
+}
+
+
+// ============================================================
+// HELPER
+// ============================================================
+
+function setElementText(
+    id,
+    value
+) {
+
+    const element =
+        document.getElementById(id);
+
+
+    if (element) {
+
+        element.textContent =
+            value;
+
+    }
 
 }
 
@@ -1065,39 +1622,70 @@ function updateDashboard() {
 function updateNextReminder() {
 
     const element =
-        document.getElementById("nextReminder");
-
-    if (!element) return;
-
-
-    const pending =
-        medicines
-            .filter(
-                medicine =>
-                    medicine.status === "Pending"
-            )
-            .sort(
-                (a, b) =>
-                    a.time.localeCompare(b.time)
-            );
+        document.getElementById(
+            "nextReminder"
+        );
 
 
-    if (pending.length === 0) {
-
-        element.textContent =
-            translations[getLanguage()].noReminder;
+    if (!element) {
 
         return;
 
     }
 
 
-    const next =
+    const pending =
+        medicines
+            .filter(
+                medicine =>
+                    medicine.status ===
+                    "Pending"
+            )
+            .sort(
+                (a, b) =>
+                    a.time.localeCompare(
+                        b.time
+                    )
+            );
+
+
+    if (pending.length === 0) {
+
+        element.textContent =
+            translations[
+                getLanguage()
+            ].noReminder;
+
+        return;
+
+    }
+
+
+    const medicine =
         pending[0];
 
 
-    element.textContent =
-        `${next.name} - ${next.time}`;
+    element.innerHTML = `
+
+        💊
+        ${escapeHTML(
+            medicine.name
+        )}
+
+        <br>
+
+        🕐
+        ${medicine.time}
+
+        <br>
+
+        <small>
+            ${escapeHTML(
+                medicine.dosage
+            )}
+        </small>
+
+    `;
 
 }
 
@@ -1108,7 +1696,8 @@ function updateNextReminder() {
 
 function getSpeechLanguage() {
 
-    const lang = getLanguage();
+    const lang =
+        getLanguage();
 
 
     if (lang === "ta") {
@@ -1138,65 +1727,119 @@ function getSpeechLanguage() {
 
 
 // ============================================================
-// FIND VOICE
-// ============================================================
-
-function getVoice(languageCode) {
-
-    const voices =
-        window.speechSynthesis.getVoices();
-
-
-    if (!voices || voices.length === 0) {
-
-        return null;
-
-    }
-
-
-    // Exact language match
-    let voice =
-        voices.find(
-            v =>
-                v.lang.toLowerCase() ===
-                languageCode.toLowerCase()
-        );
-
-
-    if (voice) return voice;
-
-
-    // Same language
-    const shortCode =
-        languageCode
-            .split("-")[0]
-            .toLowerCase();
-
-
-    voice =
-        voices.find(
-            v =>
-                v.lang
-                    .toLowerCase()
-                    .startsWith(shortCode)
-        );
-
-
-    return voice || null;
-
-}
-
-
-// ============================================================
 // PREPARE SPEECH
 // ============================================================
 
 function prepareSpeech() {
 
-    if (!("speechSynthesis" in window)) {
+    if (
+        !(
+            "speechSynthesis"
+            in window
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    function loadVoices() {
+
+        availableVoices =
+            window.speechSynthesis
+                .getVoices();
 
         console.log(
-            "Speech synthesis is not supported."
+            "Available voices:",
+            availableVoices
+        );
+
+    }
+
+
+    loadVoices();
+
+
+    window.speechSynthesis
+        .onvoiceschanged =
+        loadVoices;
+
+}
+
+
+// ============================================================
+// FIND VOICE
+// ============================================================
+
+function getVoice(
+    languageCode
+) {
+
+    if (
+        !availableVoices ||
+        availableVoices.length === 0
+    ) {
+
+        availableVoices =
+            window.speechSynthesis
+                .getVoices();
+
+    }
+
+
+    const exact =
+        availableVoices.find(
+            voice =>
+                voice.lang
+                    .toLowerCase() ===
+                languageCode
+                    .toLowerCase()
+        );
+
+
+    if (exact) {
+
+        return exact;
+
+    }
+
+
+    const prefix =
+        languageCode
+            .split("-")[0]
+            .toLowerCase();
+
+
+    const matching =
+        availableVoices.find(
+            voice =>
+                voice.lang
+                    .toLowerCase()
+                    .startsWith(prefix)
+        );
+
+
+    return matching || null;
+
+}
+
+
+// ============================================================
+// ENABLE MOBILE VOICE
+// ============================================================
+
+function enableMobileVoice() {
+
+    if (
+        !(
+            "speechSynthesis"
+            in window
+        )
+    ) {
+
+        alert(
+            "Voice reminders are not supported by this browser."
         );
 
         return;
@@ -1204,16 +1847,218 @@ function prepareSpeech() {
     }
 
 
-    // Force browser to load voices
-    window.speechSynthesis.getVoices();
+    mobileVoiceEnabled = true;
 
 
-    window.speechSynthesis.onvoiceschanged =
-        function () {
+    prepareSpeech();
 
-            window.speechSynthesis.getVoices();
+
+    const lang =
+        getLanguage();
+
+
+    let testMessage =
+        "Voice reminder enabled";
+
+
+    if (lang === "ta") {
+
+        testMessage =
+            "குரல் நினைவூட்டல் செயல்படுத்தப்பட்டது";
+
+    }
+
+    else if (lang === "hi") {
+
+        testMessage =
+            "वॉयस रिमाइंडर सक्रिय किया गया है";
+
+    }
+
+    else if (lang === "te") {
+
+        testMessage =
+            "వాయిస్ రిమైండర్ ప్రారంభించబడింది";
+
+    }
+
+
+    window.speechSynthesis.cancel();
+
+
+    const speech =
+        new SpeechSynthesisUtterance(
+            testMessage
+        );
+
+
+    speech.lang =
+        getSpeechLanguage();
+
+
+    speech.rate =
+        0.85;
+
+
+    speech.pitch =
+        1;
+
+
+    speech.volume =
+        1;
+
+
+    const voice =
+        getVoice(
+            speech.lang
+        );
+
+
+    if (voice) {
+
+        speech.voice =
+            voice;
+
+    }
+
+
+    speech.onstart =
+        function() {
+
+            const status =
+                document.getElementById(
+                    "voiceStatus"
+                );
+
+
+            if (status) {
+
+                status.textContent =
+                    testMessage;
+
+            }
 
         };
+
+
+    speech.onend =
+        function() {
+
+            const status =
+                document.getElementById(
+                    "voiceStatus"
+                );
+
+
+            if (status) {
+
+                status.textContent =
+                    translations[
+                        getLanguage()
+                    ].voiceReady;
+
+            }
+
+        };
+
+
+    speech.onerror =
+        function(event) {
+
+            console.log(
+                "Voice error:",
+                event.error
+            );
+
+        };
+
+
+    try {
+
+        window.speechSynthesis.resume();
+
+        window.speechSynthesis.speak(
+            speech
+        );
+
+    }
+
+    catch(error) {
+
+        console.log(
+            error
+        );
+
+    }
+
+}
+
+
+// ============================================================
+// SILENT MOBILE VOICE UNLOCK
+// ============================================================
+
+function enableMobileVoiceSilently() {
+
+    if (mobileVoiceEnabled) {
+
+        return;
+
+    }
+
+
+    if (
+        !(
+            "speechSynthesis"
+            in window
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    try {
+
+        const unlockSpeech =
+            new SpeechSynthesisUtterance(
+                " "
+            );
+
+
+        unlockSpeech.lang =
+            getSpeechLanguage();
+
+
+        unlockSpeech.volume =
+            0;
+
+
+        unlockSpeech.rate =
+            10;
+
+
+        window.speechSynthesis.speak(
+            unlockSpeech
+        );
+
+
+        window.speechSynthesis.resume();
+
+
+        mobileVoiceEnabled = true;
+
+    }
+
+    catch(error) {
+
+        console.log(
+            "Voice unlock error:",
+            error
+        );
+
+    }
 
 }
 
@@ -1222,13 +2067,16 @@ function prepareSpeech() {
 // SPEAK MEDICINE REMINDER
 // ============================================================
 
-function speakMedicineReminder(medicine) {
+function speakMedicineReminder(
+    medicine
+) {
 
-    if (!("speechSynthesis" in window)) {
-
-        alert(
-            "Your browser does not support voice reminders."
-        );
+    if (
+        !(
+            "speechSynthesis"
+            in window
+        )
+    ) {
 
         return;
 
@@ -1243,39 +2091,13 @@ function speakMedicineReminder(medicine) {
         getSpeechLanguage();
 
 
-    const t =
-        translations[lang];
-
-
-    /*
-     IMPORTANT:
-
-     medicine.name is exactly the name
-     entered by the user.
-
-     Example:
-
-     medicine.name = "Paracetamol"
-
-     Tamil:
-     "Paracetamol மருந்தை எடுத்துக்கொள்ளும் நேரம்"
-
-     Hindi:
-     "Paracetamol दवा लेने का समय हो गया है"
-
-     Telugu:
-     "Paracetamol మందు తీసుకునే సమయం వచ్చింది"
-
-     */
-
-
     let message = "";
 
 
     if (lang === "ta") {
 
         message =
-            `${medicine.name} மருந்தை எடுத்துக்கொள்ளும் நேரம்`;
+            `${medicine.name} மருந்தை எடுத்துக்கொள்ளும் நேரம் வந்துவிட்டது`;
 
     }
 
@@ -1301,7 +2123,12 @@ function speakMedicineReminder(medicine) {
     }
 
 
-    // Stop previous speech
+    console.log(
+        "VOICE:",
+        message
+    );
+
+
     window.speechSynthesis.cancel();
 
 
@@ -1315,36 +2142,45 @@ function speakMedicineReminder(medicine) {
         speechLanguage;
 
 
-    speech.rate = 0.85;
+    speech.rate =
+        0.85;
 
-    speech.pitch = 1.0;
 
-    speech.volume = 1.0;
+    speech.pitch =
+        1;
+
+
+    speech.volume =
+        1;
 
 
     const voice =
-        getVoice(speechLanguage);
+        getVoice(
+            speechLanguage
+        );
 
 
     if (voice) {
 
-        speech.voice = voice;
+        speech.voice =
+            voice;
 
     }
 
 
     speech.onstart =
-        function () {
+        function() {
 
             const status =
                 document.getElementById(
                     "voiceStatus"
                 );
 
+
             if (status) {
 
                 status.textContent =
-                    message;
+                    "🔊 " + message;
 
             }
 
@@ -1352,7 +2188,7 @@ function speakMedicineReminder(medicine) {
 
 
     speech.onerror =
-        function (event) {
+        function(event) {
 
             console.log(
                 "Speech error:",
@@ -1362,42 +2198,54 @@ function speakMedicineReminder(medicine) {
         };
 
 
-    window.speechSynthesis.speak(
-        speech
+    try {
+
+        window.speechSynthesis.resume();
+
+        window.speechSynthesis.speak(
+            speech
+        );
+
+    }
+
+    catch(error) {
+
+        console.log(
+            "Speech error:",
+            error
+        );
+
+    }
+
+}
+
+
+// ============================================================
+// START REMINDER CHECKER
+// ============================================================
+
+function startReminderChecker() {
+
+    if (reminderCheckerStarted) {
+
+        return;
+
+    }
+
+
+    reminderCheckerStarted = true;
+
+
+    setInterval(
+        checkMedicationReminder,
+        1000
     );
 
 }
 
 
 // ============================================================
-// REMINDER CHECKER
-// ============================================================
-
-function startReminderChecker() {
-
-    if (reminderLoop) {
-
-        clearInterval(
-            reminderLoop
-        );
-
-    }
-
-
-    reminderLoop =
-        setInterval(
-            checkMedicationReminder,
-            1000
-        );
-
-
-    checkMedicationReminder();
-
-}
-
-
-// ============================================================
-// CHECK CURRENT TIME
+// CHECK MEDICATION REMINDER
 // ============================================================
 
 function checkMedicationReminder() {
@@ -1406,28 +2254,27 @@ function checkMedicationReminder() {
         new Date();
 
 
-    const currentHour =
-        String(
-            now.getHours()
-        ).padStart(2, "0");
-
-
-    const currentMinute =
-        String(
-            now.getMinutes()
-        ).padStart(2, "0");
-
-
     const currentTime =
-        `${currentHour}:${currentMinute}`;
+        now.toTimeString()
+            .slice(0, 5);
 
 
     medicines.forEach(
         medicine => {
 
             if (
-                medicine.status === "Pending" &&
-                medicine.time === currentTime
+                medicine.status !==
+                "Pending"
+            ) {
+
+                return;
+
+            }
+
+
+            if (
+                medicine.time ===
+                currentTime
             ) {
 
                 triggerReminder(
@@ -1446,12 +2293,14 @@ function checkMedicationReminder() {
 // TRIGGER REMINDER
 // ============================================================
 
-function triggerReminder(medicine) {
+function triggerReminder(
+    medicine
+) {
 
-    // Prevent duplicate reminder
     if (
         activeReminder &&
-        activeReminder.id === medicine.id
+        activeReminder.id ===
+        medicine.id
     ) {
 
         return;
@@ -1459,40 +2308,25 @@ function triggerReminder(medicine) {
     }
 
 
+    stopActiveReminder();
+
+
     activeReminder =
         medicine;
 
 
-    // Stop any previous repetition
-    if (reminderLoopRepeat) {
-
-        clearInterval(
-            reminderLoopRepeat
-        );
-
-    }
-
-
-    // Stop any previous missed timer
-    if (missedTimer) {
-
-        clearTimeout(
-            missedTimer
-        );
-
-    }
-
-
     // Speak immediately
+
     speakMedicineReminder(
         medicine
     );
 
 
-    // Repeat every 10 seconds
+    // Repeat voice every 10 seconds
+
     reminderLoopRepeat =
         setInterval(
-            function () {
+            function() {
 
                 if (
                     medicine.status ===
@@ -1510,10 +2344,11 @@ function triggerReminder(medicine) {
         );
 
 
-    // After 60 seconds → Missed
+    // Mark missed after 60 seconds
+
     missedTimer =
         setTimeout(
-            function () {
+            function() {
 
                 if (
                     medicine.status ===
@@ -1524,9 +2359,20 @@ function triggerReminder(medicine) {
                         "Missed";
 
 
+                    medicine.missedAt =
+                        new Date()
+                            .toLocaleString();
+
+
+                    medicine.takenAt =
+                        "";
+
+
                     saveMedicines();
 
+
                     loadMedicines();
+
 
                     updateDashboard();
 
@@ -1544,7 +2390,12 @@ function triggerReminder(medicine) {
 
 
                     addLog(
-                        `${medicine.name} - Missed`
+                        "❌ " +
+                        medicine.name +
+                        " - " +
+                        translations[
+                            getLanguage()
+                        ].reminderMissed
                     );
 
                 }
@@ -1589,7 +2440,15 @@ function stopActiveReminder() {
     }
 
 
-    window.speechSynthesis.cancel();
+    if (
+        "speechSynthesis"
+        in window
+    ) {
+
+        window.speechSynthesis.cancel();
+
+    }
+
 
     activeReminder =
         null;
@@ -1598,7 +2457,7 @@ function stopActiveReminder() {
 
 
 // ============================================================
-// MARK MEDICINE TAKEN
+// MARK TAKEN
 // ============================================================
 
 function markTaken(id) {
@@ -1610,14 +2469,24 @@ function markTaken(id) {
         );
 
 
-    if (!medicine) return;
+    if (!medicine) {
+
+        return;
+
+    }
 
 
     medicine.status =
         "Taken";
 
 
-    saveMedicines();
+    medicine.takenAt =
+        new Date()
+            .toLocaleString();
+
+
+    medicine.missedAt =
+        "";
 
 
     if (
@@ -1630,6 +2499,8 @@ function markTaken(id) {
     }
 
 
+    saveMedicines();
+
     loadMedicines();
 
     updateDashboard();
@@ -1638,11 +2509,16 @@ function markTaken(id) {
 
 
     const t =
-        translations[getLanguage()];
+        translations[
+            getLanguage()
+        ];
 
 
     addLog(
-        `${medicine.name} - ${t.takenStatus}`
+        "✓ " +
+        medicine.name +
+        " - " +
+        t.takenStatus
     );
 
 }
@@ -1661,7 +2537,11 @@ function deleteMedicine(id) {
         );
 
 
-    if (!medicine) return;
+    if (!medicine) {
+
+        return;
+
+    }
 
 
     if (
@@ -1691,34 +2571,71 @@ function deleteMedicine(id) {
 
 
     addLog(
-        `${medicine.name} - ${
-            translations[getLanguage()].medicineDeleted
-        }`
+        "🗑 " +
+        medicine.name +
+        " - " +
+        translations[
+            getLanguage()
+        ].medicineDeleted
     );
 
 }
 
 
 // ============================================================
-// MISSED REMINDER VOICE
+// MISSED VOICE
 // ============================================================
 
-function speakMissedReminder(medicine) {
+function speakMissedReminder(
+    medicine
+) {
+
+    if (
+        !(
+            "speechSynthesis"
+            in window
+        )
+    ) {
+
+        return;
+
+    }
+
 
     const lang =
         getLanguage();
 
 
-    const speechLanguage =
-        getSpeechLanguage();
+    let message = "";
 
 
-    const t =
-        translations[lang];
+    if (lang === "ta") {
 
+        message =
+            `${medicine.name} மருந்து தவறிவிட்டது`;
 
-    const message =
-        `${t.reminderMissed}: ${medicine.name}`;
+    }
+
+    else if (lang === "hi") {
+
+        message =
+            `${medicine.name} दवा छूट गई है`;
+
+    }
+
+    else if (lang === "te") {
+
+        message =
+            `${medicine.name} మందు తప్పిపోయింది`;
+
+    }
+
+    else {
+
+        message =
+            `${medicine.name} medicine was missed`;
+
+    }
 
 
     const speech =
@@ -1728,7 +2645,7 @@ function speakMissedReminder(medicine) {
 
 
     speech.lang =
-        speechLanguage;
+        getSpeechLanguage();
 
 
     speech.rate =
@@ -1737,7 +2654,7 @@ function speakMissedReminder(medicine) {
 
     const voice =
         getVoice(
-            speechLanguage
+            speech.lang
         );
 
 
@@ -1748,8 +2665,6 @@ function speakMissedReminder(medicine) {
 
     }
 
-
-    window.speechSynthesis.cancel();
 
     window.speechSynthesis.speak(
         speech
@@ -1762,7 +2677,9 @@ function speakMissedReminder(medicine) {
 // CAREGIVER SMS
 // ============================================================
 
-function sendCaregiverSMS(medicine) {
+function sendCaregiverSMS(
+    medicine
+) {
 
     const caregiver =
         localStorage.getItem(
@@ -1771,6 +2688,10 @@ function sendCaregiverSMS(medicine) {
 
 
     if (!caregiver) {
+
+        console.log(
+            "No caregiver number saved."
+        );
 
         return;
 
@@ -1781,13 +2702,13 @@ function sendCaregiverSMS(medicine) {
         getLanguage();
 
 
-    let message;
+    let message = "";
 
 
     if (lang === "ta") {
 
         message =
-            `மருந்து நினைவூட்டல்: ${medicine.name} மருந்தை நோயாளி எடுக்கவில்லை. தயவுசெய்து சரிபார்க்கவும்.`;
+            `மருந்து நினைவூட்டல்: நோயாளி ${medicine.name} மருந்தை எடுக்கவில்லை. தயவுசெய்து சரிபார்க்கவும்.`;
 
     }
 
@@ -1814,17 +2735,29 @@ function sendCaregiverSMS(medicine) {
 
 
     const smsURL =
-        `sms:${caregiver}?body=${encodeURIComponent(message)}`;
+        "sms:" +
+        caregiver +
+        "?body=" +
+        encodeURIComponent(
+            message
+        );
 
 
     window.location.href =
         smsURL;
 
+
+    addLog(
+        translations[
+            lang
+        ].caregiverAlert
+    );
+
 }
 
 
 // ============================================================
-// CAREGIVER
+// SAVE CAREGIVER
 // ============================================================
 
 function saveCaregiver() {
@@ -1836,6 +2769,12 @@ function saveCaregiver() {
 
 
     if (!phone) {
+
+        alert(
+            translations[
+                getLanguage()
+            ].caregiverPhone
+        );
 
         return;
 
@@ -1849,31 +2788,47 @@ function saveCaregiver() {
 
 
     alert(
-        translations[getLanguage()]
-            .caregiverSaved
+        translations[
+            getLanguage()
+        ].caregiverSaved
     );
 
 
     addLog(
-        "Caregiver number saved"
+        "📞 " +
+        translations[
+            getLanguage()
+        ].caregiverSaved
     );
 
 }
 
 
+// ============================================================
+// LOAD CAREGIVER
+// ============================================================
+
 function loadCaregiver() {
 
-    const phone =
+    const caregiver =
         localStorage.getItem(
             "caregiverPhone"
         );
 
 
-    if (phone) {
-
+    const input =
         document.getElementById(
             "caregiverPhone"
-        ).value = phone;
+        );
+
+
+    if (
+        caregiver &&
+        input
+    ) {
+
+        input.value =
+            caregiver;
 
     }
 
@@ -1886,17 +2841,18 @@ function loadCaregiver() {
 
 function callCaregiver() {
 
-    const phone =
+    const caregiver =
         localStorage.getItem(
             "caregiverPhone"
         );
 
 
-    if (!phone) {
+    if (!caregiver) {
 
         alert(
-            translations[getLanguage()]
-                .caregiverPhone
+            translations[
+                getLanguage()
+            ].caregiverPhone
         );
 
         return;
@@ -1905,13 +2861,13 @@ function callCaregiver() {
 
 
     window.location.href =
-        `tel:${phone}`;
+        "tel:" + caregiver;
 
 }
 
 
 // ============================================================
-// AMBULANCE
+// EMERGENCY
 // ============================================================
 
 function callAmbulance() {
@@ -1926,7 +2882,9 @@ function callAmbulance() {
 // ACTIVITY LOG
 // ============================================================
 
-function addLog(message) {
+function addLog(
+    message
+) {
 
     const log =
         document.getElementById(
@@ -1934,7 +2892,16 @@ function addLog(message) {
         );
 
 
-    if (!log) return;
+    if (!log) {
+
+        return;
+
+    }
+
+
+    const time =
+        new Date()
+            .toLocaleString();
 
 
     const item =
@@ -1948,10 +2915,24 @@ function addLog(message) {
 
 
     item.textContent =
-        `${new Date().toLocaleTimeString()} - ${message}`;
+        `${time} - ${message}`;
 
 
-    log.prepend(item);
+    log.prepend(
+        item
+    );
+
+
+    while (
+        log.children.length >
+        50
+    ) {
+
+        log.removeChild(
+            log.lastChild
+        );
+
+    }
 
 }
 
@@ -1965,34 +2946,793 @@ function logout() {
     stopActiveReminder();
 
 
-    if (reminderLoop) {
+    if (
+        "speechSynthesis"
+        in window
+    ) {
 
-        clearInterval(
-            reminderLoop
-        );
-
-        reminderLoop =
-            null;
+        window.speechSynthesis.cancel();
 
     }
 
 
-    window.speechSynthesis.cancel();
-
-
     document.getElementById(
         "dashboardSection"
-    ).style.display = "none";
+    ).style.display =
+        "none";
 
 
     document.getElementById(
         "loginSection"
-    ).style.display = "flex";
+    ).style.display =
+        "flex";
 
 
-    addLog(
-        "User logged out"
-    );
+    mobileVoiceEnabled =
+        false;
+
+}
+
+
+// ============================================================
+// FULL MEDICATION REPORT
+// PRINT / SAVE AS PDF
+// ============================================================
+
+function generateMedicationReport() {
+
+    const lang =
+        getLanguage();
+
+
+    const t =
+        translations[lang];
+
+
+    const patientName =
+        localStorage.getItem(
+            "patientName"
+        ) || "Patient";
+
+
+    const patientPhone =
+        localStorage.getItem(
+            "patientPhone"
+        ) || "";
+
+
+    const total =
+        medicines.length;
+
+
+    const taken =
+        medicines.filter(
+            medicine =>
+                medicine.status ===
+                "Taken"
+        ).length;
+
+
+    const missed =
+        medicines.filter(
+            medicine =>
+                medicine.status ===
+                "Missed"
+        ).length;
+
+
+    const pending =
+        medicines.filter(
+            medicine =>
+                medicine.status ===
+                "Pending"
+        ).length;
+
+
+    const completed =
+        taken + missed;
+
+
+    const adherence =
+        completed > 0
+            ? Math.round(
+                (
+                    taken /
+                    completed
+                ) * 100
+            )
+            : 0;
+
+
+    let tableRows = "";
+
+
+    medicines
+        .slice()
+        .sort(
+            (a, b) =>
+                a.time.localeCompare(
+                    b.time
+                )
+        )
+        .forEach(
+            medicine => {
+
+
+                let statusText =
+                    t.pending;
+
+
+                if (
+                    medicine.status ===
+                    "Taken"
+                ) {
+
+                    statusText =
+                        t.takenStatus;
+
+                }
+
+                else if (
+                    medicine.status ===
+                    "Missed"
+                ) {
+
+                    statusText =
+                        t.missedStatus;
+
+                }
+
+
+                let actionTime =
+                    "-";
+
+
+                if (
+                    medicine.status ===
+                    "Taken"
+                ) {
+
+                    actionTime =
+                        medicine.takenAt ||
+                        "-";
+
+                }
+
+                else if (
+                    medicine.status ===
+                    "Missed"
+                ) {
+
+                    actionTime =
+                        medicine.missedAt ||
+                        "-";
+
+                }
+
+
+                tableRows += `
+
+                    <tr>
+
+                        <td>
+                            💊
+                            ${escapeHTML(
+                                medicine.name
+                            )}
+                        </td>
+
+                        <td>
+                            ${escapeHTML(
+                                medicine.dosage
+                            )}
+                        </td>
+
+                        <td>
+                            ${medicine.time}
+                        </td>
+
+                        <td class="
+                            ${medicine.status.toLowerCase()}
+                        ">
+
+                            ${statusText}
+
+                        </td>
+
+                        <td>
+                            ${actionTime}
+                        </td>
+
+                    </tr>
+
+                `;
+
+            }
+        );
+
+
+    if (!tableRows) {
+
+        tableRows = `
+
+            <tr>
+
+                <td
+                    colspan="5"
+                    style="
+                        text-align:center;
+                        padding:30px;
+                    "
+                >
+
+                    ${t.noReminder}
+
+                </td>
+
+            </tr>
+
+        `;
+
+    }
+
+
+    const reportWindow =
+        window.open(
+            "",
+            "_blank"
+        );
+
+
+    if (!reportWindow) {
+
+        alert(
+            "Please allow pop-ups to generate the report."
+        );
+
+        return;
+
+    }
+
+
+    reportWindow.document.write(`
+
+<!DOCTYPE html>
+
+<html lang="${lang}">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width,
+             initial-scale=1.0"
+>
+
+<title>
+    MEDICARE AI - ${t.report}
+</title>
+
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+
+body {
+
+    font-family:
+        Arial,
+        "Noto Sans",
+        sans-serif;
+
+    margin: 0;
+
+    padding: 30px;
+
+    background: #f5f7f8;
+
+    color: #263238;
+
+}
+
+
+.report-container {
+
+    max-width: 1100px;
+
+    margin: auto;
+
+    background: white;
+
+    padding: 30px;
+
+    border-radius: 15px;
+
+}
+
+
+.header {
+
+    text-align: center;
+
+    border-bottom:
+        3px solid #00897b;
+
+    padding-bottom: 20px;
+
+    margin-bottom: 20px;
+
+}
+
+
+.header h1 {
+
+    color: #00695c;
+
+    margin: 0 0 8px 0;
+
+}
+
+
+.patient {
+
+    background: #e0f2f1;
+
+    padding: 18px;
+
+    border-radius: 10px;
+
+    margin-bottom: 20px;
+
+    line-height: 1.7;
+
+}
+
+
+.summary {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 15px;
+
+    margin-bottom: 25px;
+
+}
+
+
+.summary-card {
+
+    text-align: center;
+
+    padding: 18px;
+
+    border-radius: 10px;
+
+    background: #f5f5f5;
+
+}
+
+
+.summary-card h3 {
+
+    margin: 0;
+
+    font-size: 14px;
+
+}
+
+
+.summary-card p {
+
+    font-size: 28px;
+
+    font-weight: bold;
+
+    color: #00695c;
+
+    margin: 8px 0 0;
+
+}
+
+
+table {
+
+    width: 100%;
+
+    border-collapse: collapse;
+
+    margin-top: 15px;
+
+}
+
+
+th {
+
+    background: #00897b;
+
+    color: white;
+
+    padding: 12px;
+
+    text-align: left;
+
+}
+
+
+td {
+
+    padding: 12px;
+
+    border-bottom:
+        1px solid #ddd;
+
+}
+
+
+.taken {
+
+    color: #2e7d32;
+
+    font-weight: bold;
+
+}
+
+
+.missed {
+
+    color: #c62828;
+
+    font-weight: bold;
+
+}
+
+
+.pending {
+
+    color: #ef6c00;
+
+    font-weight: bold;
+
+}
+
+
+.report-footer {
+
+    margin-top: 25px;
+
+    padding: 18px;
+
+    background: #f5f5f5;
+
+    border-radius: 10px;
+
+}
+
+
+.print-btn {
+
+    display: block;
+
+    margin: 25px auto 0;
+
+    background: #00897b;
+
+    color: white;
+
+    border: none;
+
+    padding: 14px 25px;
+
+    border-radius: 8px;
+
+    font-size: 16px;
+
+    cursor: pointer;
+
+}
+
+
+.footer {
+
+    margin-top: 25px;
+
+    text-align: center;
+
+    color: #607d8b;
+
+    font-size: 13px;
+
+}
+
+
+@media(max-width:700px) {
+
+    body {
+
+        padding: 10px;
+
+    }
+
+
+    .report-container {
+
+        padding: 15px;
+
+    }
+
+
+    .summary {
+
+        grid-template-columns:
+            repeat(2, 1fr);
+
+    }
+
+
+    table {
+
+        font-size: 11px;
+
+    }
+
+
+    th,
+    td {
+
+        padding: 7px;
+
+    }
+
+}
+
+
+@media print {
+
+    body {
+
+        background: white;
+
+        padding: 0;
+
+    }
+
+
+    .report-container {
+
+        box-shadow: none;
+
+        max-width: none;
+
+    }
+
+
+    .print-btn {
+
+        display: none;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="report-container">
+
+
+    <div class="header">
+
+        <h1>
+            💊 MEDICARE AI
+        </h1>
+
+        <p>
+            ${t.report}
+        </p>
+
+    </div>
+
+
+    <div class="patient">
+
+        <strong>
+            ${t.patientName}:
+        </strong>
+
+        ${escapeHTML(
+            patientName
+        )}
+
+        <br>
+
+
+        <strong>
+            ${t.phone}:
+        </strong>
+
+        ${escapeHTML(
+            patientPhone
+        )}
+
+        <br>
+
+
+        <strong>
+            ${t.reportGenerated}:
+        </strong>
+
+        ${new Date().toLocaleString()}
+
+    </div>
+
+
+    <div class="summary">
+
+
+        <div class="summary-card">
+
+            <h3>
+                ${t.totalMedicines}
+            </h3>
+
+            <p>
+                ${total}
+            </p>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <h3>
+                ${t.medicinesTaken}
+            </h3>
+
+            <p>
+                ${taken}
+            </p>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <h3>
+                ${t.medicinesMissed}
+            </h3>
+
+            <p>
+                ${missed}
+            </p>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <h3>
+                ${t.adherence}
+            </h3>
+
+            <p>
+                ${adherence}%
+            </p>
+
+        </div>
+
+
+    </div>
+
+
+    <h2>
+        ${t.medicineList}
+    </h2>
+
+
+    <table>
+
+        <thead>
+
+            <tr>
+
+                <th>
+                    ${t.medicineName}
+                </th>
+
+                <th>
+                    ${t.dosage}
+                </th>
+
+                <th>
+                    ${t.scheduledTime}
+                </th>
+
+                <th>
+                    ${t.status}
+                </th>
+
+                <th>
+                    ${t.actionTime}
+                </th>
+
+            </tr>
+
+        </thead>
+
+
+        <tbody>
+
+            ${tableRows}
+
+        </tbody>
+
+    </table>
+
+
+    <div class="report-footer">
+
+        <strong>
+            ${t.medicinesPending}:
+        </strong>
+
+        ${pending}
+
+        <br><br>
+
+        <strong>
+            ${t.adherence}:
+        </strong>
+
+        ${adherence}%
+
+    </div>
+
+
+    <button
+        class="print-btn"
+        onclick="window.print()"
+    >
+
+        📄 ${t.printSave}
+
+    </button>
+
+
+    <div class="footer">
+
+        MEDICARE AI
+
+        <br>
+
+        ${t.subtitle}
+
+    </div>
+
+
+</div>
+
+
+</body>
+
+</html>
+
+    `);
+
+
+    reportWindow.document.close();
 
 }
 
@@ -2001,9 +3741,9 @@ function logout() {
 // PAGE LOAD
 // ============================================================
 
-window.addEventListener(
+document.addEventListener(
     "DOMContentLoaded",
-    function () {
+    function() {
 
         const savedLanguage =
             localStorage.getItem(
@@ -2023,28 +3763,30 @@ window.addEventListener(
             );
 
 
-        document.getElementById(
-            "languageSelect"
-        ).value =
-            savedLanguage;
-
-
-        if (savedName) {
-
+        const languageSelect =
             document.getElementById(
-                "patientName"
-            ).value =
-                savedName;
+                "languageSelect"
+            );
+
+
+        const dashboardLanguage =
+            document.getElementById(
+                "dashboardLanguage"
+            );
+
+
+        if (languageSelect) {
+
+            languageSelect.value =
+                savedLanguage;
 
         }
 
 
-        if (savedPhone) {
+        if (dashboardLanguage) {
 
-            document.getElementById(
-                "patientPhone"
-            ).value =
-                savedPhone;
+            dashboardLanguage.value =
+                savedLanguage;
 
         }
 
@@ -2057,11 +3799,41 @@ window.addEventListener(
         prepareSpeech();
 
 
-        // If user was already logged in
+        // ------------------------------------------------
+        // Mobile browser voice unlock
+        // First user touch/click enables speech.
+        // ------------------------------------------------
+
+        document.addEventListener(
+            "pointerdown",
+            function() {
+
+                enableMobileVoiceSilently();
+
+            },
+            {
+                once: true,
+                passive: true
+            }
+        );
+
+
         if (
             savedName &&
             savedPhone
         ) {
+
+            document.getElementById(
+                "patientName"
+            ).value =
+                savedName;
+
+
+            document.getElementById(
+                "patientPhone"
+            ).value =
+                savedPhone;
+
 
             document.getElementById(
                 "loginSection"
@@ -2096,16 +3868,21 @@ window.addEventListener(
 
 
 // ============================================================
-// VOICE LISTENER
+// LOAD SPEECH VOICES
 // ============================================================
 
-if ("speechSynthesis" in window) {
+if (
+    "speechSynthesis"
+    in window
+) {
 
-    window.speechSynthesis.onvoiceschanged =
-        function () {
+    window.speechSynthesis
+        .onvoiceschanged =
+        function() {
 
-            window.speechSynthesis
-                .getVoices();
+            availableVoices =
+                window.speechSynthesis
+                    .getVoices();
 
         };
 
