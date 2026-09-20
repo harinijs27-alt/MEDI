@@ -2,2715 +2,1085 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>JS MEDICARE</title>
-// =====================================================
-// JS MEDICARE
-// COMPLETE JAVASCRIPT
-// =====================================================
 
-
-let medicines = [];
-
-let activeReminder = null;
-
-let reminderLoop = null;
-
-let patientName = "";
-
-let patientPhone = "";
-
-let selectedLanguage = "en";
-
-let medicareAudio = null;
-
-let voiceUnlocked = false;
-
-
-// =====================================================
-// TRANSLATIONS
-// =====================================================
-
-const translations = {
-
-    en: {
-
-        welcome: "Welcome to JS MEDICARE",
-
-        aiStatus: "AI Monitoring Online",
-
-        aiTitle: "AI Medication Monitoring",
-
-        aiMessage:
-            "Your medication schedule is being monitored automatically.",
-
-        addMedicine: "Add Medicine",
-
-        myMedicines: "My Medicines",
-
-        nextReminder: "Next Reminder"
-
-    },
-
-
-    ta: {
-
-        welcome: "JS MEDICARE க்கு வரவேற்கிறோம்",
-
-        aiStatus: "AI கண்காணிப்பு இயங்குகிறது",
-
-        aiTitle: "AI மருந்து கண்காணிப்பு",
-
-        aiMessage:
-            "உங்கள் மருந்து அட்டவணை தானாக கண்காணிக்கப்படுகிறது.",
-
-        addMedicine: "மருந்தை சேர்க்கவும்",
-
-        myMedicines: "எனது மருந்துகள்",
-
-        nextReminder: "அடுத்த நினைவூட்டல்"
-
-    },
-
-
-    hi: {
-
-        welcome: "JS MEDICARE में आपका स्वागत है",
-
-        aiStatus: "AI निगरानी चालू है",
-
-        aiTitle: "AI दवा निगरानी",
-
-        aiMessage:
-            "आपकी दवा की समय-सारणी स्वचालित रूप से निगरानी की जा रही है।",
-
-        addMedicine: "दवा जोड़ें",
-
-        myMedicines: "मेरी दवाएं",
-
-        nextReminder: "अगला रिमाइंडर"
-
-    },
-
-
-    te: {
-
-        welcome: "JS MEDICARE కు స్వాగతం",
-
-        aiStatus: "AI పర్యవేక్షణ ఆన్‌లైన్‌లో ఉంది",
-
-        aiTitle: "AI మందుల పర్యవేక్షణ",
-
-        aiMessage:
-            "మీ మందుల షెడ్యూల్ స్వయంచాలకంగా పర్యవేక్షించబడుతోంది.",
-
-        addMedicine: "మందును జోడించండి",
-
-        myMedicines: "నా మందులు",
-
-        nextReminder: "తదుపరి రిమైండర్"
-
-    }
-
-};
-
-
-// =====================================================
-// GET LANGUAGE
-// =====================================================
-
-function getLanguage() {
-
-    return selectedLanguage || "en";
-
-}
-
-
-// =====================================================
-// LOGIN
-// =====================================================
-
-function login() {
-
-    const nameInput =
-        document.getElementById("patientName");
-
-    const phoneInput =
-        document.getElementById("patientPhone");
-
-    const languageInput =
-        document.getElementById("languageSelect");
-
-
-    patientName =
-        nameInput.value.trim();
-
-    patientPhone =
-        phoneInput.value.trim();
-
-    selectedLanguage =
-        languageInput.value;
-
-
-    if (!patientName) {
-
-        alert("Please enter patient name.");
-
-        nameInput.focus();
-
-        return;
-    }
-
-
-    if (!patientPhone) {
-
-        alert("Please enter patient phone number.");
-
-        phoneInput.focus();
-
-        return;
-    }
-
-
-    localStorage.setItem(
-        "medicare_patient_name",
-        patientName
-    );
-
-
-    localStorage.setItem(
-        "medicare_patient_phone",
-        patientPhone
-    );
-
-
-    localStorage.setItem(
-        "medicare_language",
-        selectedLanguage
-    );
-
-
-    loadMedicines();
-
-    loadCaregiver();
-
-    applyLanguage();
-
-    document.getElementById(
-        "loginSection"
-    ).style.display = "none";
-
-
-    document.getElementById(
-        "dashboardSection"
-    ).style.display = "block";
-
-
-    renderMedicines();
-
-    updateDashboard();
-
-    startReminderChecker();
-
-    addLog(
-        "Login successful."
-    );
-
-
-    console.log(
-        "MEDICARE: Login successful"
-    );
-}
-
-
-// =====================================================
-// LOAD PATIENT
-// =====================================================
-
-function loadPatientData() {
-
-    patientName =
-        localStorage.getItem(
-            "medicare_patient_name"
-        ) || "";
-
-    patientPhone =
-        localStorage.getItem(
-            "medicare_patient_phone"
-        ) || "";
-
-    selectedLanguage =
-        localStorage.getItem(
-            "medicare_language"
-        ) || "en";
-
-
-    const nameInput =
-        document.getElementById("patientName");
-
-    const phoneInput =
-        document.getElementById("patientPhone");
-
-    const languageInput =
-        document.getElementById("languageSelect");
-
-
-    if (nameInput) {
-
-        nameInput.value =
-            patientName;
-    }
-
-
-    if (phoneInput) {
-
-        phoneInput.value =
-            patientPhone;
-    }
-
-
-    if (languageInput) {
-
-        languageInput.value =
-            selectedLanguage;
-    }
-
-}
-
-
-// =====================================================
-// CHANGE LANGUAGE
-// =====================================================
-
-function changeLanguage(language) {
-
-    selectedLanguage = language;
-
-
-    localStorage.setItem(
-        "medicare_language",
-        language
-    );
-
-
-    const loginLanguage =
-        document.getElementById(
-            "languageSelect"
-        );
-
-
-    const dashboardLanguage =
-        document.getElementById(
-            "dashboardLanguage"
-        );
-
-
-    if (loginLanguage) {
-
-        loginLanguage.value =
-            language;
-    }
-
-
-    if (dashboardLanguage) {
-
-        dashboardLanguage.value =
-            language;
-    }
-
-
-    applyLanguage();
-
-
-    renderMedicines();
-
-}
-
-
-// =====================================================
-// APPLY LANGUAGE
-// =====================================================
-
-function applyLanguage() {
-
-    const lang =
-        translations[getLanguage()] ||
-        translations.en;
-
-
-    const welcome =
-        document.getElementById(
-            "welcomeTitle"
-        );
-
-    const aiStatus =
-        document.getElementById(
-            "aiStatusText"
-        );
-
-    const aiTitle =
-        document.getElementById(
-            "aiTitle"
-        );
-
-    const aiMessage =
-        document.getElementById(
-            "aiMessage"
-        );
-
-
-    if (welcome) {
-
-        welcome.textContent =
-            lang.welcome;
-    }
-
-
-    if (aiStatus) {
-
-        aiStatus.textContent =
-            lang.aiStatus;
-    }
-
-
-    if (aiTitle) {
-
-        aiTitle.textContent =
-            lang.aiTitle;
-    }
-
-
-    if (aiMessage) {
-
-        aiMessage.textContent =
-            lang.aiMessage;
-    }
-
-}
-
-
-// =====================================================
-// ENABLE MOBILE VOICE
-// =====================================================
-
-function enableMobileVoice() {
-
-    if (
-        "speechSynthesis"
-        in window
-    ) {
-
-        speechSynthesis.cancel();
-
-        const testSpeech =
-            new SpeechSynthesisUtterance(
-                ""
-            );
-
-        testSpeech.lang =
-            getBrowserLanguage();
-
-        speechSynthesis.speak(
-            testSpeech
-        );
-
-        voiceUnlocked = true;
-
-
-        const status =
-            document.getElementById(
-                "voiceStatus"
-            );
-
-
-        if (status) {
-
-            status.textContent =
-                "✓ Voice enabled successfully.";
+    <style>
+        * {
+            box-sizing: border-box;
         }
 
-    } else {
-
-        alert(
-            "Speech is not supported in this browser."
-        );
-    }
-
-}
-
-
-// =====================================================
-// VOICE LANGUAGE CODE
-// =====================================================
-
-function getVoiceLanguageCode() {
-
-    const lang =
-        getLanguage();
-
-
-    if (lang === "ta") {
-
-        return "ta";
-    }
-
-
-    if (lang === "hi") {
-
-        return "hi";
-    }
-
-
-    if (lang === "te") {
-
-        return "te";
-    }
-
-
-    return "en";
-
-}
-
-
-// =====================================================
-// BROWSER LANGUAGE
-// =====================================================
-
-function getBrowserLanguage() {
-
-    const lang =
-        getLanguage();
-
-
-    if (lang === "ta") {
-
-        return "ta-IN";
-    }
-
-
-    if (lang === "hi") {
-
-        return "hi-IN";
-    }
-
-
-    if (lang === "te") {
-
-        return "te-IN";
-    }
-
-
-    return "en-IN";
-
-}
-
-
-// =====================================================
-// BUILD REMINDER MESSAGE
-// =====================================================
-
-function buildReminderMessage(
-    medicineName
-) {
-
-    const lang =
-        getLanguage();
-
-
-    // IMPORTANT:
-    // Medicine name is NOT translated.
-    // It remains exactly as entered.
-
-    const name =
-        String(
-            medicineName || ""
-        ).trim();
-
-
-    if (!name) {
-
-        return "";
-    }
-
-
-    // TAMIL
-
-    if (lang === "ta") {
-
-        return `${name} மருந்தை எடுத்துக்கொள்ளும் நேரம் வந்துவிட்டது.`;
-    }
-
-
-    // HINDI
-
-    if (lang === "hi") {
-
-        return `${name} दवा लेने का समय हो गया है।`;
-    }
-
-
-    // TELUGU
-
-    if (lang === "te") {
-
-        return `${name} మందు తీసుకునే సమయం వచ్చింది.`;
-    }
-
-
-    // ENGLISH
-
-    return `It is time to take ${name}.`;
-
-}
-
-
-// =====================================================
-// REGIONAL VOICE
-// =====================================================
-
-function speakRegionalVoice(text) {
-
-    if (
-        !text ||
-        !text.trim()
-    ) {
-
-        return;
-    }
-
-
-    const language =
-        getVoiceLanguageCode();
-
-
-    // Stop old speech
-
-    try {
-
-        speechSynthesis.cancel();
-
-    } catch (error) {
-
-        console.log(error);
-
-    }
-
-
-    // =================================================
-    // ENGLISH
-    // =================================================
-
-    if (language === "en") {
-
-        speakBrowserVoice(
-            text,
-            "en-IN"
-        );
-
-        return;
-    }
-
-
-    // =================================================
-    // REGIONAL LANGUAGE
-    // =================================================
-
-    const audioURL =
-        "https://translate.google.com/translate_tts" +
-        "?ie=UTF-8" +
-        "&client=tw-ob" +
-        "&tl=" +
-        language +
-        "&q=" +
-        encodeURIComponent(text);
-
-
-    try {
-
-        medicareAudio =
-            new Audio(audioURL);
-
-
-        medicareAudio.volume =
-            1.0;
-
-
-        medicareAudio.play()
-
-            .then(() => {
-
-                console.log(
-                    "MEDICARE VOICE:",
-                    language,
-                    "started"
-                );
-
-            })
-
-            .catch(error => {
-
-                console.log(
-                    "Regional voice failed:",
-                    error
-                );
-
-
-                speakBrowserVoice(
-                    text,
-                    getBrowserLanguage()
-                );
-
-            });
-
-
-    } catch (error) {
-
-        console.log(
-            "Voice error:",
-            error
-        );
-
-
-        speakBrowserVoice(
-            text,
-            getBrowserLanguage()
-        );
-
-    }
-
-}
-
-
-// =====================================================
-// BROWSER TTS
-// =====================================================
-
-function speakBrowserVoice(
-    text,
-    language
-) {
-
-    if (
-        !("speechSynthesis" in window)
-    ) {
-
-        console.log(
-            "Speech synthesis not supported."
-        );
-
-        return;
-    }
-
-
-    try {
-
-        speechSynthesis.cancel();
-
-        speechSynthesis.resume();
-
-
-        const speech =
-            new SpeechSynthesisUtterance(
-                text
-            );
-
-
-        speech.lang =
-            language;
-
-
-        speech.rate =
-            0.8;
-
-
-        speech.pitch =
-            1;
-
-
-        speech.volume =
-            1;
-
-
-        speechSynthesis.speak(
-            speech
-        );
-
-
-    } catch (error) {
-
-        console.log(
-            "Browser speech error:",
-            error
-        );
-
-    }
-
-}
-
-
-// =====================================================
-// STORAGE KEY
-// =====================================================
-
-function getMedicineStorageKey() {
-
-    const phone =
-        patientPhone ||
-        "default";
-
-
-    return (
-        "medicines_" +
-        phone
-    );
-
-}
-
-
-// =====================================================
-// LOAD MEDICINES
-// =====================================================
-
-function loadMedicines() {
-
-    try {
-
-        const saved =
-            localStorage.getItem(
-                getMedicineStorageKey()
-            );
-
-
-        medicines =
-            saved
-                ? JSON.parse(saved)
-                : [];
-
-
-        if (!Array.isArray(medicines)) {
-
-            medicines = [];
-
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f0fdf4;
+            color: #1f2937;
         }
 
-    } catch (error) {
-
-        console.log(
-            "Medicine loading error:",
-            error
-        );
-
-        medicines = [];
-
-    }
-
-}
-
-
-// =====================================================
-// SAVE MEDICINES
-// =====================================================
-
-function saveMedicines() {
-
-    localStorage.setItem(
-        getMedicineStorageKey(),
-        JSON.stringify(medicines)
-    );
-
-}
-
-
-// =====================================================
-// ADD MEDICINE
-// =====================================================
-
-function addMedicine() {
-
-    const nameInput =
-        document.getElementById(
-            "medicineName"
-        );
-
-
-    const dosageInput =
-        document.getElementById(
-            "dosage"
-        );
-
-
-    const timeInput =
-        document.getElementById(
-            "medicineTime"
-        );
-
-
-    const name =
-        nameInput.value.trim();
-
-
-    const dosage =
-        dosageInput.value.trim();
-
-
-    const time =
-        timeInput.value;
-
-
-    if (!name) {
-
-        alert(
-            "Please enter medicine name."
-        );
-
-        nameInput.focus();
-
-        return;
-    }
-
-
-    if (!time) {
-
-        alert(
-            "Please select medicine time."
-        );
-
-        timeInput.focus();
-
-        return;
-    }
-
-
-    const medicine = {
-
-        id:
-            Date.now(),
-
-        name:
-            name,
-
-        dosage:
-            dosage || "-",
-
-        time:
-            time,
-
-        status:
-            "pending",
-
-        createdAt:
-            new Date().toISOString(),
-
-        takenAt:
-            null,
-
-        missedAt:
-            null
-
-    };
-
-
-    medicines.push(
-        medicine
-    );
-
-
-    medicines.sort(
-        (a, b) =>
-            a.time.localeCompare(
-                b.time
-            )
-    );
-
-
-    saveMedicines();
-
-
-    renderMedicines();
-
-    updateDashboard();
-
-
-    addLog(
-        `${name} added for ${formatTime(time)}.`
-    );
-
-
-    nameInput.value = "";
-
-    dosageInput.value = "";
-
-    timeInput.value = "";
-
-
-    console.log(
-        "Medicine added:",
-        medicine
-    );
-
-}
-
-
-// =====================================================
-// RENDER MEDICINES
-// =====================================================
-
-function renderMedicines() {
-
-    const list =
-        document.getElementById(
-            "medicineList"
-        );
-
-
-    if (!list) {
-
-        return;
-    }
-
-
-    if (medicines.length === 0) {
-
-        list.innerHTML =
-            `<div class="empty">
-                No medicines added yet.
-            </div>`;
-
-        return;
-    }
-
-
-    list.innerHTML =
-        medicines.map(
-            medicine => {
-
-                const statusClass =
-                    medicine.status;
-
-
-                const statusText =
-                    medicine.status
-                        .charAt(0)
-                        .toUpperCase() +
-                    medicine.status.slice(1);
-
-
-                const takenText =
-                    medicine.takenAt
-                        ? `<p>Taken: ${formatDateTime(medicine.takenAt)}</p>`
-                        : "";
-
-
-                const missedText =
-                    medicine.missedAt
-                        ? `<p>Missed: ${formatDateTime(medicine.missedAt)}</p>`
-                        : "";
-
-
-                return `
-
-                <div class="medicine-item">
-
-                    <div class="medicine-info">
-
-                        <h3>
-                            💊 ${escapeHTML(medicine.name)}
-                        </h3>
-
-                        <p>
-                            Dosage:
-                            ${escapeHTML(medicine.dosage)}
-                        </p>
-
-                        <p>
-                            Time:
-                            ${formatTime(medicine.time)}
-                        </p>
-
-                        ${takenText}
-
-                        ${missedText}
-
-                        <span
-                            class="status ${statusClass}"
-                        >
-                            ${statusText}
-                        </span>
-
-                    </div>
-
-
-                    <div class="medicine-actions">
-
-                        ${
-                            medicine.status === "pending"
-                            ?
-
-                            `<button
-                                type="button"
-                                class="take-btn"
-                                onclick="markTaken(${medicine.id})"
-                            >
-                                ✓ I Took It
-                            </button>`
-
-                            :
-
-                            ""
-                        }
-
-
-                        <button
-                            type="button"
-                            class="delete-btn"
-                            onclick="deleteMedicine(${medicine.id})"
-                        >
-                            Delete
-                        </button>
-
-                    </div>
-
-                </div>
-
-                `;
-
-            }
-        ).join("");
-
-}
-
-
-// =====================================================
-// FORMAT TIME
-// =====================================================
-
-function formatTime(time) {
-
-    if (!time) {
-
-        return "--";
-    }
-
-
-    const parts =
-        time.split(":");
-
-
-    let hour =
-        parseInt(parts[0]);
-
-
-    const minute =
-        parts[1];
-
-
-    const period =
-        hour >= 12
-            ? "PM"
-            : "AM";
-
-
-    hour =
-        hour % 12 || 12;
-
-
-    return `${hour}:${minute} ${period}`;
-
-}
-
-
-// =====================================================
-// FORMAT DATE TIME
-// =====================================================
-
-function formatDateTime(
-    dateString
-) {
-
-    if (!dateString) {
-
-        return "--";
-    }
-
-
-    const date =
-        new Date(dateString);
-
-
-    return date.toLocaleString();
-
-}
-
-
-// =====================================================
-// ESCAPE HTML
-// =====================================================
-
-function escapeHTML(
-    value
-) {
-
-    return String(value)
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-        .replace(
-            /</g,
-            "&lt;"
-        )
-        .replace(
-            />/g,
-            "&gt;"
-        )
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-        .replace(
-            /'/g,
-            "&#039;"
-        );
-
-}
-
-
-// =====================================================
-// UPDATE DASHBOARD
-// =====================================================
-
-function updateDashboard() {
-
-    const total =
-        medicines.length;
-
-
-    const taken =
-        medicines.filter(
-            medicine =>
-                medicine.status ===
-                "taken"
-        ).length;
-
-
-    const missed =
-        medicines.filter(
-            medicine =>
-                medicine.status ===
-                "missed"
-        ).length;
-
-
-    const adherence =
-        total > 0
-            ? Math.round(
-                (taken / total) * 100
-            )
-            : 0;
-
-
-    setText(
-        "totalMedicines",
-        total
-    );
-
-
-    setText(
-        "takenMedicines",
-        taken
-    );
-
-
-    setText(
-        "missedMedicines",
-        missed
-    );
-
-
-    setText(
-        "adherence",
-        adherence + "%"
-    );
-
-
-    setText(
-        "reportTotal",
-        total
-    );
-
-
-    setText(
-        "reportTaken",
-        taken
-    );
-
-
-    setText(
-        "reportMissed",
-        missed
-    );
-
-
-    setText(
-        "reportAdherence",
-        adherence + "%"
-    );
-
-
-    updateNextReminder();
-
-}
-
-
-// =====================================================
-// SET TEXT
-// =====================================================
-
-function setText(
-    id,
-    value
-) {
-
-    const element =
-        document.getElementById(id);
-
-
-    if (element) {
-
-        element.textContent =
-            value;
-
-    }
-
-}
-
-
-// =====================================================
-// NEXT REMINDER
-// =====================================================
-
-function updateNextReminder() {
-
-    const element =
-        document.getElementById(
-            "nextReminder"
-        );
-
-
-    if (!element) {
-
-        return;
-    }
-
-
-    const pending =
-        medicines
-            .filter(
-                medicine =>
-                    medicine.status ===
-                    "pending"
-            )
-            .sort(
-                (a, b) =>
-                    a.time.localeCompare(
-                        b.time
-                    )
-            );
-
-
-    if (pending.length === 0) {
-
-        element.textContent =
-            "No upcoming reminder.";
-
-        return;
-    }
-
-
-    const next =
-        pending[0];
-
-
-    element.innerHTML =
-        `
-        💊
-        <strong>
-            ${escapeHTML(next.name)}
-        </strong>
-        <br>
-        Dosage:
-        ${escapeHTML(next.dosage)}
-        <br>
-        Time:
-        ${formatTime(next.time)}
-        `;
-
-}
-
-
-// =====================================================
-// START REMINDER CHECKER
-// =====================================================
-
-function startReminderChecker() {
-
-    if (reminderLoop) {
-
-        clearInterval(
-            reminderLoop
-        );
-
-    }
-
-
-    checkMedicationReminder();
-
-
-    reminderLoop =
-        setInterval(
-            checkMedicationReminder,
-            1000
-        );
-
-}
-
-
-// =====================================================
-// CHECK REMINDER
-// =====================================================
-
-function checkMedicationReminder() {
-
-    if (
-        medicines.length === 0
-    ) {
-
-        return;
-    }
-
-
-    const now =
-        new Date();
-
-
-    const currentHour =
-        String(
-            now.getHours()
-        ).padStart(
-            2,
-            "0"
-        );
-
-
-    const currentMinute =
-        String(
-            now.getMinutes()
-        ).padStart(
-            2,
-            "0"
-        );
-
-
-    const currentTime =
-        `${currentHour}:${currentMinute}`;
-
-
-    medicines.forEach(
-        medicine => {
-
-            if (
-                medicine.time ===
-                currentTime &&
-                medicine.status ===
-                "pending"
-            ) {
-
-                const lastTriggered =
-                    medicine.lastTriggered;
-
-
-                const today =
-                    new Date()
-                        .toDateString();
-
-
-                if (
-                    lastTriggered !==
-                    today
-                ) {
-
-                    medicine.lastTriggered =
-                        today;
-
-
-                    saveMedicines();
-
-
-                    triggerReminder(
-                        medicine
-                    );
-
-                }
-
-            }
-
-        }
-    );
-
-}
-
-
-// =====================================================
-// TRIGGER REMINDER
-// =====================================================
-
-function triggerReminder(
-    medicine
-) {
-
-    activeReminder =
-        medicine.id;
-
-
-    const medicineName =
-        String(
-            medicine.name || ""
-        ).trim();
-
-
-    if (!medicineName) {
-
-        return;
-    }
-
-
-    // Build regional-language message
-
-    const message =
-        buildReminderMessage(
-            medicineName
-        );
-
-
-    console.log(
-        "MEDICARE AI REMINDER"
-    );
-
-
-    console.log(
-        "Language:",
-        getLanguage()
-    );
-
-
-    console.log(
-        "Medicine:",
-        medicineName
-    );
-
-
-    console.log(
-        "Message:",
-        message
-    );
-
-
-    // Show visual popup
-
-    showVisualReminder(
-        medicine
-    );
-
-
-    // AUTOMATIC VOICE
-
-    speakRegionalVoice(
-        message
-    );
-
-
-    // Repeat after 10 seconds
-
-    setTimeout(
-        () => {
-
-            const currentMedicine =
-                medicines.find(
-                    m =>
-                        m.id ===
-                        medicine.id
-                );
-
-
-            if (
-                currentMedicine &&
-                currentMedicine.status ===
-                "pending"
-            ) {
-
-                speakRegionalVoice(
-                    message
-                );
-
-            }
-
-        },
-        10000
-    );
-
-
-    // Mark missed after 1 minute
-
-    setTimeout(
-        () => {
-
-            const currentMedicine =
-                medicines.find(
-                    m =>
-                        m.id ===
-                        medicine.id
-                );
-
-
-            if (
-                currentMedicine &&
-                currentMedicine.status ===
-                "pending"
-            ) {
-
-                currentMedicine.status =
-                    "missed";
-
-
-                currentMedicine.missedAt =
-                    new Date()
-                        .toISOString();
-
-
-                saveMedicines();
-
-
-                renderMedicines();
-
-                updateDashboard();
-
-
-                speakMissedReminder(
-                    currentMedicine
-                );
-
-
-                sendCaregiverSMS(
-                    currentMedicine
-                );
-
-
-                addLog(
-                    `${currentMedicine.name} was missed.`
-                );
-
-            }
-
-
-            closeReminderPopup();
-
-
-            if (
-                activeReminder ===
-                medicine.id
-            ) {
-
-                activeReminder =
-                    null;
-
-            }
-
-        },
-        60000
-    );
-
-}
-
-
-// =====================================================
-// VISUAL REMINDER
-// =====================================================
-
-function showVisualReminder(
-    medicine
-) {
-
-    const popup =
-        document.getElementById(
-            "reminderPopup"
-        );
-
-
-    const medicineName =
-        document.getElementById(
-            "popupMedicineName"
-        );
-
-
-    if (!popup) {
-
-        return;
-    }
-
-
-    if (medicineName) {
-
-        medicineName.textContent =
-            medicine.name;
-
-    }
-
-
-    popup.style.display =
-        "flex";
-
-}
-
-
-// =====================================================
-// CLOSE POPUP
-// =====================================================
-
-function closeReminderPopup() {
-
-    const popup =
-        document.getElementById(
-            "reminderPopup"
-        );
-
-
-    if (popup) {
-
-        popup.style.display =
-            "none";
-
-    }
-
-}
-
-
-// =====================================================
-// MARK TAKEN FROM POPUP
-// =====================================================
-
-function markTakenFromPopup() {
-
-    if (!activeReminder) {
-
-        closeReminderPopup();
-
-        return;
-    }
-
-
-    markTaken(
-        activeReminder
-    );
-
-}
-
-
-// =====================================================
-// MARK TAKEN
-// =====================================================
-
-function markTaken(
-    id
-) {
-
-    const medicine =
-        medicines.find(
-            item =>
-                item.id === id
-        );
-
-
-    if (!medicine) {
-
-        return;
-    }
-
-
-    medicine.status =
-        "taken";
-
-
-    medicine.takenAt =
-        new Date()
-            .toISOString();
-
-
-    saveMedicines();
-
-
-    renderMedicines();
-
-    updateDashboard();
-
-
-    addLog(
-        `${medicine.name} marked as taken.`
-    );
-
-
-    if (
-        activeReminder === id
-    ) {
-
-        activeReminder =
-            null;
-
-    }
-
-
-    closeReminderPopup();
-
-
-    try {
-
-        speechSynthesis.cancel();
-
-    } catch (error) {
-
-        console.log(error);
-
-    }
-
-
-    if (medicareAudio) {
-
-        try {
-
-            medicareAudio.pause();
-
-        } catch (error) {
-
-            console.log(error);
-
+        /* ================= LOGIN ================= */
+
+        .login-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #dcfce7, #f0fdf4);
+            padding: 20px;
         }
 
-    }
-
-}
-
-
-// =====================================================
-// DELETE MEDICINE
-// =====================================================
-
-function deleteMedicine(
-    id
-) {
-
-    const medicine =
-        medicines.find(
-            item =>
-                item.id === id
-        );
-
-
-    if (!medicine) {
-
-        return;
-    }
-
-
-    const confirmDelete =
-        confirm(
-            `Delete ${medicine.name}?`
-        );
-
-
-    if (!confirmDelete) {
-
-        return;
-    }
-
-
-    medicines =
-        medicines.filter(
-            item =>
-                item.id !== id
-        );
-
-
-    saveMedicines();
-
-
-    renderMedicines();
-
-    updateDashboard();
-
-
-    addLog(
-        `${medicine.name} deleted.`
-    );
-
-}
-
-
-// =====================================================
-// MISSED REMINDER VOICE
-// =====================================================
-
-function speakMissedReminder(
-    medicine
-) {
-
-    const lang =
-        getLanguage();
-
-
-    const name =
-        medicine.name;
-
-
-    let message = "";
-
-
-    if (lang === "ta") {
-
-        message =
-            `${name} மருந்து எடுத்துக்கொள்ளப்படவில்லை.`;
-
-    }
-
-
-    else if (lang === "hi") {
-
-        message =
-            `${name} दवा नहीं ली गई है।`;
-
-    }
-
-
-    else if (lang === "te") {
-
-        message =
-            `${name} మందు తీసుకోలేదు.`;
-
-    }
-
-
-    else {
-
-        message =
-            `${name} medicine was not taken.`;
-
-    }
-
-
-    speakRegionalVoice(
-        message
-    );
-
-}
-
-
-// =====================================================
-// CAREGIVER SMS
-// =====================================================
-
-function sendCaregiverSMS(
-    medicine
-) {
-
-    const caregiver =
-        localStorage.getItem(
-            getCaregiverKey()
-        );
-
-
-    if (!caregiver) {
-
-        console.log(
-            "No caregiver number saved."
-        );
-
-        return;
-    }
-
-
-    const message =
-        `${patientName || "Patient"} missed ${medicine.name}.`;
-
-
-    const smsURL =
-        "sms:" +
-        caregiver +
-        "?body=" +
-        encodeURIComponent(
-            message
-        );
-
-
-    console.log(
-        "Caregiver SMS:",
-        smsURL
-    );
-
-
-    // Open SMS application
-
-    window.location.href =
-        smsURL;
-
-}
-
-
-// =====================================================
-// CAREGIVER STORAGE KEY
-// =====================================================
-
-function getCaregiverKey() {
-
-    return (
-        "caregiver_" +
-        (
-            patientPhone ||
-            "default"
-        )
-    );
-
-}
-
-
-// =====================================================
-// SAVE CAREGIVER
-// =====================================================
-
-function saveCaregiver() {
-
-    const input =
-        document.getElementById(
-            "caregiverPhone"
-        );
-
-
-    const number =
-        input.value.trim();
-
-
-    if (!number) {
-
-        alert(
-            "Please enter caregiver phone number."
-        );
-
-        return;
-    }
-
-
-    localStorage.setItem(
-        getCaregiverKey(),
-        number
-    );
-
-
-    addLog(
-        "Caregiver number saved."
-    );
-
-
-    alert(
-        "Caregiver number saved successfully."
-    );
-
-}
-
-
-// =====================================================
-// LOAD CAREGIVER
-// =====================================================
-
-function loadCaregiver() {
-
-    const input =
-        document.getElementById(
-            "caregiverPhone"
-        );
-
-
-    if (!input) {
-
-        return;
-    }
-
-
-    input.value =
-        localStorage.getItem(
-            getCaregiverKey()
-        ) || "";
-
-}
-
-
-// =====================================================
-// CALL CAREGIVER
-// =====================================================
-
-function callCaregiver() {
-
-    const number =
-        localStorage.getItem(
-            getCaregiverKey()
-        );
-
-
-    if (!number) {
-
-        alert(
-            "Please save caregiver phone number first."
-        );
-
-        return;
-    }
-
-
-    window.location.href =
-        "tel:" +
-        number;
-
-}
-
-
-// =====================================================
-// CALL AMBULANCE
-// =====================================================
-
-function callAmbulance() {
-
-    const confirmCall =
-        confirm(
-            "Call emergency services?"
-        );
-
-
-    if (!confirmCall) {
-
-        return;
-    }
-
-
-    window.location.href =
-        "tel:112";
-
-}
-
-
-// =====================================================
-// ACTIVITY LOG
-// =====================================================
-
-function addLog(
-    message
-) {
-
-    const log =
-        document.getElementById(
-            "activityLog"
-        );
-
-
-    if (!log) {
-
-        return;
-    }
-
-
-    const empty =
-        log.querySelector(
-            ".empty"
-        );
-
-
-    if (empty) {
-
-        empty.remove();
-
-    }
-
-
-    const item =
-        document.createElement(
-            "div"
-        );
-
-
-    item.className =
-        "activity-item";
-
-
-    item.textContent =
-        `${new Date().toLocaleString()} - ${message}`;
-
-
-    log.prepend(
-        item
-    );
-
-}
-
-
-// =====================================================
-// MEDICATION REPORT
-// =====================================================
-
-function generateMedicationReport() {
-
-    const total =
-        medicines.length;
-
-
-    const taken =
-        medicines.filter(
-            medicine =>
-                medicine.status ===
-                "taken"
-        ).length;
-
-
-    const missed =
-        medicines.filter(
-            medicine =>
-                medicine.status ===
-                "missed"
-        ).length;
-
-
-    const adherence =
-        total > 0
-            ? Math.round(
-                (taken / total) * 100
-            )
-            : 0;
-
-
-    const reportWindow =
-        window.open(
-            "",
-            "_blank"
-        );
-
-
-    if (!reportWindow) {
-
-        alert(
-            "Please allow pop-ups to print the report."
-        );
-
-        return;
-    }
-
-
-    const medicineRows =
-        medicines.map(
-            medicine => {
-
-                return `
-                    <tr>
-
-                        <td>
-                            ${escapeHTML(medicine.name)}
-                        </td>
-
-                        <td>
-                            ${escapeHTML(medicine.dosage)}
-                        </td>
-
-                        <td>
-                            ${formatTime(medicine.time)}
-                        </td>
-
-                        <td>
-                            ${medicine.status}
-                        </td>
-
-                        <td>
-                            ${
-                                medicine.takenAt
-                                ?
-                                formatDateTime(
-                                    medicine.takenAt
-                                )
-                                :
-                                "-"
-                            }
-                        </td>
-
-                    </tr>
-                `;
-
+        .login-card {
+            width: 100%;
+            max-width: 420px;
+            background: white;
+            padding: 28px;
+            border-radius: 18px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 42px;
+            margin-bottom: 5px;
+        }
+
+        .login-card h1 {
+            margin: 5px 0;
+            color: #15803d;
+        }
+
+        .subtitle {
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 22px;
+        }
+
+        .form-group {
+            text-align: left;
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 6px;
+            color: #374151;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #bbf7d0;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            background: white;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: #16a34a;
+            box-shadow: 0 0 0 2px #dcfce7;
+        }
+
+        button {
+            border: none;
+            border-radius: 8px;
+            padding: 9px 15px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-1px);
+        }
+
+        .primary-btn {
+            width: 100%;
+            background: #16a34a;
+            color: white;
+            margin-top: 5px;
+        }
+
+        .primary-btn:hover {
+            background: #15803d;
+        }
+
+        .voice-btn {
+            width: 100%;
+            background: #dcfce7;
+            color: #15803d;
+            margin-top: 10px;
+        }
+
+        .voice-status {
+            margin-top: 10px;
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        /* ================= DASHBOARD ================= */
+
+        .dashboard {
+            min-height: 100vh;
+            background: #f0fdf4;
+            display: none;
+        }
+
+        .topbar {
+            background: #15803d;
+            color: white;
+            padding: 12px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .brand {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .language-select {
+            width: auto;
+            min-width: 100px;
+            padding: 7px 10px;
+        }
+
+        .logout-btn {
+            background: white;
+            color: #15803d;
+            padding: 7px 12px;
+        }
+
+        /* ================= CONTAINER ================= */
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        /* ================= WELCOME ================= */
+
+        .welcome {
+            background: linear-gradient(135deg, #16a34a, #15803d);
+            color: white;
+            padding: 20px;
+            border-radius: 14px;
+            margin-bottom: 18px;
+        }
+
+        .welcome h2 {
+            margin: 0 0 5px;
+            font-size: 22px;
+        }
+
+        .welcome p {
+            margin: 5px 0 12px;
+            font-size: 14px;
+        }
+
+        .ai-status {
+            font-size: 13px;
+        }
+
+        /* ================= STATS ================= */
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .stat-card h3 {
+            margin: 0 0 8px;
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        .stat-number {
+            font-size: 25px;
+            font-weight: bold;
+            color: #15803d;
+        }
+
+        /* ================= MAIN GRID ================= */
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1.6fr 1fr;
+            gap: 18px;
+        }
+
+        /* ================= CARDS ================= */
+
+        .card {
+            background: white;
+            padding: 18px;
+            border-radius: 12px;
+            margin-bottom: 18px;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .card h2 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 18px;
+            color: #15803d;
+        }
+
+        /* ================= ADD MEDICINE ================= */
+
+        .add-medicine {
+            display: grid;
+            grid-template-columns: 1fr 1fr 150px auto;
+            gap: 10px;
+            align-items: end;
+        }
+
+        .add-medicine button {
+            background: #16a34a;
+            color: white;
+        }
+
+        .add-medicine button:hover {
+            background: #15803d;
+        }
+
+        /* ================= MEDICINE ITEM ================= */
+
+        .medicine-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            padding: 14px;
+            border: 1px solid #dcfce7;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            background: #fafffb;
+        }
+
+        .medicine-info h3 {
+            margin: 0 0 7px;
+            color: #166534;
+            font-size: 16px;
+        }
+
+        .medicine-info p {
+            margin: 4px 0;
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        .medicine-actions {
+            display: flex;
+            gap: 7px;
+            flex-wrap: wrap;
+        }
+
+        .take-btn {
+            background: #16a34a;
+            color: white;
+        }
+
+        .delete-btn {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .status.pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status.taken {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status.missed {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        /* ================= NEXT REMINDER ================= */
+
+        .next-reminder {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            padding: 14px;
+            border-radius: 9px;
+            color: #166534;
+        }
+
+        /* ================= CAREGIVER ================= */
+
+        .caregiver-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .caregiver-row input {
+            flex: 1;
+        }
+
+        .small-btn {
+            background: #16a34a;
+            color: white;
+        }
+
+        .call-btn {
+            width: 100%;
+            background: #dcfce7;
+            color: #166534;
+            margin-bottom: 8px;
+        }
+
+        .ambulance-btn {
+            width: 100%;
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        /* ================= REPORT ================= */
+
+        .report-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 12px;
+        }
+
+        .report-table th,
+        .report-table td {
+            border: 1px solid #dcfce7;
+            padding: 8px;
+            text-align: left;
+            font-size: 13px;
+        }
+
+        .report-table th {
+            background: #f0fdf4;
+            color: #166534;
+        }
+
+        .report-btn {
+            width: 100%;
+            background: #16a34a;
+            color: white;
+        }
+
+        /* ================= ACTIVITY ================= */
+
+        .activity {
+            max-height: 220px;
+            overflow-y: auto;
+        }
+
+        .activity-item {
+            padding: 9px;
+            border-bottom: 1px solid #dcfce7;
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .empty {
+            text-align: center;
+            color: #94a3b8;
+            padding: 15px;
+            font-size: 13px;
+        }
+
+        /* ================= POPUP ================= */
+
+        .popup {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            padding: 20px;
+        }
+
+        .popup-card {
+            background: white;
+            width: 100%;
+            max-width: 360px;
+            padding: 25px;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.2);
+        }
+
+        .popup-icon {
+            font-size: 45px;
+        }
+
+        .popup-card h2 {
+            color: #15803d;
+            margin: 10px 0;
+        }
+
+        .popup-medicine {
+            font-size: 20px;
+            font-weight: bold;
+            color: #166534;
+            margin: 15px 0 20px;
+        }
+
+        .popup-take {
+            width: 100%;
+            background: #16a34a;
+            color: white;
+            padding: 11px;
+        }
+
+        /* ================= MOBILE ================= */
+
+        @media (max-width: 800px) {
+
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
             }
-        ).join("");
 
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
 
-    reportWindow.document.write(`
+            .add-medicine {
+                grid-template-columns: 1fr;
+            }
 
-        <!DOCTYPE html>
+            .topbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
 
-        <html>
+            .topbar-right {
+                justify-content: space-between;
+            }
+        }
 
-        <head>
+        @media (max-width: 500px) {
 
-            <title>
-                JS MEDICARE Report
-            </title>
+            .container {
+                padding: 12px;
+            }
 
-            <style>
+            .stats {
+                gap: 8px;
+            }
 
-                body {
-                    font-family: Arial;
-                    padding: 30px;
-                }
+            .stat-card {
+                padding: 12px 8px;
+            }
 
-                h1 {
-                    color: #2563eb;
-                }
+            .medicine-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
 
-                table {
-                    width: 100%;
-                    border-collapse: collapse;
-                    margin-top: 20px;
-                }
+            .medicine-actions {
+                width: 100%;
+            }
 
-                th,
-                td {
-                    border: 1px solid #ccc;
-                    padding: 10px;
-                    text-align: left;
-                }
+            .medicine-actions button {
+                flex: 1;
+            }
+        }
+    </style>
+</head>
 
-                th {
-                    background: #f1f5f9;
-                }
+<body>
 
-            </style>
+    <!-- =====================================================
+         LOGIN
+    ===================================================== -->
 
-        </head>
+    <section id="loginSection" class="login-section">
 
+        <div class="login-card">
 
-        <body>
+            <div class="logo">
+                💊
+            </div>
 
             <h1>
                 JS MEDICARE
             </h1>
 
-            <h2>
-                Medication Report
-            </h2>
-
-            <p>
-                Patient:
-                ${escapeHTML(patientName)}
+            <p class="subtitle">
+                AI Powered Healthcare Assistant
             </p>
 
-            <p>
-                Phone:
-                ${escapeHTML(patientPhone)}
-            </p>
+            <div class="form-group">
 
-            <p>
-                Generated:
-                ${new Date().toLocaleString()}
-            </p>
+                <label for="patientName">
+                    Patient Name
+                </label>
 
+                <input
+                    type="text"
+                    id="patientName"
+                    placeholder="Enter patient name"
+                >
 
-            <hr>
+            </div>
 
+            <div class="form-group">
 
-            <p>
-                <strong>
-                    Total:
-                </strong>
-                ${total}
-            </p>
+                <label for="patientPhone">
+                    Patient Phone Number
+                </label>
 
+                <input
+                    type="tel"
+                    id="patientPhone"
+                    placeholder="Enter phone number"
+                >
 
-            <p>
-                <strong>
-                    Taken:
-                </strong>
-                ${taken}
-            </p>
+            </div>
 
+            <div class="form-group">
 
-            <p>
-                <strong>
-                    Missed:
-                </strong>
-                ${missed}
-            </p>
+                <label for="languageSelect">
+                    Select Language
+                </label>
 
+                <select id="languageSelect">
 
-            <p>
-                <strong>
-                    Adherence:
-                </strong>
-                ${adherence}%
-            </p>
+                    <option value="en">
+                        English
+                    </option>
 
+                    <option value="ta">
+                        தமிழ்
+                    </option>
 
-            <table>
+                    <option value="hi">
+                        हिन्दी
+                    </option>
 
-                <thead>
+                    <option value="te">
+                        తెలుగు
+                    </option>
 
-                    <tr>
+                </select>
 
-                        <th>
-                            Medicine
-                        </th>
-
-                        <th>
-                            Dosage
-                        </th>
-
-                        <th>
-                            Time
-                        </th>
-
-                        <th>
-                            Status
-                        </th>
-
-                        <th>
-                            Taken At
-                        </th>
-
-                    </tr>
-
-                </thead>
-
-
-                <tbody>
-
-                    ${medicineRows}
-
-                </tbody>
-
-            </table>
-
-
-            <script>
-
-                window.onload = function() {
-
-                    window.print();
-
-                };
-
-            <\/script>
-
-        </body>
-
-        </html>
-
-    `);
-
-
-    reportWindow.document.close();
-
-}
-
-
-// =====================================================
-// LOGOUT
-// =====================================================
-
-function logout() {
-
-    if (reminderLoop) {
-
-        clearInterval(
-            reminderLoop
-        );
-
-        reminderLoop =
-            null;
-
-    }
-
-
-    try {
-
-        speechSynthesis.cancel();
-
-    } catch (error) {
-
-        console.log(error);
-
-    }
-
-
-    closeReminderPopup();
-
-
-    document.getElementById(
-        "dashboardSection"
-    ).style.display = "none";
-
-
-    document.getElementById(
-        "loginSection"
-    ).style.display = "flex";
-
-
-    addLog(
-        "Logged out."
-    );
-
-}
-
-
-// =====================================================
-// INITIALIZE
-// =====================================================
-
-document.addEventListener(
-    "DOMContentLoaded",
-    function() {
-
-        loadPatientData();
-
-
-        const dashboardLanguage =
-            document.getElementById(
-                "dashboardLanguage"
-            );
-
-
-        if (dashboardLanguage) {
-
-            dashboardLanguage.value =
-                selectedLanguage;
-
-        }
-
-
-        applyLanguage();
-
-
-        console.log(
-            "JS MEDICARE loaded successfully."
-        );
-
-
-        // Check if previous login exists
-
-        if (
-            patientName &&
-            patientPhone
-        ) {
-
-            loadMedicines();
-
-            loadCaregiver();
-
-            document.getElementById(
-                "loginSection"
-            ).style.display = "none";
-
-
-            document.getElementById(
-                "dashboardSection"
-            ).style.display = "block";
-
-
-            renderMedicines();
-
-            updateDashboard();
-
-            startReminderChecker();
-
-        }
-
-    }
-);
-
-</head>
-
-
-<body>
-
-
-<!-- =====================================================
-     LOGIN
-===================================================== -->
-
-<section
-    id="loginSection"
-    class="login-section"
->
-
-    <div class="login-card">
-
-        <div class="logo">
-            💊
-        </div>
-
-        <h1>
-            JS MEDICARE
-        </h1>
-
-        <p class="subtitle">
-            AI Powered Healthcare Assistant
-        </p>
-
-
-        <div class="form-group">
-
-            <label for="patientName">
-                Patient Name
-            </label>
-
-            <input
-                type="text"
-                id="patientName"
-                placeholder="Enter patient name"
-            >
-
-        </div>
-
-
-        <div class="form-group">
-
-            <label for="patientPhone">
-                Patient Phone Number
-            </label>
-
-            <input
-                type="tel"
-                id="patientPhone"
-                placeholder="Enter phone number"
-            >
-
-        </div>
-
-
-        <div class="form-group">
-
-            <label for="languageSelect">
-                Select Language
-            </label>
-
-            <select id="languageSelect">
-
-                <option value="en">
-                    English
-                </option>
-
-                <option value="ta">
-                    தமிழ்
-                </option>
-
-                <option value="hi">
-                    हिन्दी
-                </option>
-
-                <option value="te">
-                    తెలుగు
-                </option>
-
-            </select>
-
-        </div>
-
-
-        <button
-            type="button"
-            class="primary-btn"
-            onclick="login()"
-        >
-            Login
-        </button>
-
-
-        <button
-            type="button"
-            class="voice-btn"
-            onclick="enableMobileVoice()"
-        >
-            🔊 Enable Voice
-        </button>
-
-
-        <div
-            id="voiceStatus"
-            class="voice-status"
-        >
-            Voice will be used for medicine reminders.
-        </div>
-
-    </div>
-
-</section>
-
-
-
-<!-- =====================================================
-     DASHBOARD
-===================================================== -->
-
-<section
-    id="dashboardSection"
-    class="dashboard"
->
-
-
-    <!-- TOP BAR -->
-
-    <div class="topbar">
-
-        <div class="brand">
-            💊 JS MEDICARE
-        </div>
-
-
-        <div class="topbar-right">
-
-            <select
-                id="dashboardLanguage"
-                class="language-select"
-                onchange="changeLanguage(this.value)"
-            >
-
-                <option value="en">
-                    English
-                </option>
-
-                <option value="ta">
-                    தமிழ்
-                </option>
-
-                <option value="hi">
-                    हिन्दी
-                </option>
-
-                <option value="te">
-                    తెలుగు
-                </option>
-
-            </select>
-
+            </div>
 
             <button
                 type="button"
-                class="logout-btn"
-                onclick="logout()"
+                class="primary-btn"
+                onclick="login()"
             >
-                Logout
+                Login
+            </button>
+
+            <button
+                type="button"
+                class="voice-btn"
+                onclick="enableMobileVoice()"
+            >
+                🔊 Enable Voice
+            </button>
+
+            <div
+                id="voiceStatus"
+                class="voice-status"
+            >
+                Voice will be used for medicine reminders.
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         DASHBOARD
+    ===================================================== -->
+
+    <section id="dashboardSection" class="dashboard">
+
+        <div class="topbar">
+
+            <div class="brand">
+                💊 JS MEDICARE
+            </div>
+
+            <div class="topbar-right">
+
+                <select
+                    id="dashboardLanguage"
+                    class="language-select"
+                    onchange="changeLanguage(this.value)"
+                >
+
+                    <option value="en">
+                        English
+                    </option>
+
+                    <option value="ta">
+                        தமிழ்
+                    </option>
+
+                    <option value="hi">
+                        हिन्दी
+                    </option>
+
+                    <option value="te">
+                        తెలుగు
+                    </option>
+
+                </select>
+
+                <button
+                    type="button"
+                    class="logout-btn"
+                    onclick="logout()"
+                >
+                    Logout
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="container">
+
+            <!-- WELCOME -->
+
+            <div class="welcome">
+
+                <h2 id="welcomeTitle">
+                    Welcome to JS MEDICARE
+                </h2>
+
+                <p>
+                    AI Powered Medication Reminder
+                </p>
+
+                <div class="ai-status">
+                    🟢
+                    <span id="aiStatusText">
+                        AI Monitoring Online
+                    </span>
+                </div>
+
+            </div>
+
+
+            <!-- STATISTICS -->
+
+            <div class="stats">
+
+                <div class="stat-card">
+
+                    <h3>
+                        Total Medicines
+                    </h3>
+
+                    <div
+                        id="totalMedicines"
+                        class="stat-number"
+                    >
+                        0
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <h3>
+                        Taken
+                    </h3>
+
+                    <div
+                        id="takenMedicines"
+                        class="stat-number"
+                    >
+                        0
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <h3>
+                        Missed
+                    </h3>
+
+                    <div
+                        id="missedMedicines"
+                        class="stat-number"
+                    >
+                        0
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <h3>
+                        Adherence
+                    </h3>
+
+                    <div
+                        id="adherence"
+                        class="stat-number"
+                    >
+                        0%
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="main-grid">
+
+                <!-- LEFT COLUMN -->
+
+                <div>
+
+                    <!-- ADD MEDICINE -->
+
+                    <div class="card">
+
+                        <h2>
+                            Add Medicine
+                        </h2>
+
+                        <div class="add-medicine">
+
+                            <div>
+
+                                <label for="medicineName">
+                                    Medicine Name
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="medicineName"
+                                    placeholder="Enter medicine name"
+                                >
+
+                            </div>
+
+
+                            <div>
+
+                                <label for="dosage">
+                                    Dosage
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="dosage"
+                                    placeholder="e.g. 500 mg"
+                                >
+
+                            </div>
+
+
+                            <div>
+
+                                <label for="medicineTime">
+                                    Time
+                                </label>
+
+                                <input
+                                    type="time"
+                                    id="medicineTime"
+                                >
+
+                            </div>
+
+
+                            <button
+                                type="button"
+                                onclick="addMedicine()"
+                            >
+                                Add
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- MEDICINE LIST -->
+
+                    <div class="card">
+
+                        <h2>
+                            My Medicines
+                        </h2>
+
+                        <div id="medicineList">
+
+                            <div class="empty">
+                                No medicines added yet.
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- NEXT REMINDER -->
+
+                    <div class="card">
+
+                        <h2>
+                            Next Reminder
+                        </h2>
+
+                        <div
+                            id="nextReminder"
+                            class="next-reminder"
+                        >
+                            No upcoming reminder.
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- RIGHT COLUMN -->
+
+                <div>
+
+                    <!-- AI MONITORING -->
+
+                    <div class="card">
+
+                        <h2 id="aiTitle">
+                            AI Medication Monitoring
+                        </h2>
+
+                        <p id="aiMessage">
+                            Your medication schedule is being monitored automatically.
+                        </p>
+
+                    </div>
+
+
+                    <!-- CAREGIVER -->
+
+                    <div class="card">
+
+                        <h2>
+                            Caregiver
+                        </h2>
+
+                        <div class="caregiver-row">
+
+                            <input
+                                type="tel"
+                                id="caregiverPhone"
+                                placeholder="Caregiver phone number"
+                            >
+
+                            <button
+                                type="button"
+                                class="small-btn"
+                                onclick="saveCaregiver()"
+                            >
+                                Save
+                            </button>
+
+                        </div>
+
+
+                        <button
+                            type="button"
+                            class="call-btn"
+                            onclick="callCaregiver()"
+                        >
+                            📞 Call Caregiver
+                        </button>
+
+
+                        <button
+                            type="button"
+                            class="ambulance-btn"
+                            onclick="callAmbulance()"
+                        >
+                            🚑 Emergency
+                        </button>
+
+                    </div>
+
+
+                    <!-- REPORT -->
+
+                    <div class="card">
+
+                        <h2>
+                            Medication Report
+                        </h2>
+
+                        <table class="report-table">
+
+                            <tr>
+                                <th>
+                                    Total
+                                </th>
+
+                                <td id="reportTotal">
+                                    0
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th>
+                                    Taken
+                                </th>
+
+                                <td id="reportTaken">
+                                    0
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th>
+                                    Missed
+                                </th>
+
+                                <td id="reportMissed">
+                                    0
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th>
+                                    Adherence
+                                </th>
+
+                                <td id="reportAdherence">
+                                    0%
+                                </td>
+                            </tr>
+
+                        </table>
+
+
+                        <button
+                            type="button"
+                            class="report-btn"
+                            onclick="generateMedicationReport()"
+                        >
+                            🖨️ Print Report
+                        </button>
+
+                    </div>
+
+
+                    <!-- ACTIVITY -->
+
+                    <div class="card">
+
+                        <h2>
+                            Activity Log
+                        </h2>
+
+                        <div
+                            id="activityLog"
+                            class="activity"
+                        >
+
+                            <div class="empty">
+                                No activity yet.
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         REMINDER POPUP
+    ===================================================== -->
+
+    <div
+        id="reminderPopup"
+        class="popup"
+    >
+
+        <div class="popup-card">
+
+            <div class="popup-icon">
+                💊
+            </div>
+
+            <h2>
+                Medicine Reminder
+            </h2>
+
+            <div
+                id="popupMedicineName"
+                class="popup-medicine"
+            >
+                Medicine
+            </div>
+
+            <button
+                type="button"
+                id="popupTakeButton"
+                class="popup-take"
+                onclick="markTakenFromPopup()"
+            >
+                ✓ I Took It
             </button>
 
         </div>
@@ -2718,444 +1088,9 @@ document.addEventListener(
     </div>
 
 
+    <!-- JAVASCRIPT -->
 
-    <div class="container">
-
-
-        <!-- WELCOME -->
-
-        <div class="welcome">
-
-            <h2 id="welcomeTitle">
-                Welcome to JS MEDICARE
-            </h2>
-
-            <p>
-                AI Powered Medication Reminder
-            </p>
-
-            <div class="ai-status">
-                🟢
-                <span id="aiStatusText">
-                    AI Monitoring Online
-                </span>
-            </div>
-
-        </div>
-
-
-
-        <!-- STATISTICS -->
-
-        <div class="stats">
-
-
-            <div class="stat-card">
-
-                <h3>
-                    Total Medicines
-                </h3>
-
-                <div
-                    id="totalMedicines"
-                    class="stat-number"
-                >
-                    0
-                </div>
-
-            </div>
-
-
-            <div class="stat-card">
-
-                <h3>
-                    Taken
-                </h3>
-
-                <div
-                    id="takenMedicines"
-                    class="stat-number"
-                >
-                    0
-                </div>
-
-            </div>
-
-
-            <div class="stat-card">
-
-                <h3>
-                    Missed
-                </h3>
-
-                <div
-                    id="missedMedicines"
-                    class="stat-number"
-                >
-                    0
-                </div>
-
-            </div>
-
-
-            <div class="stat-card">
-
-                <h3>
-                    Adherence
-                </h3>
-
-                <div
-                    id="adherence"
-                    class="stat-number"
-                >
-                    0%
-                </div>
-
-            </div>
-
-        </div>
-
-
-
-        <div class="main-grid">
-
-
-            <!-- LEFT COLUMN -->
-
-            <div>
-
-
-                <!-- ADD MEDICINE -->
-
-                <div class="card">
-
-                    <h2>
-                        Add Medicine
-                    </h2>
-
-
-                    <div class="add-medicine">
-
-
-                        <div>
-
-                            <label for="medicineName">
-                                Medicine Name
-                            </label>
-
-                            <input
-                                type="text"
-                                id="medicineName"
-                                placeholder="Enter medicine name"
-                            >
-
-                        </div>
-
-
-                        <div>
-
-                            <label for="dosage">
-                                Dosage
-                            </label>
-
-                            <input
-                                type="text"
-                                id="dosage"
-                                placeholder="e.g. 500 mg"
-                            >
-
-                        </div>
-
-
-                        <div>
-
-                            <label for="medicineTime">
-                                Time
-                            </label>
-
-                            <input
-                                type="time"
-                                id="medicineTime"
-                            >
-
-                        </div>
-
-
-                        <button
-                            type="button"
-                            onclick="addMedicine()"
-                        >
-                            Add
-                        </button>
-
-                    </div>
-
-                </div>
-
-
-
-                <!-- MEDICINE LIST -->
-
-                <div class="card">
-
-                    <h2>
-                        My Medicines
-                    </h2>
-
-                    <div id="medicineList">
-
-                        <div class="empty">
-                            No medicines added yet.
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-
-                <!-- NEXT REMINDER -->
-
-                <div class="card">
-
-                    <h2>
-                        Next Reminder
-                    </h2>
-
-                    <div
-                        id="nextReminder"
-                        class="next-reminder"
-                    >
-                        No upcoming reminder.
-                    </div>
-
-                </div>
-
-            </div>
-
-
-
-            <!-- RIGHT COLUMN -->
-
-            <div>
-
-
-                <!-- AI MONITORING -->
-
-                <div class="card">
-
-                    <h2 id="aiTitle">
-                        AI Medication Monitoring
-                    </h2>
-
-                    <p id="aiMessage">
-                        Your medication schedule is being monitored automatically.
-                    </p>
-
-                </div>
-
-
-
-                <!-- CAREGIVER -->
-
-                <div class="card">
-
-                    <h2>
-                        Caregiver
-                    </h2>
-
-
-                    <div class="caregiver-row">
-
-                        <input
-                            type="tel"
-                            id="caregiverPhone"
-                            placeholder="Caregiver phone number"
-                        >
-
-                        <button
-                            type="button"
-                            class="small-btn"
-                            onclick="saveCaregiver()"
-                        >
-                            Save
-                        </button>
-
-                    </div>
-
-
-                    <button
-                        type="button"
-                        class="call-btn"
-                        onclick="callCaregiver()"
-                    >
-                        📞 Call Caregiver
-                    </button>
-
-
-                    <br>
-
-
-                    <button
-                        type="button"
-                        class="ambulance-btn"
-                        onclick="callAmbulance()"
-                    >
-                        🚑 Emergency
-                    </button>
-
-                </div>
-
-
-
-                <!-- REPORT -->
-
-                <div class="card">
-
-                    <h2>
-                        Medication Report
-                    </h2>
-
-
-                    <table class="report-table">
-
-                        <tr>
-                            <th>
-                                Total
-                            </th>
-
-                            <td id="reportTotal">
-                                0
-                            </td>
-                        </tr>
-
-
-                        <tr>
-                            <th>
-                                Taken
-                            </th>
-
-                            <td id="reportTaken">
-                                0
-                            </td>
-                        </tr>
-
-
-                        <tr>
-                            <th>
-                                Missed
-                            </th>
-
-                            <td id="reportMissed">
-                                0
-                            </td>
-                        </tr>
-
-
-                        <tr>
-                            <th>
-                                Adherence
-                            </th>
-
-                            <td id="reportAdherence">
-                                0%
-                            </td>
-                        </tr>
-
-                    </table>
-
-
-                    <button
-                        type="button"
-                        class="report-btn"
-                        onclick="generateMedicationReport()"
-                    >
-                        🖨️ Print Report
-                    </button>
-
-                </div>
-
-
-
-                <!-- ACTIVITY -->
-
-                <div class="card">
-
-                    <h2>
-                        Activity Log
-                    </h2>
-
-                    <div
-                        id="activityLog"
-                        class="activity"
-                    >
-
-                        <div class="empty">
-                            No activity yet.
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-
-<!-- =====================================================
-     REMINDER POPUP
-===================================================== -->
-
-<div
-    id="reminderPopup"
-    class="popup"
->
-
-    <div class="popup-card">
-
-        <div class="popup-icon">
-            💊
-        </div>
-
-
-        <h2>
-            Medicine Reminder
-        </h2>
-
-
-        <div
-            id="popupMedicineName"
-            class="popup-medicine"
-        >
-            Medicine
-        </div>
-
-
-        <button
-            type="button"
-            id="popupTakeButton"
-            class="popup-take"
-            onclick="markTakenFromPopup()"
-        >
-            ✓ I Took It
-        </button>
-
-    </div>
-
-</div>
-
-
-
-<!-- JAVASCRIPT -->
-
-<script src="script.js"></script>
-
+    <script src="script.js"></script>
 
 </body>
 
