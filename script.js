@@ -50,8 +50,8 @@ let vibrationTimer = null;
 const translations = {
 
     en: {
-        subtitle: "AI Powered Healthcare Assistant",
-        aiMonitoring: "AI Monitoring Online",
+        subtitle: "Healthcare Assistant",
+        aiMonitoring: "JS Medicare Monitoring Online",
         welcome: "Welcome",
         totalMedicines: "Total Medicines",
         taken: "Taken",
@@ -85,8 +85,8 @@ const translations = {
     },
 
     ta: {
-        subtitle: "AI அடிப்படையிலான சுகாதார உதவியாளர்",
-        aiMonitoring: "AI கண்காணிப்பு செயல்பாட்டில் உள்ளது",
+        subtitle: " ஜெஎஸ் மெடிகேர் அடிப்படையிலான சுகாதார உதவியாளர்",
+        aiMonitoring: "ஜெஎஸ் மெடிகேர் கண்காணிப்பு செயல்பாட்டில் உள்ளது",
         welcome: "வரவேற்கிறோம்",
         totalMedicines: "மொத்த மருந்துகள்",
         taken: "எடுத்தது",
@@ -120,8 +120,8 @@ const translations = {
     },
 
     hi: {
-        subtitle: "AI आधारित स्वास्थ्य सहायक",
-        aiMonitoring: "AI निगरानी चालू है",
+        subtitle: "जेएस मेडिकेयर आधारित स्वास्थ्य सहायक",
+        aiMonitoring: "जेएस मेडिकेयर निगरानी चालू है",
         welcome: "स्वागत है",
         totalMedicines: "कुल दवाएं",
         taken: "ली गई",
@@ -155,8 +155,8 @@ const translations = {
     },
 
     te: {
-        subtitle: "AI ఆధారిత ఆరోగ్య సహాయకుడు",
-        aiMonitoring: "AI పర్యవేక్షణ ఆన్‌లో ఉంది",
+        subtitle: "జెఎస్ మెడికేర్ఆ ధారిత ఆరోగ్య సహాయకుడు",
+        aiMonitoring: "జెఎస్ మెడికేర్ పర్యవేక్షణ ఆన్‌లో ఉంది",
         welcome: "స్వాగతం",
         totalMedicines: "మొత్తం మందులు",
         taken: "తీసుకున్నవి",
