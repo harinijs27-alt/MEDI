@@ -2,771 +2,1032 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>JS MEDICARE</title>
+<meta charset="UTF-8">
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
 
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f0fdf4;
-            color: #1f2937;
-        }
+<meta
+    name="theme-color"
+    content="#15803d"
+>
 
-        button,
-        input,
-        select {
-            font-family: Arial, sans-serif;
-        }
+<title>JS MEDICARE</title>
 
-        /* =========================
-           LOGIN
-        ========================= */
 
-        #loginSection {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
+<style>
 
-            background:
-                linear-gradient(
-                    135deg,
-                    #dcfce7,
-                    #f0fdf4
-                );
-        }
+* {
+    box-sizing: border-box;
+}
 
-        .login-card {
-            width: 100%;
-            max-width: 430px;
+html {
+    scroll-behavior: smooth;
+}
 
-            background: white;
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, "Noto Sans", sans-serif;
+    background: #f0fdf4;
+    color: #1f2937;
+}
 
-            padding: 30px;
+button,
+input,
+select {
+    font: inherit;
+}
 
-            border-radius: 20px;
+button {
+    cursor: pointer;
+}
 
-            box-shadow:
-                0 10px 30px
-                rgba(0, 0, 0, 0.12);
-        }
 
-        .logo {
-            text-align: center;
+/* =====================================================
+   LOGIN
+===================================================== */
 
-            font-size: 32px;
+#loginSection {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
 
-            font-weight: bold;
+    background:
+        linear-gradient(
+            135deg,
+            #dcfce7,
+            #f0fdf4
+        );
+}
 
-            color: #15803d;
+.login-card {
+    width: 100%;
+    max-width: 440px;
 
-            margin-bottom: 8px;
-        }
+    background: white;
 
-        .subtitle {
-            text-align: center;
+    padding: 30px;
 
-            color: #64748b;
+    border-radius: 20px;
 
-            margin-bottom: 25px;
-        }
+    box-shadow:
+        0 10px 35px
+        rgba(0,0,0,0.12);
+}
 
-        .form-group {
-            margin-bottom: 16px;
-        }
+.logo {
+    text-align: center;
 
-        .form-group label {
-            display: block;
+    font-size: 32px;
 
-            font-weight: bold;
+    font-weight: bold;
 
-            margin-bottom: 7px;
-        }
+    color: #15803d;
 
-        input,
-        select {
-            width: 100%;
+    margin-bottom: 8px;
+}
 
-            padding: 12px;
+.subtitle {
+    text-align: center;
 
-            border: 1px solid #cbd5e1;
+    color: #64748b;
 
-            border-radius: 9px;
+    margin-bottom: 25px;
 
-            background: white;
+    line-height: 1.5;
+}
 
-            outline: none;
-        }
+.form-group {
+    margin-bottom: 16px;
+}
 
-        input:focus,
-        select:focus {
-            border-color: #15803d;
+.form-group label {
+    display: block;
 
-            box-shadow:
-                0 0 0 3px
-                #dcfce7;
-        }
+    font-weight: bold;
 
-        .login-btn {
-            width: 100%;
+    margin-bottom: 7px;
+}
 
-            padding: 13px;
+input,
+select {
+    width: 100%;
 
-            border: none;
+    padding: 12px 14px;
 
-            border-radius: 9px;
+    border: 1px solid #cbd5e1;
 
-            background: #15803d;
+    border-radius: 10px;
 
-            color: white;
+    background: white;
 
-            font-weight: bold;
+    outline: none;
+}
 
-            font-size: 16px;
+input:focus,
+select:focus {
+    border-color: #15803d;
 
-            cursor: pointer;
-        }
+    box-shadow:
+        0 0 0 3px
+        #dcfce7;
+}
 
-        .login-btn:hover {
-            background: #166534;
-        }
+.login-btn {
+    width: 100%;
 
-        .voice-btn {
-            width: 100%;
+    border: none;
 
-            padding: 12px;
+    padding: 13px;
 
-            margin-top: 10px;
+    border-radius: 10px;
 
-            border: 2px solid #15803d;
+    background: #15803d;
 
-            border-radius: 9px;
+    color: white;
 
-            background: #ecfdf5;
+    font-weight: bold;
 
-            color: #166534;
+    font-size: 16px;
+}
 
-            font-weight: bold;
+.login-btn:hover {
+    background: #166534;
+}
 
-            cursor: pointer;
-        }
+.voice-enable-btn {
+    width: 100%;
 
-        #voiceStatus {
-            text-align: center;
+    margin-top: 10px;
 
-            margin-top: 10px;
+    padding: 12px;
 
-            font-size: 13px;
+    border: 2px solid #15803d;
 
-            color: #166534;
-        }
+    border-radius: 10px;
 
+    background: #ecfdf5;
 
-        /* =========================
-           DASHBOARD
-        ========================= */
+    color: #166534;
 
-        #dashboard {
-            display: none;
+    font-weight: bold;
+}
 
-            min-height: 100vh;
+#voiceStatus {
+    text-align: center;
 
-            background: #f0fdf4;
-        }
+    margin-top: 10px;
 
-        .topbar {
-            background: #15803d;
+    color: #166534;
 
-            color: white;
+    font-size: 13px;
+}
 
-            padding: 14px 20px;
 
-            display: flex;
+/* =====================================================
+   DASHBOARD
+===================================================== */
 
-            justify-content: space-between;
+#dashboard {
+    display: none;
 
-            align-items: center;
+    min-height: 100vh;
 
-            flex-wrap: wrap;
+    background: #f0fdf4;
+}
 
-            gap: 10px;
-        }
+.topbar {
+    background: #15803d;
 
-        .topbar-title {
-            font-size: 22px;
+    color: white;
 
-            font-weight: bold;
-        }
+    padding: 14px 20px;
 
-        .topbar-right {
-            display: flex;
+    display: flex;
 
-            gap: 8px;
+    justify-content: space-between;
 
-            align-items: center;
-        }
+    align-items: center;
 
-        .topbar select {
-            width: auto;
+    gap: 12px;
 
-            min-width: 110px;
+    flex-wrap: wrap;
+}
 
-            padding: 8px;
-        }
+.topbar-title {
+    font-size: 23px;
 
-        .logout-btn {
-            border: none;
+    font-weight: bold;
+}
 
-            padding: 8px 12px;
+.topbar-right {
+    display: flex;
 
-            border-radius: 7px;
+    align-items: center;
 
-            background: white;
+    gap: 8px;
+}
 
-            color: #15803d;
+.topbar select {
+    width: auto;
 
-            font-weight: bold;
+    min-width: 120px;
 
-            cursor: pointer;
-        }
+    padding: 8px;
 
-        .container {
-            width: 100%;
+    border: none;
 
-            max-width: 1100px;
+    border-radius: 7px;
+}
 
-            margin: auto;
+.logout-btn {
+    border: none;
 
-            padding: 20px;
-        }
+    padding: 8px 13px;
 
-        #welcomeText {
-            color: #166534;
+    border-radius: 8px;
 
-            font-size: 25px;
+    background: white;
 
-            margin-bottom: 20px;
-        }
+    color: #15803d;
 
+    font-weight: bold;
+}
 
-        /* =========================
-           STATS
-        ========================= */
+.container {
+    width: 100%;
 
-        .stats-grid {
-            display: grid;
+    max-width: 1100px;
 
-            grid-template-columns:
-                repeat(4, 1fr);
+    margin: auto;
 
-            gap: 12px;
+    padding: 20px;
+}
 
-            margin-bottom: 20px;
-        }
+#welcomeText {
+    color: #166534;
 
-        .stat-card {
-            background: white;
+    font-size: 26px;
 
-            padding: 18px;
+    margin-bottom: 20px;
+}
 
-            border-radius: 14px;
 
-            text-align: center;
+/* =====================================================
+   STATISTICS
+===================================================== */
 
-            box-shadow:
-                0 3px 12px
-                rgba(0,0,0,0.07);
-        }
+.stats-grid {
+    display: grid;
 
-        .stat-number {
-            font-size: 28px;
+    grid-template-columns:
+        repeat(4, 1fr);
 
-            font-weight: bold;
+    gap: 12px;
 
-            color: #15803d;
-        }
+    margin-bottom: 20px;
+}
 
-        .stat-label {
-            color: #64748b;
+.stat-card {
+    background: white;
 
-            font-size: 13px;
+    padding: 18px;
 
-            margin-top: 5px;
-        }
+    border-radius: 14px;
 
+    text-align: center;
 
-        /* =========================
-           CARDS
-        ========================= */
+    box-shadow:
+        0 3px 12px
+        rgba(0,0,0,0.07);
+}
 
-        .card {
-            background: white;
+.stat-number {
+    font-size: 28px;
 
-            padding: 20px;
+    font-weight: bold;
 
-            border-radius: 15px;
+    color: #15803d;
+}
 
-            margin-bottom: 18px;
+.stat-label {
+    margin-top: 5px;
 
-            box-shadow:
-                0 3px 12px
-                rgba(0,0,0,0.07);
-        }
+    color: #64748b;
 
-        .card h2 {
-            color: #166534;
+    font-size: 13px;
+}
 
-            margin-top: 0;
-        }
 
+/* =====================================================
+   CARDS
+===================================================== */
 
-        /* =========================
-           MEDICINE FORM
-        ========================= */
+.card {
+    background: white;
 
-        .medicine-form {
-            display: grid;
+    padding: 20px;
 
-            grid-template-columns:
-                2fr 1fr 1fr;
+    border-radius: 16px;
 
-            gap: 10px;
-        }
+    margin-bottom: 18px;
 
-        .add-btn {
-            margin-top: 10px;
+    box-shadow:
+        0 3px 12px
+        rgba(0,0,0,0.07);
+}
 
-            padding: 11px 18px;
+.card h2 {
+    margin-top: 0;
 
-            border: none;
+    color: #166534;
 
-            border-radius: 8px;
+    font-size: 20px;
+}
 
-            background: #15803d;
 
-            color: white;
+/* =====================================================
+   MEDICINE FORM
+===================================================== */
 
-            font-weight: bold;
+.medicine-form {
+    display: grid;
 
-            cursor: pointer;
-        }
+    grid-template-columns:
+        2fr 1fr 1fr;
 
+    gap: 10px;
+}
 
-        /* =========================
-           VOICE ENTRY
-        ========================= */
+.add-medicine-btn {
+    margin-top: 5px;
 
-        .voice-entry-box {
-            margin-top: 15px;
+    padding: 11px 18px;
 
-            padding: 15px;
+    border: none;
 
-            border-radius: 10px;
+    border-radius: 9px;
 
-            background: #f0fdf4;
+    background: #15803d;
 
-            border: 1px solid #bbf7d0;
-        }
+    color: white;
 
-        .voice-entry-btn {
-            padding: 11px 15px;
+    font-weight: bold;
+}
 
-            border: none;
 
-            border-radius: 8px;
+/* =====================================================
+   VOICE ENTRY
+===================================================== */
 
-            background: #166534;
+.voice-entry-box {
+    margin-top: 15px;
 
-            color: white;
+    padding: 16px;
 
-            font-weight: bold;
+    border-radius: 12px;
 
-            cursor: pointer;
-        }
+    background: #f0fdf4;
 
-        #voiceEntryStatus {
-            color: #166534;
+    border: 1px solid #bbf7d0;
+}
 
-            font-size: 14px;
-        }
+.voice-entry-btn {
+    padding: 11px 16px;
 
+    border: none;
 
-        /* =========================
-           MEDICINES
-        ========================= */
+    border-radius: 9px;
 
-        .medicine-item {
-            display: flex;
+    background: #166534;
 
-            justify-content: space-between;
+    color: white;
 
-            align-items: center;
+    font-weight: bold;
+}
 
-            gap: 15px;
+#voiceEntryStatus {
+    margin: 10px 0 0;
 
-            padding: 14px;
+    color: #166534;
 
-            margin-bottom: 10px;
+    font-size: 14px;
 
-            border-radius: 10px;
+    line-height: 1.5;
+}
 
-            border: 1px solid #dcfce7;
+.voice-step-indicator {
+    display: flex;
 
-            background: #fbfffc;
-        }
+    gap: 6px;
 
-        .medicine-name {
-            font-size: 18px;
+    margin-top: 12px;
+}
 
-            font-weight: bold;
+.voice-step {
+    flex: 1;
 
-            color: #166534;
-        }
+    padding: 7px 5px;
 
-        .medicine-details {
-            margin-top: 5px;
+    text-align: center;
 
-            color: #64748b;
+    border-radius: 7px;
 
-            font-size: 14px;
-        }
+    background: #dcfce7;
 
-        .medicine-actions {
-            display: flex;
+    color: #166534;
 
-            gap: 7px;
+    font-size: 12px;
 
-            flex-wrap: wrap;
-        }
+    font-weight: bold;
+}
 
-        .take-btn {
-            border: none;
 
-            padding: 9px 12px;
+/* =====================================================
+   MEDICINE LIST
+===================================================== */
 
-            border-radius: 8px;
+.medicine-item {
+    display: flex;
 
-            background: #15803d;
+    align-items: center;
 
-            color: white;
+    justify-content: space-between;
 
-            font-weight: bold;
+    gap: 15px;
 
-            cursor: pointer;
-        }
+    padding: 14px;
 
-        .delete-btn {
-            border: none;
+    margin-bottom: 10px;
 
-            padding: 9px 12px;
+    border: 1px solid #dcfce7;
 
-            border-radius: 8px;
+    border-radius: 12px;
 
-            background: #fee2e2;
+    background: #fbfffc;
+}
 
-            color: #991b1b;
+.medicine-name {
+    font-size: 18px;
 
-            cursor: pointer;
-        }
+    font-weight: bold;
 
-        .status {
-            display: inline-block;
+    color: #166534;
 
-            margin-top: 7px;
+    word-break: break-word;
+}
 
-            padding: 4px 8px;
+.medicine-details {
+    margin-top: 5px;
 
-            border-radius: 20px;
+    color: #64748b;
 
-            font-size: 12px;
+    font-size: 14px;
 
-            font-weight: bold;
-        }
+    line-height: 1.5;
+}
 
-        .status-pending {
-            background: #fef3c7;
+.medicine-actions {
+    display: flex;
 
-            color: #92400e;
-        }
+    gap: 7px;
 
-        .status-taken {
-            background: #dcfce7;
+    flex-wrap: wrap;
+}
 
-            color: #166534;
-        }
+.take-btn {
+    border: none;
 
-        .status-missed {
-            background: #fee2e2;
+    padding: 9px 12px;
 
-            color: #991b1b;
-        }
+    border-radius: 8px;
 
+    background: #15803d;
 
-        /* =========================
-           NEXT REMINDER
-        ========================= */
+    color: white;
 
-        .next-reminder {
-            padding: 15px;
+    font-weight: bold;
+}
 
-            background: #ecfdf5;
+.delete-btn {
+    border: none;
 
-            border-left: 5px solid #15803d;
+    padding: 9px 12px;
 
-            border-radius: 8px;
+    border-radius: 8px;
 
-            color: #166534;
+    background: #fee2e2;
 
-            font-weight: bold;
-        }
+    color: #991b1b;
+}
 
+.status {
+    display: inline-block;
 
-        /* =========================
-           ACCESSIBILITY
-        ========================= */
+    margin-top: 7px;
 
-        .accessibility-card {
-            border: 1px solid #bbf7d0;
-        }
+    padding: 4px 9px;
 
-        .accessibility-item {
-            display: flex;
+    border-radius: 20px;
 
-            gap: 12px;
+    font-size: 12px;
 
-            margin-bottom: 15px;
-        }
+    font-weight: bold;
+}
 
-        .accessibility-icon {
-            font-size: 28px;
-        }
+.status-pending {
+    background: #fef3c7;
 
-        .accessibility-item strong {
-            color: #166534;
-        }
+    color: #92400e;
+}
 
-        .accessibility-item p {
-            color: #64748b;
+.status-taken {
+    background: #dcfce7;
 
-            margin-top: 4px;
+    color: #166534;
+}
 
-            line-height: 1.5;
-        }
+.status-missed {
+    background: #fee2e2;
 
+    color: #991b1b;
+}
 
-        /* =========================
-           CAREGIVER
-        ========================= */
 
-        .action-buttons {
-            display: flex;
+/* =====================================================
+   NEXT REMINDER
+===================================================== */
 
-            gap: 8px;
+.next-reminder {
+    padding: 15px;
 
-            flex-wrap: wrap;
+    border-left: 5px solid #15803d;
 
-            margin-top: 10px;
-        }
+    border-radius: 10px;
 
-        .small-btn {
-            border: none;
+    background: #ecfdf5;
 
-            padding: 10px 14px;
+    color: #166534;
 
-            border-radius: 8px;
+    font-weight: bold;
+}
 
-            background: #15803d;
 
-            color: white;
+/* =====================================================
+   AI
+===================================================== */
 
-            font-weight: bold;
+.ai-card {
+    background: #f0fdf4;
 
-            cursor: pointer;
-        }
+    border: 1px solid #bbf7d0;
+}
 
-        .emergency-btn {
-            border: none;
+.ai-status {
+    color: #15803d;
 
-            padding: 10px 14px;
+    font-weight: bold;
+}
 
-            border-radius: 8px;
+.ai-dot {
+    display: inline-block;
 
-            background: #dc2626;
+    width: 9px;
 
-            color: white;
+    height: 9px;
 
-            font-weight: bold;
+    background: #22c55e;
 
-            cursor: pointer;
-        }
+    border-radius: 50%;
 
+    margin-right: 5px;
+}
 
-        /* =========================
-           REPORT
-        ========================= */
 
-        .report-btn {
-            border: none;
+/* =====================================================
+   ACCESSIBILITY
+===================================================== */
 
-            padding: 11px 15px;
+.accessibility-card {
+    border: 1px solid #bbf7d0;
+}
 
-            border-radius: 8px;
+.accessibility-item {
+    display: flex;
 
-            background: #166534;
+    gap: 14px;
 
-            color: white;
+    align-items: flex-start;
 
-            font-weight: bold;
+    margin-bottom: 16px;
+}
 
-            cursor: pointer;
-        }
+.accessibility-icon {
+    font-size: 28px;
 
+    min-width: 40px;
+}
 
-        /* =========================
-           REMINDER POPUP
-        ========================= */
+.accessibility-item strong {
+    color: #166534;
+}
 
-        .reminder-popup {
-            display: none;
+.accessibility-item p {
+    margin: 4px 0 0;
 
-            position: fixed;
+    color: #64748b;
 
-            inset: 0;
+    line-height: 1.5;
+}
 
-            z-index: 9999;
 
-            background:
-                rgba(0,0,0,0.75);
+/* =====================================================
+   VIBRATION STATUS
+===================================================== */
 
-            align-items: center;
+.vibration-card {
+    border: 1px solid #bbf7d0;
 
-            justify-content: center;
+    background: #f0fdf4;
+}
 
-            padding: 20px;
-        }
+.vibration-status {
+    display: flex;
 
-        .reminder-box {
-            width: 100%;
+    align-items: center;
 
-            max-width: 430px;
+    gap: 10px;
 
-            padding: 30px;
+    color: #166534;
 
-            background: white;
+    font-weight: bold;
+}
 
-            border-radius: 20px;
+.vibration-icon {
+    font-size: 28px;
 
-            text-align: center;
+    animation:
+        vibrationVisual 0.35s
+        infinite;
+}
 
-            border: 5px solid #dc2626;
+@keyframes vibrationVisual {
 
-            animation:
-                reminderFlash
-                1s
-                infinite;
-        }
+    0% {
+        transform: translateX(0);
+    }
 
-        @keyframes reminderFlash {
+    25% {
+        transform: translateX(-3px);
+    }
 
-            0% {
-                transform: scale(1);
-            }
+    50% {
+        transform: translateX(3px);
+    }
 
-            50% {
-                transform: scale(1.02);
-            }
+    75% {
+        transform: translateX(-3px);
+    }
 
-            100% {
-                transform: scale(1);
-            }
-        }
+    100% {
+        transform: translateX(0);
+    }
 
-        .reminder-icon {
-            font-size: 55px;
-        }
+}
 
-        .popup-medicine-name {
-            font-size: 28px;
 
-            font-weight: bold;
+/* =====================================================
+   CAREGIVER
+===================================================== */
 
-            color: #15803d;
+.caregiver-actions {
+    display: flex;
 
-            margin: 15px 0;
+    gap: 8px;
 
-            word-break: break-word;
-        }
+    flex-wrap: wrap;
 
-        .take-medicine-btn {
-            width: 100%;
+    margin-top: 10px;
+}
 
-            padding: 16px;
+.small-btn {
+    border: none;
 
-            border: none;
+    padding: 10px 14px;
 
-            border-radius: 10px;
+    border-radius: 8px;
 
-            background: #15803d;
+    background: #15803d;
 
-            color: white;
+    color: white;
 
-            font-size: 20px;
+    font-weight: bold;
+}
 
-            font-weight: bold;
+.emergency-btn {
+    border: none;
 
-            cursor: pointer;
-        }
+    padding: 10px 14px;
 
+    border-radius: 8px;
 
-        /* =========================
-           MOBILE
-        ========================= */
+    background: #dc2626;
 
-        @media(max-width:800px) {
+    color: white;
 
-            .stats-grid {
-                grid-template-columns:
-                    repeat(2, 1fr);
-            }
+    font-weight: bold;
+}
 
-            .medicine-form {
-                grid-template-columns: 1fr;
-            }
 
-        }
+/* =====================================================
+   REPORT
+===================================================== */
 
-        @media(max-width:600px) {
+.report-btn {
+    border: none;
 
-            .container {
-                padding: 14px;
-            }
+    padding: 11px 16px;
 
-            .medicine-item {
-                flex-direction: column;
+    border-radius: 9px;
 
-                align-items: stretch;
-            }
+    background: #166534;
 
-            .medicine-actions {
-                width: 100%;
-            }
+    color: white;
 
-            .take-btn,
-            .delete-btn {
-                flex: 1;
-            }
+    font-weight: bold;
+}
 
-        }
 
-    </style>
+/* =====================================================
+   ACTIVITY LOG
+===================================================== */
+
+#activityLog {
+    margin: 0;
+
+    padding-left: 20px;
+}
+
+#activityLog li {
+    margin-bottom: 7px;
+
+    color: #475569;
+
+    font-size: 14px;
+
+    line-height: 1.4;
+}
+
+
+/* =====================================================
+   REMINDER POPUP
+===================================================== */
+
+.reminder-popup {
+
+    display: none;
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 9999;
+
+    background:
+        rgba(0,0,0,0.78);
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 20px;
+}
+
+
+.reminder-popup.active {
+
+    display: flex;
+}
+
+
+.reminder-box {
+
+    width: 100%;
+
+    max-width: 440px;
+
+    padding: 30px;
+
+    border-radius: 20px;
+
+    background: white;
+
+    text-align: center;
+
+    border: 5px solid #dc2626;
+
+    animation:
+        reminderFlash 1s
+        infinite;
+}
+
+
+@keyframes reminderFlash {
+
+    0% {
+        transform: scale(1);
+        box-shadow:
+            0 0 0
+            rgba(220,38,38,0);
+    }
+
+    50% {
+        transform: scale(1.025);
+        box-shadow:
+            0 0 30px
+            rgba(220,38,38,0.7);
+    }
+
+    100% {
+        transform: scale(1);
+        box-shadow:
+            0 0 0
+            rgba(220,38,38,0);
+    }
+}
+
+
+.reminder-icon {
+    font-size: 55px;
+
+    margin-bottom: 5px;
+}
+
+
+.reminder-box h2 {
+    color: #991b1b;
+
+    margin: 5px 0 15px;
+}
+
+
+.popup-medicine-name {
+
+    font-size: 28px;
+
+    font-weight: bold;
+
+    color: #166534;
+
+    margin: 15px 0;
+
+    word-break: break-word;
+}
+
+
+#popupReminderText {
+
+    font-size: 17px;
+
+    line-height: 1.5;
+
+    color: #374151;
+}
+
+
+/* =====================================================
+   TAKE BUTTON
+===================================================== */
+
+.take-medicine-btn {
+
+    width: 100%;
+
+    padding: 17px;
+
+    margin-top: 15px;
+
+    border: none;
+
+    border-radius: 12px;
+
+    background: #15803d;
+
+    color: white;
+
+    font-size: 20px;
+
+    font-weight: bold;
+
+    box-shadow:
+        0 5px 15px
+        rgba(21,128,61,0.25);
+}
+
+
+.take-medicine-btn:hover {
+    background: #166534;
+}
+
+
+.take-medicine-btn:active {
+    transform: scale(0.98);
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 800px) {
+
+    .stats-grid {
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+
+    .medicine-form {
+        grid-template-columns: 1fr;
+    }
+
+    .medicine-item {
+        flex-direction: column;
+
+        align-items: flex-start;
+    }
+
+    .medicine-actions {
+        width: 100%;
+    }
+
+    .medicine-actions button {
+        flex: 1;
+    }
+
+}
+
+
+@media (max-width: 500px) {
+
+    .container {
+        padding: 12px;
+    }
+
+    .topbar {
+        padding: 12px;
+    }
+
+    .topbar-title {
+        font-size: 20px;
+    }
+
+    .stats-grid {
+        gap: 8px;
+    }
+
+    .stat-card {
+        padding: 12px;
+    }
+
+    .stat-number {
+        font-size: 23px;
+    }
+
+    .card {
+        padding: 15px;
+    }
+
+    .reminder-box {
+        padding: 22px;
+    }
+
+    .popup-medicine-name {
+        font-size: 24px;
+    }
+
+}
+
+
+/* =====================================================
+   ACCESSIBILITY FOCUS
+===================================================== */
+
+button:focus,
+input:focus,
+select:focus {
+
+    outline: 3px solid #86efac;
+
+    outline-offset: 2px;
+}
+
+</style>
 
 </head>
 
@@ -778,7 +1039,10 @@
      LOGIN
 ===================================================== -->
 
-<div id="loginSection">
+<section
+    id="loginSection"
+    aria-label="JS MEDICARE Login"
+>
 
     <div class="login-card">
 
@@ -798,9 +1062,10 @@
             </label>
 
             <input
-                type="text"
                 id="patientName"
+                type="text"
                 placeholder="Enter patient name"
+                autocomplete="name"
             >
 
         </div>
@@ -809,13 +1074,14 @@
         <div class="form-group">
 
             <label for="patientPhone">
-                Patient Phone
+                Patient Phone Number
             </label>
 
             <input
-                type="tel"
                 id="patientPhone"
+                type="tel"
                 placeholder="Enter phone number"
+                autocomplete="tel"
             >
 
         </div>
@@ -859,20 +1125,22 @@
 
 
         <button
-            class="voice-btn"
+            class="voice-enable-btn"
             onclick="enableMobileVoice()"
         >
-            🔊 Enable Voice
+            🎤 Enable Voice
         </button>
 
 
-        <div id="voiceStatus">
-            Voice assistance available
+        <div
+            id="voiceStatus"
+            aria-live="polite"
+        >
         </div>
 
     </div>
 
-</div>
+</section>
 
 
 
@@ -880,9 +1148,15 @@
      DASHBOARD
 ===================================================== -->
 
-<div id="dashboard">
+<section
+    id="dashboard"
+    aria-label="JS MEDICARE Dashboard"
+>
 
-    <div class="topbar">
+
+    <!-- TOP BAR -->
+
+    <header class="topbar">
 
         <div class="topbar-title">
             💊 JS MEDICARE
@@ -891,9 +1165,17 @@
 
         <div class="topbar-right">
 
+            <label
+                for="dashboardLanguage"
+                style="display:none;"
+            >
+                Language
+            </label>
+
             <select
                 id="dashboardLanguage"
                 onchange="changeLanguage(this.value)"
+                aria-label="Select language"
             >
 
                 <option value="en">
@@ -924,11 +1206,11 @@
 
         </div>
 
-    </div>
+    </header>
 
 
 
-    <div class="container">
+    <main class="container">
 
 
         <h1 id="welcomeText">
@@ -936,9 +1218,15 @@
         </h1>
 
 
-        <!-- STATS -->
 
-        <div class="stats-grid">
+        <!-- =================================================
+             STATISTICS
+        ================================================== -->
+
+        <section
+            class="stats-grid"
+            aria-label="Medication statistics"
+        >
 
             <div class="stat-card">
 
@@ -1003,13 +1291,45 @@
 
             </div>
 
-        </div>
+        </section>
 
 
 
-        <!-- ADD MEDICINE -->
+        <!-- =================================================
+             AI MONITORING
+        ================================================== -->
 
-        <div class="card">
+        <section class="card ai-card">
+
+            <h2 id="aiTitle">
+                AI Medication Monitoring
+            </h2>
+
+            <div
+                id="aiStatus"
+                class="ai-status"
+            >
+
+                <span class="ai-dot"></span>
+
+                AI Monitoring Online
+
+            </div>
+
+            <p id="aiMessage">
+                Your medication schedule is being
+                monitored automatically.
+            </p>
+
+        </section>
+
+
+
+        <!-- =================================================
+             ADD MEDICINE
+        ================================================== -->
+
+        <section class="card">
 
             <h2 id="addMedicineTitle">
                 Add Medicine
@@ -1020,14 +1340,15 @@
 
                 <div class="form-group">
 
-                    <label>
+                    <label for="medicineName">
                         Medicine Name
                     </label>
 
                     <input
-                        type="text"
                         id="medicineName"
+                        type="text"
                         placeholder="Example: Paracetamol"
+                        autocomplete="off"
                     >
 
                 </div>
@@ -1035,14 +1356,14 @@
 
                 <div class="form-group">
 
-                    <label>
+                    <label for="dosage">
                         Dosage
                     </label>
 
                     <input
-                        type="text"
                         id="dosage"
-                        placeholder="500 mg"
+                        type="text"
+                        placeholder="Example: 500 mg"
                     >
 
                 </div>
@@ -1050,13 +1371,13 @@
 
                 <div class="form-group">
 
-                    <label>
-                        Time
+                    <label for="medicineTime">
+                        Medicine Time
                     </label>
 
                     <input
-                        type="time"
                         id="medicineTime"
+                        type="time"
                     >
 
                 </div>
@@ -1065,53 +1386,92 @@
 
 
             <button
-                class="add-btn"
+                class="add-medicine-btn"
                 onclick="addMedicine()"
             >
-                + Add Medicine
+                ➕ Add Medicine
             </button>
 
+
+
+            <!-- VOICE ENTRY -->
 
             <div class="voice-entry-box">
 
                 <button
                     class="voice-entry-btn"
                     onclick="startVoiceMedicineEntry()"
+                    aria-label="Add medicine by voice"
                 >
                     🎤 Add Medicine by Voice
                 </button>
 
 
-                <p id="voiceEntryStatus">
-                    Say medicine name, dosage and time.
+                <p
+                    id="voiceEntryStatus"
+                    aria-live="polite"
+                >
+                    Tap the microphone and follow
+                    the voice instructions.
                 </p>
+
+
+                <div
+                    class="voice-step-indicator"
+                    aria-label="Voice entry steps"
+                >
+
+                    <div class="voice-step">
+                        1. Name
+                    </div>
+
+                    <div class="voice-step">
+                        2. Dosage
+                    </div>
+
+                    <div class="voice-step">
+                        3. Time
+                    </div>
+
+                </div>
 
             </div>
 
-        </div>
+        </section>
 
 
 
-        <!-- MEDICINES -->
+        <!-- =================================================
+             MEDICINES
+        ================================================== -->
 
-        <div class="card">
+        <section class="card">
 
             <h2 id="myMedicinesTitle">
                 My Medicines
             </h2>
 
 
-            <div id="medicineList">
-                No medicines added yet.
+            <div
+                id="medicineList"
+                aria-live="polite"
+            >
+
+                <p>
+                    No medicines added yet.
+                </p>
+
             </div>
 
-        </div>
+        </section>
 
 
 
-        <!-- NEXT REMINDER -->
+        <!-- =================================================
+             NEXT REMINDER
+        ================================================== -->
 
-        <div class="card">
+        <section class="card">
 
             <h2 id="nextReminderTitle">
                 Next Reminder
@@ -1122,43 +1482,54 @@
                 id="nextReminder"
                 class="next-reminder"
             >
-                No reminder
+                No upcoming reminders.
             </div>
 
-        </div>
+        </section>
 
 
 
-        <!-- AI -->
+        <!-- =================================================
+             VIBRATION / ACCESSIBILITY
+        ================================================== -->
 
-        <div class="card">
+        <section class="card vibration-card">
 
             <h2>
-                AI Medication Monitoring
+                📳 Vibration Alert
             </h2>
 
-            <p
-                id="aiStatus"
-                style="
-                    color:#15803d;
-                    font-weight:bold;
-                "
-            >
-                🟢 AI Monitoring Online
-            </p>
+
+            <div class="vibration-status">
+
+                <span class="vibration-icon">
+                    📳
+                </span>
+
+                <span>
+                    Vibration alert will repeat
+                    throughout the 60-second
+                    medicine reminder.
+                </span>
+
+            </div>
+
 
             <p>
-                Your medication schedule is
-                being monitored automatically.
+                On supported mobile devices,
+                JS MEDICARE uses repeated vibration
+                together with voice and visual alerts.
             </p>
 
-        </div>
+        </section>
 
 
 
-        <!-- ACCESSIBILITY -->
+        <!-- =================================================
+             ACCESSIBILITY
+        ================================================== -->
 
-        <div class="card accessibility-card">
+        <section class="card accessibility-card">
 
             <h2>
                 ♿ Accessibility Support
@@ -1174,14 +1545,14 @@
                 <div>
 
                     <strong>
-                        Blind / Visually Impaired
+                        For Blind / Low-Vision Users
                     </strong>
 
                     <p>
-                        Regional-language voice
-                        reminders, spoken medicine
-                        names, voice-to-text medicine
-                        entry and screen-reader support.
+                        Voice reminders, voice medicine
+                        entry, spoken medicine name,
+                        screen-reader friendly controls,
+                        and voice command support.
                     </p>
 
                 </div>
@@ -1198,13 +1569,14 @@
                 <div>
 
                     <strong>
-                        Deaf / Hearing Impaired
+                        For Deaf / Hard-of-Hearing Users
                     </strong>
 
                     <p>
-                        Repeated vibration and
-                        flashing visual reminders
-                        are provided during alerts.
+                        Repeated vibration, flashing
+                        visual reminder, large medicine
+                        display and large "I Took It"
+                        button.
                     </p>
 
                 </div>
@@ -1215,56 +1587,34 @@
             <div class="accessibility-item">
 
                 <div class="accessibility-icon">
-                    🎤
+                    📳
                 </div>
 
                 <div>
 
                     <strong>
-                        Voice Interaction
+                        Vibration Alert
                     </strong>
 
                     <p>
-                        During an active reminder,
-                        the patient can say
-                        "I took it" to mark the
-                        medicine as taken.
+                        Vibration is repeatedly triggered
+                        during the complete 60-second
+                        reminder period on supported devices.
                     </p>
 
                 </div>
 
             </div>
 
-
-            <div class="accessibility-item">
-
-                <div class="accessibility-icon">
-                    🤝
-                </div>
-
-                <div>
-
-                    <strong>
-                        Caregiver Support
-                    </strong>
-
-                    <p>
-                        If the patient does not
-                        respond within one minute,
-                        the caregiver can be notified.
-                    </p>
-
-                </div>
-
-            </div>
-
-        </div>
+        </section>
 
 
 
-        <!-- CAREGIVER -->
+        <!-- =================================================
+             CAREGIVER
+        ================================================== -->
 
-        <div class="card">
+        <section class="card">
 
             <h2>
                 👨‍👩‍👧 Caregiver Support
@@ -1273,20 +1623,20 @@
 
             <div class="form-group">
 
-                <label>
+                <label for="caregiverPhone">
                     Caregiver Phone Number
                 </label>
 
                 <input
-                    type="tel"
                     id="caregiverPhone"
-                    placeholder="Enter caregiver phone"
+                    type="tel"
+                    placeholder="Enter caregiver phone number"
                 >
 
             </div>
 
 
-            <div class="action-buttons">
+            <div class="caregiver-actions">
 
                 <button
                     class="small-btn"
@@ -1313,37 +1663,44 @@
 
             </div>
 
-        </div>
+
+            <p>
+                If a medicine is not taken within
+                60 seconds, the caregiver SMS
+                notification option will be triggered.
+            </p>
+
+        </section>
 
 
 
-        <!-- REPORT -->
+        <!-- =================================================
+             REPORT
+        ================================================== -->
 
-        <div class="card">
+        <section class="card">
 
             <h2>
                 📊 Medication Report
             </h2>
-
-            <p>
-                Generate a printable medication report.
-            </p>
 
 
             <button
                 class="report-btn"
                 onclick="generateMedicationReport()"
             >
-                📄 Generate Report
+                🖨️ Generate Medication Report
             </button>
 
-        </div>
+        </section>
 
 
 
-        <!-- ACTIVITY -->
+        <!-- =================================================
+             ACTIVITY
+        ================================================== -->
 
-        <div class="card">
+        <section class="card">
 
             <h2>
                 📋 Activity Log
@@ -1353,16 +1710,16 @@
             <ul id="activityLog">
             </ul>
 
-        </div>
+        </section>
 
-    </div>
+    </main>
 
-</div>
+</section>
 
 
 
 <!-- =====================================================
-     REMINDER POPUP
+     MEDICINE REMINDER POPUP
 ===================================================== -->
 
 <div
@@ -1398,6 +1755,16 @@
         </p>
 
 
+        <p
+            style="
+                color:#dc2626;
+                font-weight:bold;
+            "
+        >
+            📳 Vibration + Voice Alert Active
+        </p>
+
+
         <button
             id="popupTakeButton"
             class="take-medicine-btn"
@@ -1412,11 +1779,12 @@
 
 
 
-<!-- IMPORTANT:
-     Keep this as the LAST script
--->
+<!-- =====================================================
+     JAVASCRIPT
+===================================================== -->
 
 <script src="script.js"></script>
+
 
 </body>
 
