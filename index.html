@@ -1,442 +1,733 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>MEDICARE - Medication Reminder</title>
-
-<style>
-
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
-}
-
-body {
-    background: linear-gradient(135deg,#e0f7fa,#e8eaf6);
-    min-height: 100vh;
-    color: #263238;
-}
-
-.container {
-    width: 95%;
-    max-width: 1200px;
-    margin: auto;
-}
-
-/* ================= LOGIN ================= */
-
-.login-section {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.login-card {
-    background: white;
-    padding: 35px;
-    width: 95%;
-    max-width: 450px;
-    border-radius: 18px;
-    box-shadow: 0 10px 30px rgba(0,0,0,.15);
-}
-
-.login-card h1 {
-    text-align: center;
-    color: #00695c;
-    margin-bottom: 10px;
-}
-
-.login-card p {
-    text-align: center;
-    color: #607d8b;
-    margin-bottom: 25px;
-}
-
-.form-group {
-    margin-bottom: 18px;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 7px;
-    font-weight: bold;
-}
-
-input,
-select,
-button {
-    width: 100%;
-    padding: 12px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    font-size: 15px;
-}
-
-button {
-    border: none;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-.login-btn {
-    background: #00897b;
-    color: white;
-    padding: 14px;
-}
-
-.voice-enable-btn {
-    margin-top: 12px;
-    background: #3949ab;
-    color: white;
-    padding: 14px;
-}
-
-.voice-enabled {
-    background: #43a047 !important;
-}
-
-#voiceStatus {
-    margin-top: 12px;
-    text-align: center;
-    font-weight: bold;
-    color: #00695c;
-}
-
-/* ================= DASHBOARD ================= */
-
-.dashboard {
-    display: none;
-}
-
-header {
-    background: linear-gradient(135deg,#00695c,#00897b);
-    color: white;
-    padding: 20px;
-}
-
-.header-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 15px;
-    flex-wrap: wrap;
-}
-
-.logo {
-    font-size: 28px;
-    font-weight: bold;
-}
-
-.subtitle {
-    font-size: 14px;
-    margin-top: 5px;
-}
-
-header select {
-    width: auto;
-}
-
-.dashboard-header {
-    padding: 25px 0;
-}
-
-.dashboard-header h1 {
-    color: #00695c;
-}
-
-.ai-status {
-    display: inline-block;
-    margin-top: 8px;
-    padding: 7px 12px;
-    background: #c8e6c9;
-    color: #2e7d32;
-    border-radius: 20px;
-    font-size: 13px;
-    font-weight: bold;
-}
-
-/* ================= STATS ================= */
-
-.stats {
-    display: grid;
-    grid-template-columns: repeat(4,1fr);
-    gap: 15px;
-    margin-bottom: 25px;
-}
-
-.stat-card {
-    background: white;
-    padding: 20px;
-    border-radius: 15px;
-    box-shadow: 0 4px 12px rgba(0,0,0,.08);
-    text-align: center;
-}
-
-.stat-card h3 {
-    color: #607d8b;
-    font-size: 14px;
-}
-
-.stat-card .number {
-    font-size: 30px;
-    font-weight: bold;
-    color: #00695c;
-    margin-top: 8px;
-}
-
-/* ================= CARDS ================= */
-
-.card {
-    background: white;
-    padding: 25px;
-    border-radius: 15px;
-    box-shadow: 0 4px 12px rgba(0,0,0,.08);
-    margin-bottom: 25px;
-}
-
-.card h2 {
-    color: #00695c;
-    margin-bottom: 20px;
-}
-
-/* ================= NEXT REMINDER ================= */
-
-.next-reminder {
-    background: linear-gradient(135deg,#00897b,#26a69a);
-    color: white;
-    padding: 22px;
-    border-radius: 15px;
-    margin-bottom: 25px;
-}
-
-.next-reminder h3 {
-    margin-bottom: 8px;
-}
-
-.next-reminder-time {
-    font-size: 25px;
-    font-weight: bold;
-}
-
-/* ================= MEDICINE FORM ================= */
-
-.medicine-form {
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr auto;
-    gap: 12px;
-}
-
-.medicine-form button {
-    width: auto;
-}
-
-/* ================= MEDICINE LIST ================= */
-
-.medicine-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.medicine-item {
-    border: 1px solid #ddd;
-    border-left: 5px solid #00897b;
-    padding: 15px;
-    border-radius: 10px;
-
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    gap: 15px;
-    flex-wrap: wrap;
-}
-
-.medicine-info h3 {
-    margin-bottom: 6px;
-}
-
-.medicine-info p {
-    color: #607d8b;
-    margin: 4px 0;
-}
-
-.medicine-actions {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-}
-
-.medicine-actions button {
-    width: auto;
-}
-
-.btn-primary {
-    background: #00897b;
-    color: white;
-}
-
-.btn-success {
-    background: #43a047;
-    color: white;
-}
-
-.btn-danger {
-    background: #e53935;
-    color: white;
-}
-
-.btn-warning {
-    background: #fb8c00;
-    color: white;
-}
-
-.pending {
-    color: #fb8c00;
-    font-weight: bold;
-}
-
-.taken {
-    color: #43a047;
-    font-weight: bold;
-}
-
-/* ================= AI ================= */
-
-.ai-box {
-    background: #f3e5f5;
-    border-left: 5px solid #8e24aa;
-    padding: 18px;
-    border-radius: 10px;
-}
-
-.ai-box h3 {
-    color: #6a1b9a;
-    margin-bottom: 8px;
-}
-
-/* ================= REPORT ================= */
-
-.report-grid {
-    display: grid;
-    grid-template-columns: repeat(2,1fr);
-    gap: 15px;
-}
-
-.report-item {
-    background: #f5f5f5;
-    padding: 15px;
-    border-radius: 10px;
-}
-
-.report-button {
-    margin-top: 20px;
-    background: #00695c;
-    color: white;
-}
-
-/* ================= LOG ================= */
-
-.log {
-    max-height: 250px;
-    overflow-y: auto;
-}
-
-.log-item {
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
-    font-size: 14px;
-}
-
-/* ================= ACTIONS ================= */
-
-.actions {
-    display: grid;
-    grid-template-columns: repeat(3,1fr);
-    gap: 12px;
-}
-
-.action-btn {
-    padding: 18px;
-    color: white;
-}
-
-.caregiver {
-    background: #3949ab;
-}
-
-.ambulance {
-    background: #d32f2f;
-}
-
-.logout {
-    background: #455a64;
-}
-
-/* ================= MOBILE ================= */
-
-@media(max-width:800px) {
-
-    .stats {
-        grid-template-columns: repeat(2,1fr);
-    }
-
-    .medicine-form {
-        grid-template-columns: 1fr;
-    }
-
-    .medicine-form button {
-        width: 100%;
-    }
-
-    .actions {
-        grid-template-columns: 1fr;
-    }
-
-    .report-grid {
-        grid-template-columns: 1fr;
-    }
-
-}
-
-@media(max-width:500px) {
-
-    .stats {
-        grid-template-columns: 1fr;
-    }
-
-    .header-content {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    header select {
-        width: 100%;
-    }
-
-    .login-card {
-        padding: 25px;
-    }
-
-    .medicine-actions {
-        width: 100%;
-    }
-
-    .medicine-actions button {
-        flex: 1;
-    }
-
-}
-
-</style>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>JS MEDICARE - Medication Reminder</title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+
+        body {
+            background: linear-gradient(
+                135deg,
+                #e0f7fa,
+                #e8eaf6
+            );
+
+            min-height: 100vh;
+
+            color: #263238;
+        }
+
+
+        .container {
+            width: 95%;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+
+        /* ================= HEADER ================= */
+
+        header {
+            background: linear-gradient(
+                135deg,
+                #00695c,
+                #00897b
+            );
+
+            color: white;
+
+            padding: 20px;
+
+            box-shadow:
+                0 3px 10px rgba(0,0,0,0.2);
+        }
+
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            flex-wrap: wrap;
+
+            gap: 15px;
+        }
+
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+
+        .subtitle {
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+
+        /* ================= INPUTS ================= */
+
+        select,
+        input,
+        button {
+            padding: 12px;
+
+            border-radius: 8px;
+
+            border: 1px solid #ccc;
+
+            font-size: 15px;
+        }
+
+
+        select {
+            cursor: pointer;
+        }
+
+
+        input:focus,
+        select:focus {
+            outline: 2px solid #80cbc4;
+        }
+
+
+        button {
+            cursor: pointer;
+
+            border: none;
+
+            font-weight: bold;
+        }
+
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+
+        .btn-primary {
+            background: #00897b;
+            color: white;
+        }
+
+
+        .btn-danger {
+            background: #e53935;
+            color: white;
+        }
+
+
+        .btn-success {
+            background: #43a047;
+            color: white;
+        }
+
+
+        .btn-warning {
+            background: #fb8c00;
+            color: white;
+        }
+
+
+        /* ================= LOGIN ================= */
+
+        .login-section {
+            min-height: 100vh;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+        }
+
+
+        .login-card {
+            background: white;
+
+            padding: 35px;
+
+            width: 100%;
+
+            max-width: 450px;
+
+            border-radius: 18px;
+
+            box-shadow:
+                0 10px 30px rgba(0,0,0,0.15);
+        }
+
+
+        .login-card h1 {
+            color: #00695c;
+
+            margin-bottom: 10px;
+
+            text-align: center;
+        }
+
+
+        .login-card p {
+            text-align: center;
+
+            margin-bottom: 25px;
+
+            color: #607d8b;
+        }
+
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+
+        .form-group label {
+            display: block;
+
+            margin-bottom: 7px;
+
+            font-weight: bold;
+        }
+
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+        }
+
+
+        .login-btn {
+            width: 100%;
+
+            background: #00897b;
+
+            color: white;
+
+            padding: 14px;
+        }
+
+
+        .voice-enable-btn {
+            width: 100%;
+
+            margin-top: 12px;
+
+            background: #3949ab;
+
+            color: white;
+
+            padding: 14px;
+        }
+
+
+        .voice-enabled {
+            background: #43a047 !important;
+        }
+
+
+        #voiceStatus {
+            margin-top: 12px;
+
+            text-align: center;
+
+            font-weight: bold;
+
+            color: #00695c;
+        }
+
+
+        /* ================= DASHBOARD ================= */
+
+        .dashboard {
+            display: none;
+        }
+
+
+        .dashboard-header {
+            padding: 25px 0;
+        }
+
+
+        .dashboard-header h1 {
+            color: #00695c;
+        }
+
+
+        .ai-status {
+            display: inline-block;
+
+            margin-top: 8px;
+
+            padding: 7px 12px;
+
+            background: #c8e6c9;
+
+            color: #2e7d32;
+
+            border-radius: 20px;
+
+            font-size: 13px;
+
+            font-weight: bold;
+        }
+
+
+        /* ================= STATS ================= */
+
+        .stats {
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
+            gap: 15px;
+
+            margin-bottom: 25px;
+        }
+
+
+        .stat-card {
+            background: white;
+
+            padding: 20px;
+
+            border-radius: 15px;
+
+            box-shadow:
+                0 4px 12px rgba(0,0,0,0.08);
+
+            text-align: center;
+        }
+
+
+        .stat-card h3 {
+            color: #607d8b;
+
+            font-size: 14px;
+        }
+
+
+        .stat-card .number {
+            font-size: 30px;
+
+            font-weight: bold;
+
+            color: #00695c;
+
+            margin-top: 8px;
+        }
+
+
+        /* ================= CARDS ================= */
+
+        .card {
+            background: white;
+
+            padding: 25px;
+
+            border-radius: 15px;
+
+            box-shadow:
+                0 4px 12px rgba(0,0,0,0.08);
+
+            margin-bottom: 25px;
+        }
+
+
+        .card h2 {
+            color: #00695c;
+
+            margin-bottom: 20px;
+        }
+
+
+        /* ================= NEXT REMINDER ================= */
+
+        .next-reminder {
+            background: linear-gradient(
+                135deg,
+                #00897b,
+                #26a69a
+            );
+
+            color: white;
+
+            padding: 22px;
+
+            border-radius: 15px;
+
+            margin-bottom: 25px;
+        }
+
+
+        .next-reminder h3 {
+            margin-bottom: 8px;
+        }
+
+
+        .next-reminder-time {
+            font-size: 25px;
+
+            font-weight: bold;
+        }
+
+
+        /* ================= MEDICINE FORM ================= */
+
+        .medicine-form {
+            display: grid;
+
+            grid-template-columns:
+                2fr 1fr 1fr auto;
+
+            gap: 12px;
+        }
+
+
+        .medicine-form input {
+            width: 100%;
+        }
+
+
+        /* ================= MEDICINE LIST ================= */
+
+        .medicine-list {
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 12px;
+        }
+
+
+        .medicine-item {
+            border: 1px solid #ddd;
+
+            border-left: 5px solid #00897b;
+
+            padding: 15px;
+
+            border-radius: 10px;
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            gap: 15px;
+
+            flex-wrap: wrap;
+        }
+
+
+        .medicine-info h3 {
+            color: #263238;
+
+            margin-bottom: 6px;
+        }
+
+
+        .medicine-info p {
+            color: #607d8b;
+
+            margin: 3px 0;
+        }
+
+
+        .status {
+            font-weight: bold;
+        }
+
+
+        .pending {
+            color: #fb8c00;
+        }
+
+
+        .taken {
+            color: #43a047;
+        }
+
+
+        .missed {
+            color: #e53935;
+        }
+
+
+        .medicine-actions {
+            display: flex;
+
+            gap: 8px;
+
+            flex-wrap: wrap;
+        }
+
+
+        /* ================= AI ================= */
+
+        .ai-box {
+            background: #f3e5f5;
+
+            border-left: 5px solid #8e24aa;
+
+            padding: 18px;
+
+            border-radius: 10px;
+        }
+
+
+        .ai-box h3 {
+            color: #6a1b9a;
+
+            margin-bottom: 8px;
+        }
+
+
+        /* ================= REPORT ================= */
+
+        .report-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(2, 1fr);
+
+            gap: 15px;
+        }
+
+
+        .report-item {
+            background: #f5f5f5;
+
+            padding: 15px;
+
+            border-radius: 10px;
+        }
+
+
+        .report-item div {
+            margin-top: 8px;
+
+            font-size: 20px;
+
+            font-weight: bold;
+
+            color: #00695c;
+        }
+
+
+        .report-button {
+            width: 100%;
+
+            margin-top: 20px;
+
+            padding: 15px;
+
+            background: #00695c;
+
+            color: white;
+
+            font-size: 16px;
+        }
+
+
+        /* ================= ACTION BUTTONS ================= */
+
+        .actions {
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 12px;
+        }
+
+
+        .action-btn {
+            padding: 18px;
+
+            color: white;
+
+            border-radius: 10px;
+        }
+
+
+        .caregiver {
+            background: #3949ab;
+        }
+
+
+        .ambulance {
+            background: #d32f2f;
+        }
+
+
+        .logout {
+            background: #455a64;
+        }
+
+
+        /* ================= LOG ================= */
+
+        .log {
+            max-height: 250px;
+
+            overflow-y: auto;
+        }
+
+
+        .log-item {
+            padding: 10px;
+
+            border-bottom:
+                1px solid #ddd;
+
+            font-size: 14px;
+        }
+
+
+        /* ================= REMINDER ALERT ================= */
+
+        .reminder-alert {
+            position: fixed;
+
+            top: 20px;
+
+            right: 20px;
+
+            left: 20px;
+
+            max-width: 500px;
+
+            margin: auto;
+
+            background: white;
+
+            border: 4px solid #e53935;
+
+            border-radius: 18px;
+
+            padding: 25px;
+
+            box-shadow:
+                0 10px 40px rgba(0,0,0,0.3);
+
+            z-index: 9999;
+
+            text-align: center;
+
+            display: none;
+        }
+
+
+        .reminder-alert h2 {
+            color: #e53935;
+
+            margin-bottom: 10px;
+        }
+
+
+        .reminder-alert p {
+            font-size: 20px;
+
+            margin-bottom: 18px;
+        }
+
+
+        .reminder-take-btn {
+            background: #43a047;
+
+            color: white;
+
+            padding: 15px 30px;
+
+            font-size: 17px;
+        }
+
+
+        /* ================= RESPONSIVE ================= */
+
+        @media(max-width: 800px) {
+
+            .stats {
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+
+            .medicine-form {
+                grid-template-columns:
+                    1fr;
+            }
+
+
+            .actions {
+                grid-template-columns:
+                    1fr;
+            }
+
+
+            .report-grid {
+                grid-template-columns:
+                    1fr;
+            }
+
+        }
+
+
+        @media(max-width: 500px) {
+
+            .stats {
+                grid-template-columns:
+                    1fr;
+            }
+
+
+            .header-content {
+                flex-direction: column;
+
+                align-items: flex-start;
+            }
+
+
+            .login-card {
+                width: 92%;
+
+                padding: 25px;
+            }
+
+
+            .medicine-actions {
+                width: 100%;
+            }
+
+
+            .medicine-actions button {
+                flex: 1;
+            }
+
+        }
+
+    </style>
 
 </head>
 
@@ -444,144 +735,182 @@ header select {
 <body>
 
 
-<!-- =====================================================
-LOGIN
-===================================================== -->
+<!-- =========================================================
+     LOGIN PAGE
+========================================================= -->
 
-<section id="loginSection" class="login-section">
-
-<div class="login-card">
-
-<h1>💊 MEDICARE</h1>
-
-<p id="loginSubtitle">
-Right Medicine, Right Time
-</p>
-
-
-<div class="form-group">
-
-<label id="nameLabel">
-Patient Name
-</label>
-
-<input
-type="text"
-id="patientName"
-placeholder="Enter patient name"
+<section
+    id="loginSection"
+    class="login-section"
 >
 
-</div>
+    <div class="login-card">
+
+        <h1>
+            JS MEDICARE
+        </h1>
 
 
-<div class="form-group">
-
-<label id="phoneLabel">
-Phone Number
-</label>
-
-<input
-type="tel"
-id="patientPhone"
-placeholder="Enter phone number"
->
-
-</div>
+        <p id="loginSubtitle">
+            Right Medicine, Right Time
+        </p>
 
 
-<div class="form-group">
+        <!-- PATIENT NAME -->
 
-<label id="languageLabel">
-Select Language
-</label>
+        <div class="form-group">
 
-<select id="languageSelect">
+            <label id="nameLabel">
+                Patient Name
+            </label>
 
-<option value="en">English</option>
+            <input
+                type="text"
+                id="patientName"
+                placeholder="Enter patient name"
+            >
 
-<option value="ta">தமிழ்</option>
-
-<option value="hi">हिन्दी</option>
-
-<option value="te">తెలుగు</option>
-
-</select>
-
-</div>
+        </div>
 
 
-<button
-class="login-btn"
-id="loginButton"
-onclick="login()"
->
-Login
-</button>
+        <!-- PHONE -->
+
+        <div class="form-group">
+
+            <label id="phoneLabel">
+                Phone Number
+            </label>
+
+            <input
+                type="tel"
+                id="patientPhone"
+                placeholder="Enter phone number"
+            >
+
+        </div>
 
 
-<button
-class="voice-enable-btn"
-id="voiceEnableButton"
-onclick="enableMobileVoice()"
->
-🔊 Enable Mobile Voice
-</button>
+        <!-- LANGUAGE -->
+
+        <div class="form-group">
+
+            <label id="languageLabel">
+                Select Language
+            </label>
+
+            <select id="languageSelect">
+
+                <option value="en">
+                    English
+                </option>
+
+                <option value="ta">
+                    தமிழ்
+                </option>
+
+                <option value="hi">
+                    हिन्दी
+                </option>
+
+                <option value="te">
+                    తెలుగు
+                </option>
+
+            </select>
+
+        </div>
 
 
-<div id="voiceStatus"></div>
+        <!-- LOGIN -->
 
-</div>
+        <button
+            type="button"
+            class="login-btn"
+            id="loginButton"
+            onclick="login()"
+        >
+            Login
+        </button>
+
+
+        <!-- ENABLE VOICE -->
+
+        <button
+            type="button"
+            class="voice-enable-btn"
+            id="voiceEnableButton"
+            onclick="enableMobileVoice()"
+        >
+            🔊 Enable Mobile Voice
+        </button>
+
+
+        <div id="voiceStatus"></div>
+
+    </div>
 
 </section>
 
 
 
-<!-- =====================================================
-DASHBOARD
-===================================================== -->
+<!-- =========================================================
+     DASHBOARD
+========================================================= -->
 
 <section
-id="dashboardSection"
-class="dashboard"
+    id="dashboardSection"
+    class="dashboard"
 >
 
+
+<!-- HEADER -->
 
 <header>
 
-<div class="container header-content">
+    <div class="container header-content">
 
-<div>
+        <div>
 
-<div class="logo">
-💊 MEDICARE
-</div>
+            <div class="logo">
+                JS MEDICARE
+            </div>
 
-<div
-class="subtitle"
-id="headerSubtitle"
->
-Right Medicine, Right Time
-</div>
+            <div
+                class="subtitle"
+                id="headerSubtitle"
+            >
+                Right Medicine, Right Time
+            </div>
 
-</div>
+        </div>
 
 
-<select
-id="dashboardLanguage"
-onchange="changeLanguage(this.value)"
->
+        <!-- DASHBOARD LANGUAGE -->
 
-<option value="en">English</option>
+        <select
+            id="dashboardLanguage"
+            onchange="changeLanguage(this.value)"
+        >
 
-<option value="ta">தமிழ்</option>
+            <option value="en">
+                English
+            </option>
 
-<option value="hi">हिन्दी</option>
+            <option value="ta">
+                தமிழ்
+            </option>
 
-<option value="te">తెలుగు</option>
+            <option value="hi">
+                हिन्दी
+            </option>
 
-</select>
+            <option value="te">
+                తెలుగు
+            </option>
 
-</div>
+        </select>
+
+    </div>
 
 </header>
 
@@ -590,362 +919,414 @@ onchange="changeLanguage(this.value)"
 <main class="container">
 
 
-<!-- ================= WELCOME ================= -->
+<!-- DASHBOARD TITLE -->
 
 <div class="dashboard-header">
 
-<h1 id="welcomeTitle">
-Welcome
-</h1>
+    <h1 id="welcomeTitle">
+        Welcome
+    </h1>
 
-<div class="ai-status">
 
-●
+    <div class="ai-status">
 
-<span id="aiStatusText">
-Monitoring Online
-</span>
+        ●
+
+        <span id="aiStatusText">
+            Monitoring Online
+        </span>
+
+    </div>
 
 </div>
 
-</div>
 
 
-
-<!-- ================= STATS ================= -->
+<!-- =====================================================
+     STATISTICS
+===================================================== -->
 
 <div class="stats">
 
-<div class="stat-card">
 
-<h3 id="totalLabel">
-Total Medicines
-</h3>
+    <div class="stat-card">
 
-<div
-class="number"
-id="totalMedicines"
->
-0
+        <h3 id="totalLabel">
+            Total Medicines
+        </h3>
+
+        <div
+            class="number"
+            id="totalMedicines"
+        >
+            0
+        </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+        <h3 id="takenLabel">
+            Taken
+        </h3>
+
+        <div
+            class="number"
+            id="takenMedicines"
+        >
+            0
+        </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+        <h3 id="missedLabel">
+            Missed
+        </h3>
+
+        <div
+            class="number"
+            id="missedMedicines"
+        >
+            0
+        </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+        <h3 id="adherenceLabel">
+            Adherence
+        </h3>
+
+        <div
+            class="number"
+            id="adherence"
+        >
+            0%
+        </div>
+
+    </div>
+
 </div>
 
-</div>
 
 
-<div class="stat-card">
-
-<h3 id="takenLabel">
-Taken
-</h3>
-
-<div
-class="number"
-id="takenMedicines"
->
-0
-</div>
-
-</div>
-
-
-<div class="stat-card">
-
-<h3 id="missedLabel">
-Missed
-</h3>
-
-<div
-class="number"
-id="missedMedicines"
->
-0
-</div>
-
-</div>
-
-
-<div class="stat-card">
-
-<h3 id="adherenceLabel">
-Adherence
-</h3>
-
-<div
-class="number"
-id="adherence"
->
-0%
-</div>
-
-</div>
-
-</div>
-
-
-
-<!-- ================= NEXT REMINDER ================= -->
+<!-- =====================================================
+     NEXT REMINDER
+===================================================== -->
 
 <div class="next-reminder">
 
-<h3 id="nextReminderTitle">
-Next Medication Reminder
-</h3>
+    <h3 id="nextReminderTitle">
+        Next Medication Reminder
+    </h3>
 
-<div
-class="next-reminder-time"
-id="nextReminder"
->
-No reminders
+
+    <div
+        class="next-reminder-time"
+        id="nextReminder"
+    >
+        No reminders
+    </div>
+
 </div>
 
-</div>
 
 
-
-<!-- ================= ADD MEDICINE ================= -->
+<!-- =====================================================
+     ADD MEDICINE
+===================================================== -->
 
 <div class="card">
 
-<h2 id="addMedicineTitle">
-Add Medicine
-</h2>
+    <h2 id="addMedicineTitle">
+        Add Medicine
+    </h2>
 
 
-<div class="medicine-form">
-
-<input
-type="text"
-id="medicineName"
-placeholder="Medicine name"
->
+    <div class="medicine-form">
 
 
-<input
-type="text"
-id="dosage"
-placeholder="Dosage"
->
+        <input
+            type="text"
+            id="medicineName"
+            placeholder="Medicine name"
+        >
 
 
-<input
-type="time"
-id="medicineTime"
->
+        <input
+            type="text"
+            id="dosage"
+            placeholder="Dosage"
+        >
 
 
-<button
-class="btn-primary"
-onclick="addMedicine()"
-id="addButton"
->
-Add Medicine
-</button>
+        <input
+            type="time"
+            id="medicineTime"
+        >
+
+
+        <button
+            type="button"
+            class="btn-primary"
+            id="addButton"
+            onclick="addMedicine()"
+        >
+            Add Medicine
+        </button>
+
+    </div>
+
+
+    <!-- VOICE TEST -->
+
+    <button
+        type="button"
+        class="btn-primary"
+        onclick="testMedicineVoice()"
+        style="
+            margin-top:15px;
+            width:100%;
+            background:#3949ab;
+        "
+    >
+        🔊 Test Medicine Voice
+    </button>
 
 </div>
 
-</div>
 
 
-
-<!-- ================= MEDICINE LIST ================= -->
+<!-- =====================================================
+     MEDICINE LIST
+===================================================== -->
 
 <div class="card">
 
-<h2 id="medicineListTitle">
-Medicine Schedule
-</h2>
+    <h2 id="medicineListTitle">
+        Medicine Schedule
+    </h2>
 
 
-<div
-id="medicineList"
-class="medicine-list"
->
+    <div
+        id="medicineList"
+        class="medicine-list"
+    ></div>
+
 </div>
 
-</div>
 
 
-
-<!-- ================= AI ================= -->
+<!-- =====================================================
+     AI ASSISTANT
+===================================================== -->
 
 <div class="card">
 
-<div class="ai-box">
+    <div class="ai-box">
 
-<h3 id="aiTitle">
-AI Healthcare Assistant
-</h3>
+        <h3 id="aiTitle">
+            AI Healthcare Assistant
+        </h3>
 
-<p id="aiMessage">
-Your medication schedule is being monitored automatically.
-</p>
+
+        <p id="aiMessage">
+            Your medication schedule is being monitored
+            automatically.
+        </p>
+
+    </div>
 
 </div>
 
-</div>
 
 
-
-<!-- ================= CAREGIVER ================= -->
+<!-- =====================================================
+     CAREGIVER
+===================================================== -->
 
 <div class="card">
 
-<h2 id="caregiverTitle">
-Caregiver
-</h2>
+    <h2 id="caregiverTitle">
+        Caregiver
+    </h2>
 
 
-<div class="form-group">
+    <div class="form-group">
 
-<label id="caregiverPhoneLabel">
-Caregiver Phone Number
-</label>
+        <label id="caregiverPhoneLabel">
+            Caregiver Phone Number
+        </label>
 
-<input
-type="tel"
-id="caregiverPhone"
-placeholder="Enter caregiver phone number"
->
+
+        <input
+            type="tel"
+            id="caregiverPhone"
+            placeholder="Enter caregiver phone number"
+        >
+
+    </div>
+
+
+    <button
+        type="button"
+        class="btn-primary"
+        id="saveCaregiverButton"
+        onclick="saveCaregiver()"
+    >
+        Save Caregiver
+    </button>
 
 </div>
 
 
-<button
-class="btn-primary"
-onclick="saveCaregiver()"
-id="saveCaregiverButton"
->
-Save Caregiver
-</button>
 
-</div>
-
-
-
-<!-- ================= REPORT ================= -->
+<!-- =====================================================
+     REPORT
+===================================================== -->
 
 <div class="card">
 
-<h2 id="reportTitle">
-Medication Report
-</h2>
+    <h2 id="reportTitle">
+        Medication Report
+    </h2>
 
 
-<div class="report-grid">
+    <div class="report-grid">
 
-<div class="report-item">
 
-<strong>
-Total Medicines
-</strong>
+        <div class="report-item">
 
-<div id="reportTotal">
-0
+            <strong id="reportTotalText">
+                Total Medicines
+            </strong>
+
+            <div id="reportTotal">
+                0
+            </div>
+
+        </div>
+
+
+        <div class="report-item">
+
+            <strong id="reportTakenText">
+                Medicines Taken
+            </strong>
+
+            <div id="reportTaken">
+                0
+            </div>
+
+        </div>
+
+
+        <div class="report-item">
+
+            <strong id="reportMissedText">
+                Medicines Missed
+            </strong>
+
+            <div id="reportMissed">
+                0
+            </div>
+
+        </div>
+
+
+        <div class="report-item">
+
+            <strong id="reportAdherenceText">
+                Adherence
+            </strong>
+
+            <div id="reportAdherence">
+                0%
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <button
+        type="button"
+        class="report-button"
+        id="reportButton"
+        onclick="generateMedicationReport()"
+    >
+        📄 Generate Detailed PDF Report
+    </button>
+
 </div>
 
-</div>
 
 
-<div class="report-item">
-
-<strong>
-Medicines Taken
-</strong>
-
-<div id="reportTaken">
-0
-</div>
-
-</div>
-
-
-<div class="report-item">
-
-<strong>
-Medicines Missed
-</strong>
-
-<div id="reportMissed">
-0
-</div>
-
-</div>
-
-
-<div class="report-item">
-
-<strong>
-Adherence
-</strong>
-
-<div id="reportAdherence">
-0%
-</div>
-
-</div>
-
-</div>
-
-
-<button
-class="report-button"
-onclick="generateMedicationReport()"
->
-📄 Generate Medication Report
-</button>
-
-</div>
-
-
-
-<!-- ================= ACTIVITY LOG ================= -->
+<!-- =====================================================
+     ACTIVITY LOG
+===================================================== -->
 
 <div class="card">
 
-<h2>
-Activity Log
-</h2>
+    <h2 id="logTitle">
+        Activity Log
+    </h2>
 
-<div
-id="activityLog"
-class="log"
->
+
+    <div
+        id="activityLog"
+        class="log"
+    ></div>
+
 </div>
 
-</div>
 
 
-
-<!-- ================= BUTTONS ================= -->
+<!-- =====================================================
+     ACTION BUTTONS
+===================================================== -->
 
 <div class="card">
 
-<div class="actions">
-
-<button
-class="action-btn caregiver"
-onclick="callCaregiver()"
->
-📞 Call Caregiver
-</button>
+    <div class="actions">
 
 
-<button
-class="action-btn ambulance"
-onclick="callAmbulance()"
->
-🚑 Emergency
-</button>
+        <button
+            type="button"
+            class="action-btn caregiver"
+            id="callCaregiverButton"
+            onclick="callCaregiver()"
+        >
+            📞 Call Caregiver
+        </button>
 
 
-<button
-class="action-btn logout"
-onclick="logout()"
->
-Logout
-</button>
+        <button
+            type="button"
+            class="action-btn ambulance"
+            id="ambulanceButton"
+            onclick="callAmbulance()"
+        >
+            🚑 Emergency
+        </button>
 
-</div>
+
+        <button
+            type="button"
+            class="action-btn logout"
+            id="logoutButton"
+            onclick="logout()"
+        >
+            Logout
+        </button>
+
+    </div>
 
 </div>
 
@@ -956,1781 +1337,44 @@ Logout
 
 
 
-<script>
-
-
-// ============================================================
-// MEDICARE APPLICATION
-// ============================================================
-
-
-let medicines = [];
-
-let voices = [];
-
-let reminderTimer = null;
-
-
-// ============================================================
-// LANGUAGE SETTINGS
-// ============================================================
-
-const languageData = {
-
-en: {
-
-code: "en-IN",
-
-reminder: name =>
-`It is time to take your medicine ${name}.`,
-
-enabled:
-"MEDICARE voice is enabled."
-
-},
-
-ta: {
-
-code: "ta-IN",
-
-reminder: name =>
-`உங்கள் மருந்து ${name} எடுத்துக்கொள்ளும் நேரம் இது.`,
-
-enabled:
-"மெடிகேர் குரல் செயல்படுத்தப்பட்டுள்ளது."
-
-},
-
-hi: {
-
-code: "hi-IN",
-
-reminder: name =>
-`आपकी दवा ${name} लेने का समय हो गया है।`,
-
-enabled:
-"मेडिकेयर की आवाज़ सक्रिय कर दी गई है।"
-
-},
-
-te: {
-
-code: "te-IN",
-
-reminder: name =>
-`మీ మందు ${name} వేసుకునే సమయం వచ్చింది.`,
-
-enabled:
-"మెడికేర్ వాయిస్ ప్రారంభించబడింది."
-
-}
-
-};
-
-
-// ============================================================
-// LOAD VOICES
-// ============================================================
-
-function loadVoices() {
-
-if (
-"speechSynthesis" in window
-) {
-
-voices =
-window.speechSynthesis.getVoices();
-
-console.log(
-"TTS voices:",
-voices
-);
-
-}
-
-}
-
-
-if (
-"speechSynthesis" in window
-) {
-
-speechSynthesis.onvoiceschanged =
-loadVoices;
-
-loadVoices();
-
-}
-
-
-// ============================================================
-// FIND VOICE
-// ============================================================
-
-function findVoice(languageCode) {
-
-loadVoices();
-
-if (!voices.length) {
-
-return null;
-
-}
-
-
-let exact =
-voices.find(
-voice =>
-voice.lang &&
-voice.lang.toLowerCase() ===
-languageCode.toLowerCase()
-);
-
-
-if (exact) {
-
-return exact;
-
-}
-
-
-let shortCode =
-languageCode
-.split("-")[0]
-.toLowerCase();
-
-
-return voices.find(
-voice =>
-voice.lang &&
-voice.lang
-.toLowerCase()
-.startsWith(shortCode)
-) || null;
-
-}
-
-
-// ============================================================
-// SPEAK
-// ============================================================
-
-function speakText(
-text,
-language
-) {
-
-if (
-!("speechSynthesis" in window)
-) {
-
-alert(
-"Text-to-Speech is not supported on this browser."
-);
-
-return;
-
-}
-
-
-const config =
-languageData[language] ||
-languageData.en;
-
-
-speechSynthesis.cancel();
-
-
-const utterance =
-new SpeechSynthesisUtterance(
-text
-);
-
-
-utterance.lang =
-config.code;
-
-
-const voice =
-findVoice(config.code);
-
-
-if (voice) {
-
-utterance.voice =
-voice;
-
-console.log(
-"Using voice:",
-voice.name,
-voice.lang
-);
-
-} else {
-
-console.log(
-"No exact voice found. Using:",
-config.code
-);
-
-}
-
-
-utterance.rate =
-0.85;
-
-utterance.pitch =
-1;
-
-utterance.volume =
-1;
-
-
-utterance.onstart =
-function() {
-
-document.getElementById(
-"voiceStatus"
-).innerText =
-"🔊 Speaking...";
-
-};
-
-
-utterance.onend =
-function() {
-
-document.getElementById(
-"voiceStatus"
-).innerText =
-"✅ Voice ready";
-
-};
-
-
-utterance.onerror =
-function(event) {
-
-console.log(
-"TTS error:",
-event
-);
-
-document.getElementById(
-"voiceStatus"
-).innerText =
-"⚠️ Voice error. Check TTS settings.";
-
-};
-
-
-speechSynthesis.speak(
-utterance
-);
-
-}
-
-
-// ============================================================
-// ENABLE MOBILE VOICE
-// ============================================================
-
-function enableMobileVoice() {
-
-const language =
-document.getElementById(
-"languageSelect"
-).value;
-
-
-const config =
-languageData[language] ||
-languageData.en;
-
-
-const button =
-document.getElementById(
-"voiceEnableButton"
-);
-
-
-button.innerText =
-"🔊 Enabling Voice...";
-
-
-loadVoices();
-
-
-setTimeout(
-function() {
-
-speakText(
-config.enabled,
-language
-);
-
-
-button.innerText =
-"✅ Mobile Voice Enabled";
-
-
-button.classList.add(
-"voice-enabled"
-);
-
-
-document.getElementById(
-"voiceStatus"
-).innerText =
-`🔊 ${config.code} selected`;
-
-},
-500
-);
-
-}
-
-
-// ============================================================
-// LOGIN
-// ============================================================
-
-function login() {
-
-try {
-
-const name =
-document.getElementById(
-"patientName"
-).value.trim();
-
-
-const phone =
-document.getElementById(
-"patientPhone"
-).value.trim();
-
-
-const language =
-document.getElementById(
-"languageSelect"
-).value;
-
-
-if (!name) {
-
-alert(
-"Please enter patient name."
-);
-
-return;
-
-}
-
-
-localStorage.setItem(
-"patientName",
-name
-);
-
-
-localStorage.setItem(
-"patientPhone",
-phone
-);
-
-
-localStorage.setItem(
-"language",
-language
-);
-
-
-// IMPORTANT:
-// Do not call TTS during login.
-// Mobile browsers can block it.
-
-document.getElementById(
-"loginSection"
-).style.display =
-"none";
-
-
-document.getElementById(
-"dashboardSection"
-).style.display =
-"block";
-
-
-document.getElementById(
-"dashboardLanguage"
-).value =
-language;
-
-
-document.getElementById(
-"welcomeTitle"
-).innerText =
-"Welcome, " + name;
-
-
-loadMedicines();
-
-renderMedicines();
-
-updateDashboard();
-
-startReminderSystem();
-
-
-console.log(
-"MEDICARE login successful"
-);
-
-}
-
-catch(error) {
-
-console.error(
-"LOGIN ERROR:",
-error
-);
-
-alert(
-"Something went wrong while opening MEDICARE. Please refresh and try again."
-);
-
-}
-
-}
-
-
-// ============================================================
-// LANGUAGE CHANGE
-// ============================================================
-
-function changeLanguage(language) {
-
-localStorage.setItem(
-"language",
-language
-);
-
-
-document.getElementById(
-"languageSelect"
-).value =
-language;
-
-
-updateInterfaceLanguage();
-
-
-loadVoices();
-
-
-const config =
-languageData[language] ||
-languageData.en;
-
-
-const voice =
-findVoice(config.code);
-
-
-if (voice) {
-
-document.getElementById(
-"voiceStatus"
-).innerText =
-`🔊 ${voice.lang} voice selected`;
-
-} else {
-
-document.getElementById(
-"voiceStatus"
-).innerText =
-`⚠️ ${config.code} voice not found`;
-
-}
-
-}
-
-
-// ============================================================
-// CURRENT LANGUAGE
-// ============================================================
-
-function currentLanguage() {
-
-return (
-localStorage.getItem(
-"language"
-) || "en"
-);
-
-}
-
-
-// ============================================================
-// UI TRANSLATION
-// ============================================================
-
-const uiText = {
-
-en: {
-
-subtitle:
-"Right Medicine, Right Time",
-
-monitoring:
-"Monitoring Online",
-
-total:
-"Total Medicines",
-
-taken:
-"Taken",
-
-missed:
-"Missed",
-
-adherence:
-"Adherence",
-
-next:
-"Next Medication Reminder",
-
-no:
-"No reminders",
-
-add:
-"Add Medicine",
-
-schedule:
-"Medicine Schedule",
-
-ai:
-"AI Healthcare Assistant",
-
-aiMessage:
-"Your medication schedule is being monitored automatically.",
-
-caregiver:
-"Caregiver",
-
-save:
-"Save Caregiver"
-
-},
-
-ta: {
-
-subtitle:
-"சரியான மருந்து, சரியான நேரம்",
-
-monitoring:
-"கண்காணிப்பு செயல்பாட்டில் உள்ளது",
-
-total:
-"மொத்த மருந்துகள்",
-
-taken:
-"எடுத்துக்கொண்டவை",
-
-missed:
-"தவறியவை",
-
-adherence:
-"பின்பற்றுதல்",
-
-next:
-"அடுத்த மருந்து நினைவூட்டல்",
-
-no:
-"நினைவூட்டல்கள் இல்லை",
-
-add:
-"மருந்தைச் சேர்க்கவும்",
-
-schedule:
-"மருந்து அட்டவணை",
-
-ai:
-"AI சுகாதார உதவியாளர்",
-
-aiMessage:
-"உங்கள் மருந்து அட்டவணை தானாக கண்காணிக்கப்படுகிறது.",
-
-caregiver:
-"பராமரிப்பாளர்",
-
-save:
-"பராமரிப்பாளரை சேமிக்கவும்"
-
-},
-
-hi: {
-
-subtitle:
-"सही दवा, सही समय",
-
-monitoring:
-"निगरानी चालू है",
-
-total:
-"कुल दवाइयाँ",
-
-taken:
-"ली गई",
-
-missed:
-"छूटी हुई",
-
-adherence:
-"पालन",
-
-next:
-"अगली दवा की याद",
-
-no:
-"कोई याद नहीं",
-
-add:
-"दवा जोड़ें",
-
-schedule:
-"दवा अनुसूची",
-
-ai:
-"AI स्वास्थ्य सहायक",
-
-aiMessage:
-"आपकी दवा की समय-सारणी स्वचालित रूप से निगरानी की जा रही है।",
-
-caregiver:
-"देखभालकर्ता",
-
-save:
-"सेव करें"
-
-},
-
-te: {
-
-subtitle:
-"సరైన మందు, సరైన సమయం",
-
-monitoring:
-"పర్యవేక్షణ ఆన్‌లైన్‌లో ఉంది",
-
-total:
-"మొత్తం మందులు",
-
-taken:
-"తీసుకున్నవి",
-
-missed:
-"మిస్ అయినవి",
-
-adherence:
-"పాటింపు",
-
-next:
-"తదుపరి మందు రిమైండర్",
-
-no:
-"రిమైండర్లు లేవు",
-
-add:
-"మందును జోడించండి",
-
-schedule:
-"మందుల షెడ్యూల్",
-
-ai:
-"AI ఆరోగ్య సహాయకుడు",
-
-aiMessage:
-"మీ మందుల షెడ్యూల్ స్వయంచాలకంగా పర్యవేక్షించబడుతోంది.",
-
-caregiver:
-"సంరక్షకుడు",
-
-save:
-"సంరక్షకుడిని సేవ్ చేయండి"
-
-}
-
-};
-
-
-// ============================================================
-// UPDATE UI
-// ============================================================
-
-function updateInterfaceLanguage() {
-
-const lang =
-currentLanguage();
-
-
-const t =
-uiText[lang] ||
-uiText.en;
-
-
-document.getElementById(
-"headerSubtitle"
-).innerText =
-t.subtitle;
-
-
-document.getElementById(
-"aiStatusText"
-).innerText =
-t.monitoring;
-
-
-document.getElementById(
-"totalLabel"
-).innerText =
-t.total;
-
-
-document.getElementById(
-"takenLabel"
-).innerText =
-t.taken;
-
-
-document.getElementById(
-"missedLabel"
-).innerText =
-t.missed;
-
-
-document.getElementById(
-"adherenceLabel"
-).innerText =
-t.adherence;
-
-
-document.getElementById(
-"nextReminderTitle"
-).innerText =
-t.next;
-
-
-document.getElementById(
-"addMedicineTitle"
-).innerText =
-t.add;
-
-
-document.getElementById(
-"medicineListTitle"
-).innerText =
-t.schedule;
-
-
-document.getElementById(
-"aiTitle"
-).innerText =
-t.ai;
-
-
-document.getElementById(
-"aiMessage"
-).innerText =
-t.aiMessage;
-
-
-document.getElementById(
-"caregiverTitle"
-).innerText =
-t.caregiver;
-
-
-document.getElementById(
-"saveCaregiverButton"
-).innerText =
-t.save;
-
-}
-
-
-// ============================================================
-// ADD MEDICINE
-// ============================================================
-
-function addMedicine() {
-
-const name =
-document.getElementById(
-"medicineName"
-).value.trim();
-
-
-const dosage =
-document.getElementById(
-"dosage"
-).value.trim();
-
-
-const time =
-document.getElementById(
-"medicineTime"
-).value;
-
-
-if (!name) {
-
-alert(
-"Please enter medicine name."
-);
-
-return;
-
-}
-
-
-if (!time) {
-
-alert(
-"Please select medicine time."
-);
-
-return;
-
-}
-
-
-const medicine = {
-
-id: Date.now(),
-
-name: name,
-
-dosage: dosage,
-
-time: time,
-
-status: "pending",
-
-lastReminder: ""
-
-};
-
-
-medicines.push(
-medicine
-);
-
-
-saveMedicines();
-
-
-document.getElementById(
-"medicineName"
-).value =
-"";
-
-
-document.getElementById(
-"dosage"
-).value =
-"";
-
-
-document.getElementById(
-"medicineTime"
-).value =
-"";
-
-
-renderMedicines();
-
-updateDashboard();
-
-
-addLog(
-`Medicine added: ${name}`
-);
-
-}
-
-
-// ============================================================
-// SAVE MEDICINES
-// ============================================================
-
-function saveMedicines() {
-
-localStorage.setItem(
-"medicines",
-JSON.stringify(
-medicines
-)
-);
-
-}
-
-
-// ============================================================
-// LOAD MEDICINES
-// ============================================================
-
-function loadMedicines() {
-
-try {
-
-const saved =
-localStorage.getItem(
-"medicines"
-);
-
-
-medicines =
-saved
-? JSON.parse(saved)
-: [];
-
-
-if (!Array.isArray(medicines)) {
-
-medicines = [];
-
-}
-
-}
-
-catch(error) {
-
-console.error(error);
-
-medicines = [];
-
-}
-
-}
-
-
-// ============================================================
-// RENDER MEDICINES
-// ============================================================
-
-function renderMedicines() {
-
-const list =
-document.getElementById(
-"medicineList"
-);
-
-
-list.innerHTML =
-"";
-
-
-medicines.forEach(
-medicine => {
-
-const item =
-document.createElement(
-"div"
-);
-
-
-item.className =
-"medicine-item";
-
-
-item.innerHTML = `
-
-<div class="medicine-info">
-
-<h3>
-💊 ${escapeHTML(medicine.name)}
-</h3>
-
-<p>
-Dosage:
-${escapeHTML(medicine.dosage || "-")}
-</p>
-
-<p>
-⏰ ${medicine.time}
-</p>
-
-<p class="${medicine.status}">
-Status: ${medicine.status}
-</p>
+<!-- =========================================================
+     REMINDER POPUP
+========================================================= -->
+
+<div
+    id="reminderPopup"
+    class="reminder-alert"
+>
+
+    <h2>
+        💊 Medicine Reminder
+    </h2>
+
+
+    <p id="popupMedicineName">
+        Medicine
+    </p>
+
+
+    <button
+        type="button"
+        id="popupTakeButton"
+        class="reminder-take-btn"
+    >
+        💊 I Took It
+    </button>
 
 </div>
 
-<div class="medicine-actions">
 
-<button
-class="btn-warning"
-onclick="testMedicineVoice(${medicine.id})"
->
-🔊 Test Voice
-</button>
 
-<button
-class="btn-success"
-onclick="markTaken(${medicine.id})"
->
-✓ Taken
-</button>
+<!-- =========================================================
+     JAVASCRIPT
+========================================================= -->
 
-<button
-class="btn-danger"
-onclick="deleteMedicine(${medicine.id})"
->
-Delete
-</button>
+<script src="script.js"></script>
 
-</div>
-
-`;
-
-
-list.appendChild(
-item
-);
-
-});
-
-}
-
-
-// ============================================================
-// TEST MEDICINE VOICE
-// ============================================================
-
-function testMedicineVoice(id) {
-
-const medicine =
-medicines.find(
-m => m.id === id
-);
-
-
-if (!medicine) {
-
-return;
-
-}
-
-
-const language =
-currentLanguage();
-
-
-const config =
-languageData[language] ||
-languageData.en;
-
-
-speakText(
-config.reminder(
-medicine.name
-),
-language
-);
-
-}
-
-
-// ============================================================
-// REMINDER SYSTEM
-// ============================================================
-
-function startReminderSystem() {
-
-if (reminderTimer) {
-
-clearInterval(
-reminderTimer
-);
-
-}
-
-
-reminderTimer =
-setInterval(
-checkReminders,
-1000
-);
-
-
-checkReminders();
-
-}
-
-
-// ============================================================
-// CHECK REMINDERS
-// ============================================================
-
-function checkReminders() {
-
-if (!medicines.length) {
-
-return;
-
-}
-
-
-const now =
-new Date();
-
-
-const hours =
-String(
-now.getHours()
-).padStart(
-2,"0"
-);
-
-
-const minutes =
-String(
-now.getMinutes()
-).padStart(
-2,"0"
-);
-
-
-const currentTime =
-`${hours}:${minutes}`;
-
-
-const today =
-now.toDateString();
-
-
-medicines.forEach(
-medicine => {
-
-if (
-medicine.time ===
-currentTime
-) {
-
-const reminderKey =
-`${today}_${medicine.time}`;
-
-
-if (
-medicine.lastReminder !==
-reminderKey
-) {
-
-medicine.lastReminder =
-reminderKey;
-
-
-medicine.status =
-"pending";
-
-
-saveMedicines();
-
-
-const language =
-currentLanguage();
-
-
-const config =
-languageData[language] ||
-languageData.en;
-
-
-speakText(
-config.reminder(
-medicine.name
-),
-language
-);
-
-
-addLog(
-`🔊 Reminder: ${medicine.name}`
-);
-
-
-renderMedicines();
-
-updateDashboard();
-
-}
-
-}
-
-});
-
-}
-
-
-// ============================================================
-// MARK TAKEN
-// ============================================================
-
-function markTaken(id) {
-
-const medicine =
-medicines.find(
-m => m.id === id
-);
-
-
-if (!medicine) {
-
-return;
-
-}
-
-
-medicine.status =
-"taken";
-
-
-saveMedicines();
-
-
-renderMedicines();
-
-updateDashboard();
-
-
-addLog(
-`Medicine taken: ${medicine.name}`
-);
-
-}
-
-
-// ============================================================
-// DELETE
-// ============================================================
-
-function deleteMedicine(id) {
-
-medicines =
-medicines.filter(
-m => m.id !== id
-);
-
-
-saveMedicines();
-
-
-renderMedicines();
-
-updateDashboard();
-
-}
-
-
-// ============================================================
-// UPDATE DASHBOARD
-// ============================================================
-
-function updateDashboard() {
-
-const total =
-medicines.length;
-
-
-const taken =
-medicines.filter(
-m => m.status === "taken"
-).length;
-
-
-const missed =
-medicines.filter(
-m => m.status === "missed"
-).length;
-
-
-const adherence =
-total > 0
-? Math.round(
-(taken / total) * 100
-)
-: 0;
-
-
-document.getElementById(
-"totalMedicines"
-).innerText =
-total;
-
-
-document.getElementById(
-"takenMedicines"
-).innerText =
-taken;
-
-
-document.getElementById(
-"missedMedicines"
-).innerText =
-missed;
-
-
-document.getElementById(
-"adherence"
-).innerText =
-adherence + "%";
-
-
-document.getElementById(
-"reportTotal"
-).innerText =
-total;
-
-
-document.getElementById(
-"reportTaken"
-).innerText =
-taken;
-
-
-document.getElementById(
-"reportMissed"
-).innerText =
-missed;
-
-
-document.getElementById(
-"reportAdherence"
-).innerText =
-adherence + "%";
-
-
-updateNextReminder();
-
-}
-
-
-// ============================================================
-// NEXT REMINDER
-// ============================================================
-
-function updateNextReminder() {
-
-if (!medicines.length) {
-
-document.getElementById(
-"nextReminder"
-).innerText =
-"No reminders";
-
-return;
-
-}
-
-
-const now =
-new Date();
-
-
-const currentMinutes =
-now.getHours() * 60 +
-now.getMinutes();
-
-
-let nearest =
-null;
-
-let smallest =
-Infinity;
-
-
-medicines.forEach(
-medicine => {
-
-const parts =
-medicine.time.split(":");
-
-
-let minutes =
-parseInt(parts[0]) * 60 +
-parseInt(parts[1]);
-
-
-let difference =
-minutes -
-currentMinutes;
-
-
-if (difference < 0) {
-
-difference +=
-1440;
-
-}
-
-
-if (
-difference <
-smallest
-) {
-
-smallest =
-difference;
-
-nearest =
-medicine;
-
-}
-
-});
-
-
-if (nearest) {
-
-document.getElementById(
-"nextReminder"
-).innerText =
-`${nearest.name} - ${nearest.time}`;
-
-}
-
-}
-
-
-// ============================================================
-// ACTIVITY LOG
-// ============================================================
-
-function addLog(message) {
-
-const log =
-document.getElementById(
-"activityLog"
-);
-
-
-const item =
-document.createElement(
-"div"
-);
-
-
-item.className =
-"log-item";
-
-
-item.innerText =
-`${new Date().toLocaleTimeString()} - ${message}`;
-
-
-log.prepend(
-item
-);
-
-}
-
-
-// ============================================================
-// CAREGIVER
-// ============================================================
-
-function saveCaregiver() {
-
-const phone =
-document.getElementById(
-"caregiverPhone"
-).value.trim();
-
-
-if (!phone) {
-
-alert(
-"Please enter caregiver phone number."
-);
-
-return;
-
-}
-
-
-localStorage.setItem(
-"caregiverPhone",
-phone
-);
-
-
-alert(
-"Caregiver number saved."
-);
-
-
-addLog(
-"Caregiver number saved."
-);
-
-}
-
-
-// ============================================================
-// CALL CAREGIVER
-// ============================================================
-
-function callCaregiver() {
-
-const phone =
-localStorage.getItem(
-"caregiverPhone"
-);
-
-
-if (!phone) {
-
-alert(
-"Please save caregiver number first."
-);
-
-return;
-
-}
-
-
-window.location.href =
-"tel:" + phone;
-
-}
-
-
-// ============================================================
-// EMERGENCY
-// ============================================================
-
-function callAmbulance() {
-
-window.location.href =
-"tel:108";
-
-}
-
-
-// ============================================================
-// LOGOUT
-// ============================================================
-
-function logout() {
-
-if (reminderTimer) {
-
-clearInterval(
-reminderTimer
-);
-
-}
-
-
-document.getElementById(
-"dashboardSection"
-).style.display =
-"none";
-
-
-document.getElementById(
-"loginSection"
-).style.display =
-"flex";
-
-}
-
-
-// ============================================================
-// REPORT
-// ============================================================
-
-function generateMedicationReport() {
-
-let report =
-"MEDICARE MEDICATION REPORT\n\n";
-
-
-report +=
-"Patient: " +
-(
-localStorage.getItem(
-"patientName"
-) || ""
-) +
-"\n\n";
-
-
-report +=
-"Total Medicines: " +
-medicines.length +
-"\n";
-
-
-report +=
-"Taken: " +
-medicines.filter(
-m => m.status === "taken"
-).length +
-"\n";
-
-
-report +=
-"Missed: " +
-medicines.filter(
-m => m.status === "missed"
-).length +
-"\n\n";
-
-
-report +=
-"MEDICINE SCHEDULE\n\n";
-
-
-medicines.forEach(
-medicine => {
-
-report +=
-`${medicine.name} | ` +
-`${medicine.dosage} | ` +
-`${medicine.time} | ` +
-`${medicine.status}\n`;
-
-});
-
-
-const blob =
-new Blob(
-[report],
-{
-type:
-"text/plain"
-}
-);
-
-
-const url =
-URL.createObjectURL(
-blob
-);
-
-
-const link =
-document.createElement(
-"a"
-);
-
-
-link.href =
-url;
-
-
-link.download =
-"MEDICARE_Report.txt";
-
-
-document.body.appendChild(
-link
-);
-
-
-link.click();
-
-
-document.body.removeChild(
-link
-);
-
-
-URL.revokeObjectURL(
-url
-);
-
-}
-
-
-// ============================================================
-// SECURITY
-// ============================================================
-
-function escapeHTML(value) {
-
-return String(value)
-.replace(/&/g,"&amp;")
-.replace(/</g,"&lt;")
-.replace(/>/g,"&gt;")
-.replace(/"/g,"&quot;")
-.replace(/'/g,"&#039;");
-
-}
-
-
-// ============================================================
-// PAGE LOAD
-// ============================================================
-
-document.addEventListener(
-"DOMContentLoaded",
-function() {
-
-loadMedicines();
-
-
-const savedLanguage =
-localStorage.getItem(
-"language"
-);
-
-
-if (savedLanguage) {
-
-document.getElementById(
-"languageSelect"
-).value =
-savedLanguage;
-
-
-document.getElementById(
-"dashboardLanguage"
-).value =
-savedLanguage;
-
-}
-
-
-const savedCaregiver =
-localStorage.getItem(
-"caregiverPhone"
-);
-
-
-if (savedCaregiver) {
-
-document.getElementById(
-"caregiverPhone"
-).value =
-savedCaregiver;
-
-}
-
-
-loadVoices();
-
-renderMedicines();
-
-updateDashboard();
-
-});
-
-</script>
 
 </body>
+
 </html>
-```
