@@ -1691,8 +1691,8 @@ function clearReminderTimers() {
 
 // ============================================================
 // ============================================================
-// "I TOOK IT" VOICE RECOGNITION
 // ============================================================
+// "I TOOK IT" - RELIABLE VOICE RECOGNITION
 // ============================================================
 
 function startTakenVoiceRecognition() {
@@ -1701,25 +1701,23 @@ function startTakenVoiceRecognition() {
         return;
     }
 
-    if (
-        !(
-            "SpeechRecognition" in window ||
-            "webkitSpeechRecognition" in window
-        )
-    ) {
+    const Recognition =
+        window.SpeechRecognition ||
+        window.webkitSpeechRecognition;
+
+    if (!Recognition) {
 
         console.log(
-            "Speech recognition unavailable."
+            "Speech recognition is NOT supported."
         );
 
         return;
     }
 
-    stopTakenVoiceRecognition();
-
-    const Recognition =
-        window.SpeechRecognition ||
-        window.webkitSpeechRecognition;
+    // Don't create another listener
+    if (takenVoiceRecognition) {
+        return;
+    }
 
     const recognition =
         new Recognition();
@@ -1730,152 +1728,413 @@ function startTakenVoiceRecognition() {
     takenVoiceActive =
         true;
 
-    // IMPORTANT:
-    // One utterance only
-    recognition.continuous =
-        false;
+    // IMPORTANT
+    recognition.continuous = true;
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 5;
 
-    recognition.interimResults =
-        false;
-
-    recognition.maxAlternatives =
-        5;
-
-    const recognitionLanguages = {
-
+    const languageMap = {
         en: "en-IN",
-
         ta: "ta-IN",
-
         hi: "hi-IN",
-
         te: "te-IN"
     };
 
     recognition.lang =
-        recognitionLanguages[
-            selectedLanguage
-        ] || "en-IN";
+        languageMap[selectedLanguage] || "en-IN";
 
 
-    recognition.onstart =
-        function () {
+    recognition.onstart = function () {
 
-            console.log(
-                "Listening for I took it..."
-            );
-        };
+        console.log(
+            "🎤 LISTENING FOR: I TOOK IT"
+        );
+
+    };
 
 
-    recognition.onresult =
-        function (event) {
+    recognition.onresult = function (event) {
 
-            if (!activeReminder) {
-                return;
+        if (!activeReminder) {
+            return;
+        }
+
+        for (
+            let i = event.resultIndex;
+            i < event.results.length;
+            i++
+        ) {
+
+            if (!event.results[i].isFinal) {
+                continue;
             }
 
-            let finalText = "";
-
-            for (
-                let i = 0;
-                i < event.results.length;
-                i++
-            ) {
-
-                finalText +=
-                    " " +
-                    event.results[i][0].transcript;
-            }
-
-            finalText =
-                finalText
+            const text =
+                event.results[i][0]
+                    .transcript
                     .trim()
                     .toLowerCase();
 
             console.log(
-                "VOICE COMMAND:",
-                finalText
+                "🎤 HEARD:",
+                text
             );
+
+
+            // ==========================================
+            // CHECK COMMAND
+            // ==========================================
 
             if (
-                detectTakenCommand(
-                    finalText
-                )
+                detectTakenCommand(text)
             ) {
 
-                // IMPORTANT:
-                // stop recognition BEFORE marking taken
-                stopTakenVoiceRecognition();
+                console.log(
+                    "✅ I TOOK IT DETECTED"
+                );
 
-                const id =
+                const medicineId =
                     activeReminder.id;
 
-                markTaken(id);
+                // STOP LISTENING FIRST
+                stopTakenVoiceRecognition();
+
+                // MARK MEDICINE AS TAKEN
+                markTaken(
+                    medicineId
+                );
+
+                return;
             }
-        };
+        }
+    };
 
 
-    recognition.onerror =
-        function (event) {
+    recognition.onerror = function (event) {
 
-            console.log(
-                "Taken recognition error:",
-                event.error
+        console.log(
+            "🎤 Recognition error:",
+            event.error
+        );
+
+        // These errors should not stop the reminder
+        if (
+            activeReminder &&
+            (
+                event.error === "no-speech" ||
+                event.error === "audio-capture" ||
+                event.error === "network"
+            )
+        ) {
+
+            setTimeout(
+                restartTakenVoiceRecognition,
+                500
             );
-
-            takenVoiceActive =
-                false;
-
-            takenVoiceRecognition =
-                null;
-
-            // Try again if reminder is still active
-            scheduleTakenVoiceRestart();
-        };
+        }
+    };
 
 
-    recognition.onend =
-        function () {
+    recognition.onend = function () {
 
-            console.log(
-                "Taken recognition ended."
+        console.log(
+            "🎤 Recognition ended"
+        );
+
+        takenVoiceRecognition =
+            null;
+
+        takenVoiceActive =
+            false;
+
+        // VERY IMPORTANT:
+        // restart while reminder is active
+        if (activeReminder) {
+
+            setTimeout(
+                restartTakenVoiceRecognition,
+                500
             );
-
-            takenVoiceActive =
-                false;
-
-            takenVoiceRecognition =
-                null;
-
-            // Automatically listen again
-            if (activeReminder) {
-
-                scheduleTakenVoiceRestart();
-            }
-        };
+        }
+    };
 
 
     try {
 
         recognition.start();
 
+        console.log(
+            "🎤 Voice recognition started"
+        );
+
     } catch (error) {
 
         console.log(
-            "Recognition start error:",
+            "Could not start recognition:",
             error
         );
-
-        takenVoiceActive =
-            false;
 
         takenVoiceRecognition =
             null;
 
-        scheduleTakenVoiceRestart();
+        takenVoiceActive =
+            false;
+
+        setTimeout(
+            restartTakenVoiceRecognition,
+            1000
+        );
     }
 }
 
+
+// ============================================================
+// RESTART VOICE RECOGNITION
+// ============================================================
+
+function restartTakenVoiceRecognition() {
+
+    if (!activeReminder) {
+        return;
+    }
+
+    if (takenVoiceRecognition) {
+        return;
+    }
+
+    startTakenVoiceRecognition();
+}
+
+
+// ============================================================
+// STOP VOICE RECOGNITION
+// ============================================================
+
+function stopTakenVoiceRecognition() {
+
+    takenVoiceActive =
+        false;
+
+    if (takenVoiceRecognition) {
+
+        try {
+
+            takenVoiceRecognition.onresult =
+                null;
+
+            takenVoiceRecognition.onerror =
+                null;
+
+            takenVoiceRecognition.onend =
+                null;
+
+            takenVoiceRecognition.stop();
+
+        } catch (error) {
+
+            console.log(
+                error
+            );
+        }
+
+        takenVoiceRecognition =
+            null;
+    }
+}
+
+
+// ============================================================
+// DETECT "I TOOK IT"
+// ============================================================
+
+function detectTakenCommand(text) {
+
+    if (!text) {
+        return false;
+    }
+
+    text =
+        text
+            .toLowerCase()
+            .trim();
+
+    console.log(
+        "🔎 CHECKING:",
+        text
+    );
+
+
+    // ========================================================
+    // ENGLISH
+    // ========================================================
+
+    const englishCommands = [
+
+        "i took it",
+        "i took the medicine",
+        "i took my medicine",
+        "i took medicine",
+        "i have taken it",
+        "i have taken the medicine",
+        "i have taken my medicine",
+        "i have taken medicine",
+        "i already took it",
+        "i already took the medicine",
+        "i already took my medicine",
+        "i took",
+        "took it",
+        "took the medicine",
+        "took medicine",
+        "medicine taken",
+        "medicine is taken",
+        "medicine was taken",
+        "medicine done",
+        "medicine completed",
+        "medicine finished",
+        "taken",
+        "done",
+        "completed",
+        "finished",
+        "yes",
+        "yes i took it",
+        "yes took it",
+        "yes done"
+    ];
+
+
+    for (
+        const command of englishCommands
+    ) {
+
+        if (
+            text === command ||
+            text.includes(command)
+        ) {
+
+            return true;
+        }
+    }
+
+
+    // Flexible English detection
+
+    const tookPattern =
+        /\b(took|taken|have taken)\b/i;
+
+    const medicinePattern =
+        /\b(it|medicine|medication|tablet|pill)\b/i;
+
+    if (
+        tookPattern.test(text) &&
+        medicinePattern.test(text)
+    ) {
+
+        return true;
+    }
+
+
+    // ========================================================
+    // TAMIL
+    // ========================================================
+
+    const tamilCommands = [
+
+        "எடுத்துவிட்டேன்",
+        "எடுத்து விட்டேன்",
+        "மருந்து எடுத்துவிட்டேன்",
+        "மருந்து எடுத்தேன்",
+        "மருந்தை எடுத்துவிட்டேன்",
+        "மருந்தை எடுத்தேன்",
+        "மருந்து எடுத்தாச்சு",
+        "மருந்தை எடுத்தாச்சு",
+        "எடுத்தாச்சு",
+        "முடிந்தது",
+        "மருந்து முடிந்தது",
+        "நான் மருந்து எடுத்தேன்",
+        "நான் எடுத்துவிட்டேன்"
+    ];
+
+
+    for (
+        const command of tamilCommands
+    ) {
+
+        if (
+            text.includes(command)
+        ) {
+
+            return true;
+        }
+    }
+
+
+    // ========================================================
+    // HINDI
+    // ========================================================
+
+    const hindiCommands = [
+
+        "मैंने दवा ले ली",
+        "मैंने दवाई ले ली",
+        "दवा ले ली",
+        "दवाई ले ली",
+        "दवा लिया",
+        "दवाई लिया",
+        "ले लिया",
+        "ले ली",
+        "हो गया",
+        "मैंने ले लिया",
+        "मैंने ले ली",
+        "दवा ले लिया"
+    ];
+
+
+    for (
+        const command of hindiCommands
+    ) {
+
+        if (
+            text.includes(command)
+        ) {
+
+            return true;
+        }
+    }
+
+
+    // ========================================================
+    // TELUGU
+    // ========================================================
+
+    const teluguCommands = [
+
+        "నేను మందు తీసుకున్నాను",
+        "మందు తీసుకున్నాను",
+        "మందు తీసుకున్నా",
+        "తీసుకున్నాను",
+        "తీసుకున్నా",
+        "మందు తీసుకున్న",
+        "పూర్తయింది",
+        "మందు పూర్తయింది",
+        "నేను తీసుకున్నాను"
+    ];
+
+
+    for (
+        const command of teluguCommands
+    ) {
+
+        if (
+            text.includes(command)
+        ) {
+
+            return true;
+        }
+    }
+
+
+    return false;
+}
 
 // ============================================================
 // RESTART TAKEN RECOGNITION
