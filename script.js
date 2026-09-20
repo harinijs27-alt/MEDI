@@ -22,6 +22,10 @@ let speechVoices = [];
 
 const translations = {
 
+    // =================================================
+    // ENGLISH
+    // =================================================
+
     en: {
 
         subtitle: "AI Powered Healthcare Assistant",
@@ -75,7 +79,7 @@ const translations = {
         language: "Select Language",
         login: "Login",
 
-        voiceReady: "Mobile voice enabled",
+        voiceReady: "Mobile voice ready",
 
         medicineAdded:
             "Medicine added successfully.",
@@ -241,7 +245,7 @@ const translations = {
             "உள்நுழைய",
 
         voiceReady:
-            "மொபைல் குரல் இயக்கப்பட்டது",
+            "மொபைல் குரல் தயாராக உள்ளது",
 
         medicineAdded:
             "மருந்து வெற்றிகரமாக சேர்க்கப்பட்டது.",
@@ -414,7 +418,7 @@ const translations = {
             "लॉगिन",
 
         voiceReady:
-            "मोबाइल आवाज़ सक्षम है",
+            "मोबाइल आवाज़ तैयार है",
 
         medicineAdded:
             "दवा सफलतापूर्वक जोड़ी गई।",
@@ -587,7 +591,7 @@ const translations = {
             "లాగిన్",
 
         voiceReady:
-            "మొబైల్ వాయిస్ ప్రారంభించబడింది",
+            "మొబైల్ వాయిస్ సిద్ధంగా ఉంది",
 
         medicineAdded:
             "మందు విజయవంతంగా జోడించబడింది.",
@@ -952,8 +956,7 @@ function login() {
     );
 
 
-    // Login is a user interaction.
-    // Use it to unlock mobile speech.
+    // Login interaction unlocks speech
 
     speechUnlocked =
         false;
@@ -973,10 +976,17 @@ function login() {
         "block";
 
 
-    document.getElementById(
-        "dashboardLanguage"
-    ).value =
-        language;
+    const dashboardLanguage =
+        document.getElementById(
+            "dashboardLanguage"
+        );
+
+    if (dashboardLanguage) {
+
+        dashboardLanguage.value =
+            language;
+
+    }
 
 
     applyLanguage(
@@ -1020,7 +1030,6 @@ function enableMobileVoice() {
                 "voiceStatus"
             );
 
-
         if (status) {
 
             status.textContent =
@@ -1044,6 +1053,12 @@ function enableMobileVoice() {
             getSpeechLanguage();
 
 
+        /*
+         * Small silent speech operation.
+         * This helps mobile browsers unlock
+         * speech after a user interaction.
+         */
+
         const unlockSpeech =
             new SpeechSynthesisUtterance(
                 "ready"
@@ -1053,17 +1068,11 @@ function enableMobileVoice() {
         unlockSpeech.lang =
             language;
 
-
         unlockSpeech.volume =
             0;
 
-
         unlockSpeech.rate =
             10;
-
-
-        unlockSpeech.pitch =
-            1;
 
 
         speechSynthesis.speak(
@@ -1083,7 +1092,6 @@ function enableMobileVoice() {
             },
             500
         );
-
 
     }
 
@@ -1155,7 +1163,6 @@ function getMedicineStorageKey() {
 
 function addMedicine() {
 
-    // User interaction also unlocks voice.
     enableMobileVoice();
 
 
@@ -1843,18 +1850,34 @@ function getSpeechLanguage() {
 
 
 // =====================================================
-// GET MOBILE VOICE
+// GET BEST MOBILE VOICE
 // =====================================================
 
 function getVoice(languageCode) {
 
     if (
-        !speechVoices.length
+        !(
+            "speechSynthesis"
+            in window
+        )
+    ) {
+
+        return null;
+
+    }
+
+
+    const voices =
+        speechSynthesis.getVoices();
+
+
+    if (
+        voices &&
+        voices.length
     ) {
 
         speechVoices =
-            window.speechSynthesis
-                .getVoices();
+            voices;
 
     }
 
@@ -1868,41 +1891,129 @@ function getVoice(languageCode) {
     }
 
 
-    const exact =
+    const target =
+        languageCode
+            .toLowerCase();
+
+
+    const base =
+        target
+            .split("-")[0];
+
+
+    // -------------------------------------------------
+    // Exact language
+    // -------------------------------------------------
+
+    let voice =
         speechVoices.find(
-            voice =>
-                voice.lang &&
-                voice.lang
+            v =>
+                v.lang &&
+                v.lang
                     .toLowerCase() ===
-                languageCode
-                    .toLowerCase()
+                target
         );
 
 
-    if (exact) {
+    if (voice) {
 
-        return exact;
+        return voice;
 
     }
 
 
-    const base =
-        languageCode
-            .split("-")[0]
-            .toLowerCase();
+    // -------------------------------------------------
+    // Same language
+    // -------------------------------------------------
 
-
-    const matching =
+    voice =
         speechVoices.find(
-            voice =>
-                voice.lang &&
-                voice.lang
+            v =>
+                v.lang &&
+                v.lang
                     .toLowerCase()
                     .startsWith(base)
         );
 
 
-    return matching || null;
+    if (voice) {
+
+        return voice;
+
+    }
+
+
+    // -------------------------------------------------
+    // Better quality voice
+    // -------------------------------------------------
+
+    voice =
+        speechVoices.find(
+            v => {
+
+                if (!v.lang) {
+
+                    return false;
+
+                }
+
+
+                const voiceLang =
+                    v.lang.toLowerCase();
+
+
+                const voiceName =
+                    (
+                        v.name ||
+                        ""
+                    ).toLowerCase();
+
+
+                return (
+
+                    voiceLang
+                        .startsWith(base)
+
+                    &&
+
+                    (
+                        voiceName.includes(
+                            "google"
+                        )
+
+                        ||
+
+                        voiceName.includes(
+                            "microsoft"
+                        )
+
+                        ||
+
+                        voiceName.includes(
+                            "natural"
+                        )
+
+                        ||
+
+                        voiceName.includes(
+                            "enhanced"
+                        )
+                    )
+
+                );
+
+            }
+        );
+
+
+    if (voice) {
+
+        return voice;
+
+    }
+
+
+    return null;
 
 }
 
@@ -1925,33 +2036,43 @@ function prepareSpeech() {
     }
 
 
-    speechVoices =
-        speechSynthesis
-            .getVoices();
+    function loadVoices() {
+
+        speechVoices =
+            speechSynthesis
+                .getVoices();
+
+
+        console.log(
+            "Available voices:"
+        );
+
+
+        speechVoices.forEach(
+            voice => {
+
+                console.log(
+                    voice.name,
+                    voice.lang
+                );
+
+            }
+        );
+
+    }
+
+
+    loadVoices();
 
 
     speechSynthesis.onvoiceschanged =
-        function() {
-
-            speechVoices =
-                speechSynthesis
-                    .getVoices();
-
-        };
+        loadVoices;
 
 }
 
 
 // =====================================================
-// REGIONAL MEDICINE PRONUNCIATION
-// =====================================================
-//
-// IMPORTANT:
-// The medicine name shown in the website/report
-// stays exactly as entered.
-//
-// Only the name spoken by the voice is converted.
-//
+// MEDICINE PRONUNCIATION DATABASE
 // =====================================================
 
 const medicinePronunciations = {
@@ -2026,6 +2147,20 @@ const medicinePronunciations = {
     },
 
 
+    levocetirizine: {
+
+        ta:
+            "லெவோசெடிரிசின்",
+
+        hi:
+            "लेवोसेटिरिज़िन",
+
+        te:
+            "లెవోసెటిరిజిన్"
+
+    },
+
+
     amoxicillin: {
 
         ta:
@@ -2063,7 +2198,7 @@ const medicinePronunciations = {
             "आइबुप्रोफेन",
 
         te:
-            "ఐబుప్రోఫెన్"
+            "ఐబుప్రोफెన్"
 
     },
 
@@ -2077,7 +2212,7 @@ const medicinePronunciations = {
             "मेटफॉर्मिन",
 
         te:
-            "మెట్‌ఫార్మిన్"
+            "మెట్‌ஃபார்மின்"
 
     },
 
@@ -2152,20 +2287,6 @@ const medicinePronunciations = {
     },
 
 
-    levocetirizine: {
-
-        ta:
-            "லெவோசெடிரிசின்",
-
-        hi:
-            "लेवोसेटिरिज़िन",
-
-        te:
-            "లెవోసెటిరిజిన్"
-
-    },
-
-
     ranitidine: {
 
         ta:
@@ -2205,7 +2326,189 @@ const medicinePronunciations = {
         te:
             "విటమిన్"
 
-    }
+    },
+
+
+    "vitamin c": {
+
+        ta:
+            "வைட்டமின் சி",
+
+        hi:
+            "विटामिन सी",
+
+        te:
+            "విటమిన్ సి"
+
+    },
+
+
+    "vitamin d": {
+
+        ta:
+            "வைட்டமின் டி",
+
+        hi:
+            "विटामिन डी",
+
+        te:
+            "విటమిన్ డి"
+
+    },
+
+
+    amlodipine: {
+
+        ta:
+            "அம்லோடிபைன்",
+
+        hi:
+            "एम्लोडिपिन",
+
+        te:
+            "అమ్లోడిపిన్"
+
+    },
+
+
+    losartan: {
+
+        ta:
+            "லோசார்டன்",
+
+        hi:
+            "लोसार्टन",
+
+        te:
+            "లోసార్టన్"
+
+    },
+
+
+    atorvastatin: {
+
+        ta:
+            "அடோர்வாஸ்டாட்டின்",
+
+        hi:
+            "एटोरवास्टेटिन",
+
+        te:
+            "అటోర్వాస్టాటిన్"
+
+    },
+
+
+    rabeprazole: {
+
+        ta:
+            "ரேபிபிரசோல்",
+
+        hi:
+            "रेबिप्राज़ोल",
+
+        te:
+            "రేబిప్రజోల్"
+
+    },
+
+
+    domperidone: {
+
+        ta:
+            "டாம்பெரிடோன்",
+
+        hi:
+            "डोम्पेरिडोन",
+
+        te:
+            "డాంపెరిడోన్"
+
+    },
+
+
+    ondansetron: {
+
+        ta:
+            "ஒன்டான்செட்ரான்",
+
+        hi:
+            "ओन्डैन्सेट्रॉन",
+
+        te:
+            "ఒండాన్సెట్రాన్"
+
+    },
+
+
+    diclofenac: {
+
+        ta:
+            "டைக்ளோஃபெனாக்",
+
+        hi:
+            "डाइक्लोफेनाक",
+
+        te:
+            "డైక్లోఫెనాక్"
+
+    },
+
+
+    naproxen: {
+
+        ta:
+            "நாப்ராக்சென்",
+
+        hi:
+            "नैप्रोक्सेन",
+
+        te:
+            "నాప్రోక్సెన్"
+
+    },
+
+
+    doxycycline: {
+
+        ta:
+            "டாக்ஸிசைக்ளின்",
+
+        hi:
+            "डॉक्सीसाइक्लिन",
+
+        te:
+            "డాక్సీసైక్లిన్"
+
+    },
+
+
+    ciprofloxacin: {
+
+        ta:
+            "சிப்ரோஃப்ளோக்சசின்",
+
+        hi:
+            "सिप्रोफ्लॉक्सासिन",
+
+        te:
+            "సిప్రోఫ్లోక్సాసిన్"
+
+    },
+
+
+    "blood pressure": {
+
+        ta:
+            "பிளட் பிரஷர்",
+
+        hi:
+            "ब्लड प्रेशर",
+
+        te:
+            "బ్లడ్ ప్రెஷర్"
+
+    },
 
 };
 
@@ -2220,7 +2523,9 @@ function getRegionalMedicineName(
 ) {
 
     const original =
-        String(name || "").trim();
+        String(
+            name || ""
+        ).trim();
 
 
     if (
@@ -2235,10 +2540,17 @@ function getRegionalMedicineName(
 
     const key =
         original
-            .toLowerCase();
+            .toLowerCase()
+            .replace(
+                /\s+/g,
+                " "
+            );
 
 
+    // -------------------------------------------------
     // Exact match
+    // -------------------------------------------------
+
     if (
         medicinePronunciations[key] &&
         medicinePronunciations[key][lang]
@@ -2251,10 +2563,9 @@ function getRegionalMedicineName(
     }
 
 
-    // Handle names such as:
-    // Dolo 500
-    // Dolo 650
-    // Dolo 1000
+    // -------------------------------------------------
+    // Dolo 500 / 650 / 1000 etc.
+    // -------------------------------------------------
 
     const doloMatch =
         key.match(
@@ -2300,7 +2611,10 @@ function getRegionalMedicineName(
     }
 
 
-    // If not found, keep original.
+    // -------------------------------------------------
+    // Generic fallback
+    // -------------------------------------------------
+
     return original;
 
 }
@@ -2338,14 +2652,21 @@ function speakMedicineReminder(
         getSpeechLanguage();
 
 
-    // IMPORTANT:
-    // Convert medicine name only for voice.
+    // -------------------------------------------------
+    // Regional medicine pronunciation
+    // -------------------------------------------------
 
     const spokenMedicineName =
         getRegionalMedicineName(
             medicine.name,
             lang
         );
+
+
+    const patientName =
+        localStorage.getItem(
+            "patientName"
+        ) || "";
 
 
     let message =
@@ -2359,7 +2680,7 @@ function speakMedicineReminder(
     if (lang === "ta") {
 
         message =
-            `${spokenMedicineName} மருந்தை எடுத்துக்கொள்ளும் நேரம் வந்துவிட்டது`;
+            `வணக்கம் ${patientName}. ${spokenMedicineName} மருந்தை எடுத்துக்கொள்ளும் நேரம் வந்துவிட்டது.`;
 
     }
 
@@ -2371,7 +2692,7 @@ function speakMedicineReminder(
     else if (lang === "hi") {
 
         message =
-            `${spokenMedicineName} दवा लेने का समय हो गया है`;
+            `नमस्ते ${patientName}। ${spokenMedicineName} दवा लेने का समय हो गया है।`;
 
     }
 
@@ -2383,7 +2704,7 @@ function speakMedicineReminder(
     else if (lang === "te") {
 
         message =
-            `${spokenMedicineName} మందు తీసుకునే సమయం వచ్చింది`;
+            `నమస్కారం ${patientName}. ${spokenMedicineName} మందు తీసుకునే సమయం వచ్చింది.`;
 
     }
 
@@ -2395,17 +2716,25 @@ function speakMedicineReminder(
     else {
 
         message =
-            `Time to take ${medicine.name}`;
+            `Hello ${patientName}. It is time to take ${medicine.name}.`;
 
     }
 
 
     try {
 
+        // -------------------------------------------------
+        // Stop previous speech
+        // -------------------------------------------------
+
         speechSynthesis.cancel();
 
         speechSynthesis.resume();
 
+
+        // -------------------------------------------------
+        // Create speech
+        // -------------------------------------------------
 
         const utterance =
             new SpeechSynthesisUtterance(
@@ -2418,7 +2747,7 @@ function speakMedicineReminder(
 
 
         utterance.rate =
-            0.82;
+            0.78;
 
 
         utterance.pitch =
@@ -2428,6 +2757,10 @@ function speakMedicineReminder(
         utterance.volume =
             1;
 
+
+        // -------------------------------------------------
+        // Select regional voice
+        // -------------------------------------------------
 
         const voice =
             getVoice(
@@ -2440,8 +2773,28 @@ function speakMedicineReminder(
             utterance.voice =
                 voice;
 
+
+            console.log(
+                "Selected TTS voice:",
+                voice.name,
+                voice.lang
+            );
+
         }
 
+        else {
+
+            console.warn(
+                "No regional TTS voice found for:",
+                languageCode
+            );
+
+        }
+
+
+        // -------------------------------------------------
+        // Voice start
+        // -------------------------------------------------
 
         utterance.onstart =
             function() {
@@ -2463,6 +2816,10 @@ function speakMedicineReminder(
             };
 
 
+        // -------------------------------------------------
+        // Voice end
+        // -------------------------------------------------
+
         utterance.onend =
             function() {
 
@@ -2475,6 +2832,7 @@ function speakMedicineReminder(
                 if (status) {
 
                     status.textContent =
+                        "✓ " +
                         translations[
                             getLanguage()
                         ].voiceReady;
@@ -2483,6 +2841,10 @@ function speakMedicineReminder(
 
             };
 
+
+        // -------------------------------------------------
+        // Voice error
+        // -------------------------------------------------
 
         utterance.onerror =
             function(event) {
@@ -2502,12 +2864,16 @@ function speakMedicineReminder(
                 if (status) {
 
                     status.textContent =
-                        "Voice error. Please check phone TTS language.";
+                        "⚠️ Regional voice unavailable. Please install the selected language TTS voice on your phone.";
 
                 }
 
             };
 
+
+        // -------------------------------------------------
+        // SPEAK
+        // -------------------------------------------------
 
         speechSynthesis.speak(
             utterance
@@ -2518,6 +2884,7 @@ function speakMedicineReminder(
     catch (error) {
 
         console.error(
+            "Speech error:",
             error
         );
 
@@ -2594,6 +2961,7 @@ function checkMedicationReminder() {
             item =>
                 item.status ===
                 "Pending" &&
+
                 item.time ===
                 currentTime
         );
@@ -2639,13 +3007,19 @@ function triggerReminder(
     );
 
 
+    // -------------------------------------------------
     // FIRST VOICE
+    // -------------------------------------------------
+
     speakMedicineReminder(
         medicine
     );
 
 
+    // -------------------------------------------------
     // REPEAT EVERY 10 SECONDS
+    // -------------------------------------------------
+
     reminderLoop =
         setInterval(
             function() {
@@ -2666,7 +3040,10 @@ function triggerReminder(
         );
 
 
+    // -------------------------------------------------
     // AFTER 60 SECONDS -> MISSED
+    // -------------------------------------------------
+
     missedTimer =
         setTimeout(
             function() {
@@ -2934,28 +3311,28 @@ function speakMissedReminder(
     if (lang === "ta") {
 
         message =
-            `${spokenMedicineName} மருந்து எடுக்கப்படவில்லை`;
+            `${spokenMedicineName} மருந்து எடுக்கப்படவில்லை.`;
 
     }
 
     else if (lang === "hi") {
 
         message =
-            `${spokenMedicineName} दवा नहीं ली गई है`;
+            `${spokenMedicineName} दवा नहीं ली गई है।`;
 
     }
 
     else if (lang === "te") {
 
         message =
-            `${spokenMedicineName} మందు తీసుకోలేదు`;
+            `${spokenMedicineName} మందు తీసుకోలేదు.`;
 
     }
 
     else {
 
         message =
-            `${medicine.name} medicine was not taken`;
+            `${medicine.name} medicine was not taken.`;
 
     }
 
@@ -2976,7 +3353,7 @@ function speakMissedReminder(
 
 
     utterance.rate =
-        0.82;
+        0.78;
 
 
     utterance.pitch =
@@ -3040,7 +3417,7 @@ function sendCaregiverSMS(
     if (lang === "ta") {
 
         message =
-            `மருந்து நினைவூட்டல்: ${medicine.name} மருந்தை நோயாளி எடுக்கவில்லை. தயவுசெய்து சரிபார்க்கவும்.`;
+            `மருந்து நினைவூட்டல்: நோயாளி ${medicine.name} மருந்தை எடுக்கவில்லை. தயவுசெய்து சரிபார்க்கவும்.`;
 
     }
 
@@ -3086,10 +3463,21 @@ function sendCaregiverSMS(
 
 function saveCaregiver() {
 
-    const phone =
+    const input =
         document.getElementById(
             "caregiverPhone"
-        ).value.trim();
+        );
+
+
+    if (!input) {
+
+        return;
+
+    }
+
+
+    const phone =
+        input.value.trim();
 
 
     if (!phone) {
@@ -4095,6 +4483,11 @@ if (
             speechVoices =
                 speechSynthesis
                     .getVoices();
+
+            console.log(
+                "TTS voices loaded:",
+                speechVoices.length
+            );
 
         };
 
